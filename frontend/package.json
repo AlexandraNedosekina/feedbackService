@@ -9,7 +9,7 @@
 		"lint:dev": "eslint \"{components,pages,}/**/*.ts\"",
 		"lint": "lint:dev --quiet",
 		"format": "prettier --write \"{pages/**/*,components/**/*}\"",
-		"prepare": "husky install",
+		"prepare": "cd .. && husky install frontend/.husky",
 		"test": "jest --watch"
 	},
 	"dependencies": {
