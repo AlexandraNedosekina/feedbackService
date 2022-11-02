@@ -1,12 +1,3 @@
-/* .header_info {
-    background-image: url(../../public/main.png);
-    position: fixed;
-    width: 1920px;
-    height: 1080px;
-    left: -96px;
-    top: -280px;
-} */
-
 .header_title {
     position: absolute;
     width: 444px;
@@ -142,6 +133,15 @@
     color: #000000;
 }
 
+.main-img {
+    position: absolute;
+    width: 1920px;
+    height: 1080px;
+    left: -96px;
+    top: -280px;
+
+}
+
 .rate1 {
     position: absolute;
     width: 256px;
@@ -149,4 +149,39 @@
     left: 1086px;
     top: 598px;
 
+}
+
+.career-grown {
+    position: absolute;
+    width: 256px;
+    height: 256px;
+    left: 361px;
+    top: 943px;
+
+}
+
+.calendar {
+    position: absolute;
+    width: 256px;
+    height: 256px;
+    left: 1086px;
+    top: 1296px;
+
+}
+
+.line1 {
+    position: absolute;
+    width: 416px;
+    height: 228px;
+    left: 562px;
+    top: 783px;
+
+}
+
+.line2 {
+    position: absolute;
+    width: 284.5px;
+    height: 216.5px;
+    left: 729px;
+    top: 1160.5px;
 }

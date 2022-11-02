@@ -20,11 +20,10 @@ const Home: NextPageWithLayout = () => {
 				<title>Главная</title>
 			</Head>
 			<SimpleGrid cols={1}>
-				{/* <Image src={}/> */}
+				{/* <Image className='main-img' src="main.png" alt='background'/> */}
 				<div className="header_info">
 					<Title className="header_title">Feedback Service</Title>
 					<Text className="header_text">
-						{' '}
 						Сервис для взаимооценивания сотрудников, направленный на
 						повышение эффективности.
 					</Text>
@@ -46,7 +45,21 @@ const Home: NextPageWithLayout = () => {
 							не очень.
 						</Text>
 					</span>
-					{/* <Image src="rat1.svg" alt='rate1'/> */}
+					<Image
+						className="rate1"
+						src="rat1.svg"
+						alt="rate1"
+						width={256}
+						height={256}
+						fit="contain"
+					/>
+					<Image
+						className="line1"
+						src="line1.svg"
+						alt="line1"
+						width={416}
+						height={228}
+					/>
 				</div>
 				<div>
 					<span className="text_right">
@@ -57,6 +70,21 @@ const Home: NextPageWithLayout = () => {
 							выполненные задачи{' '}
 						</Text>
 					</span>
+					<Image
+						className="career-grown"
+						src="career-grown.svg"
+						alt="rate2"
+						width={256}
+						height={256}
+						fit="contain"
+					/>
+					<Image
+						className="line2"
+						src="line2.svg"
+						alt="line2"
+						width={285}
+						height={217}
+					/>
 				</div>
 				<div>
 					<span className="text_left_two">
@@ -66,8 +94,15 @@ const Home: NextPageWithLayout = () => {
 							время
 						</Text>
 					</span>
+					<Image
+						className="calendar"
+						src="calendar.svg"
+						alt="rate2"
+						width={256}
+						height={256}
+						fit="contain"
+					/>
 				</div>
-				<div className="contacts">support@email.com</div>
 			</SimpleGrid>
 		</Container>
 	)
