@@ -20,24 +20,27 @@ const Home: NextPageWithLayout = () => {
 				<title>Главная</title>
 			</Head>
 			<SimpleGrid cols={1}>
-				{/* <Image className='main-img' src="main.png" alt='background'/> */}
-				<div className="header_info">
-					<Title className="header_title">Feedback Service</Title>
-					<Text className="header_text">
-						Сервис для взаимооценивания сотрудников, направленный на
-						повышение эффективности.
-					</Text>
-					<Center>
-						<Button
-							className="button_login"
-							leftIcon={<IconBrandGitlab size={22} color="#3B82BF" />}
-							variant="outline"
-						>
-							Войти через Git
-						</Button>
-					</Center>
-				</div>
-				<div>
+				<article className="card">
+					<div className="card_thumb">
+						<Image src="main.png" alt="background" />
+					</div>
+					<div className="card_content">
+						<Title>Feedback Service</Title>
+						<a>
+							Сервис для взаимооценивания сотрудников, направленный на
+							повышение эффективности.
+						</a>
+						<div className="git_button">
+							<Button
+								leftIcon={<IconBrandGitlab size={22} color="#3B82BF" />}
+								variant="outline"
+							>
+								Войти через Git
+							</Button>
+						</div>
+					</div>
+				</article>
+				<article className="card">
 					<span className="text_left">
 						<Title> Оценивай коллег</Title>
 						<Text size="md">
@@ -60,8 +63,8 @@ const Home: NextPageWithLayout = () => {
 						width={416}
 						height={228}
 					/>
-				</div>
-				<div>
+				</article>
+				<article className="card">
 					<span className="text_right">
 						<Title> Узнай, что нужно для карьерного роста</Title>
 						<Text size="md">
@@ -85,8 +88,8 @@ const Home: NextPageWithLayout = () => {
 						width={285}
 						height={217}
 					/>
-				</div>
-				<div>
+				</article>
+				<article className="card">
 					<span className="text_left_two">
 						<Title> Назначай личные встречи</Title>
 						<Text size="md">
@@ -102,7 +105,7 @@ const Home: NextPageWithLayout = () => {
 						height={256}
 						fit="contain"
 					/>
-				</div>
+				</article>
 			</SimpleGrid>
 		</Container>
 	)
