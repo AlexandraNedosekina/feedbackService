@@ -1,14 +1,12 @@
 import typing
-from feedback.core.jwt import decode_token
+
 import fastapi
 import starlette
 from fastapi import HTTPException
 from fastapi.security.utils import get_authorization_scheme_param
-from feedback.db.database import db
 
 
 class OAuth2PasswordBearerWithCookie(fastapi.security.OAuth2):
-    # __hash__ = lambda obj: id(obj)
     def __init__(
         self,
         tokenUrl: str,
@@ -48,16 +46,3 @@ class OAuth2PasswordBearerWithCookie(fastapi.security.OAuth2):
             else:
                 return None
         return param
-
-
-oauth2_scheme = OAuth2PasswordBearerWithCookie(tokenUrl="auth/signin-giltab")
-
-
-def get_current_user(token: str = fastapi.Depends(oauth2_scheme)):
-    token_payload = decode_token(token)
-    if not token_payload:
-        raise HTTPException(status_code=401, detail="Invalid token")
-    user = db.get(token_payload.email)
-    if not user:
-        raise HTTPException(status_code=401, detail="Not user found")
-    return user

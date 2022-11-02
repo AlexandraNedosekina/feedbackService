@@ -1,8 +1,10 @@
-from jose import jwt
 from datetime import datetime, timedelta
-from feedback.core.config import settings
-from pydantic import BaseModel, ValidationError
+
 from fastapi import HTTPException
+from jose import jwt
+from pydantic import BaseModel, ValidationError
+
+from feedback.core.config import settings
 
 ALGORITHM = "HS256"
 JWT_EXPIRE_IN_MINUTES = 120
@@ -38,6 +40,9 @@ def decode_token(token: str) -> TokenPayload | None:
     try:
         payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[ALGORITHM])
         token_data = TokenPayload(**payload)
-    except (jwt.JWTError, ValidationError):
-        return None
+    except jwt.ExpiredSignatureError:
+        raise HTTPException(status_code=401, detail="Token expired")
+    except (jwt.JWTError, ValidationError) as e:
+        print(e)
+        raise HTTPException(status_code=401, detail="Invalid token")
     return token_data
