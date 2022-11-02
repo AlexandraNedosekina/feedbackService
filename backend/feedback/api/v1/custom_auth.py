@@ -25,11 +25,11 @@ async def register_user(token):
 
 
 @router.get("/signin-gitlab")
-async def signin_gitlab(request: Request):
+async def signin_gitlab(request: Request, response: Response):
     state = gitlab.create_state()
     request.session["state"] = state
     authorize_url = await gitlab.get_authorization_url(gitlab.callback_url, state)
-    return RedirectResponse(authorize_url)
+    return {"authorize_url": authorize_url}
 
 
 @router.get("/authorize-gitlab")
@@ -59,10 +59,13 @@ async def authorize_gitlab(
     jwt_token = jwt.Token(
         access_token=jwt.create_access_token(token_payload), token_type="Bearer"
     )
+
+    response = RedirectResponse(url="http://localhost:3000", status_code=302) 
     response.set_cookie(
         "access-token",
         value=str(jwt_token),
         domain="localhost",
         max_age=60 * 60 * 2,  # 2 hours
+        httponly=True,
     )
-    return jwt_token
+    return response
