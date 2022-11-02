@@ -89,9 +89,9 @@ const Header: FC<Props> = ({ openMenu, isOpen }) => {
 						</ActionIcon>
 					</Menu.Target>
 					<Menu.Dropdown>
-						<Link href="/profile" passHref>
-							<Menu.Item component="a">Профиль</Menu.Item>
-						</Link>
+						<Menu.Item component={Link} href="/profile">
+							Профиль
+						</Menu.Item>
 						<Menu.Item
 							onClick={() => {
 								router.push('/login')

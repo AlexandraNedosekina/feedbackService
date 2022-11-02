@@ -48,18 +48,28 @@ const NavItem: FC<Props> = ({
 		}),
 	}
 
+	if (isFull) {
+		return (
+			<Button
+				component={Link}
+				href={href}
+				{...buttonProps}
+				onClick={closeMenu}
+			>
+				{text}
+			</Button>
+		)
+	}
+
 	return (
-		<Link href={href} passHref>
-			{isFull ? (
-				<Button component="a" {...buttonProps} onClick={closeMenu}>
-					{text}
-				</Button>
-			) : (
-				<ActionIcon component="a" {...actionIconProps} onClick={closeMenu}>
-					<Icon icon={icon} size={24} {...iconProps} />
-				</ActionIcon>
-			)}
-		</Link>
+		<ActionIcon
+			component={Link}
+			href={href}
+			{...actionIconProps}
+			onClick={closeMenu}
+		>
+			<Icon icon={icon} size={24} {...iconProps} />
+		</ActionIcon>
 	)
 }
 
