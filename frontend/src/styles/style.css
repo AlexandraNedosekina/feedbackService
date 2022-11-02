@@ -1,0 +1,152 @@
+/* .header_info {
+    background-image: url(../../public/main.png);
+    position: fixed;
+    width: 1920px;
+    height: 1080px;
+    left: -96px;
+    top: -280px;
+} */
+
+.header_title {
+    position: absolute;
+    width: 444px;
+    height: 59px;
+    left: 642px;
+    top: 187px;
+
+    font-family: 'Montserrat';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 48px;
+    line-height: 59px;
+
+
+    text-align: center;
+    color: #3474AA;
+
+}
+
+.header_text {
+    position: absolute;
+    width: 672px;
+    height: 56px;
+    left: 520px;
+    top: 278px;
+
+    font-family: 'Rubik';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 24px;
+    line-height: 28px;
+    text-align: center;
+
+    /* Brand/700 */
+
+    color: #3474AA;
+
+}
+
+.button_login {
+    box-sizing: border-box;
+
+    /* Auto layout */
+
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    padding: 8px 16px;
+    gap: 10px;
+
+    position: absolute;
+    width: 283px;
+    height: 57px;
+    left: 722px;
+    top: 431px;
+
+    background: #FFFFFF;
+    /* Brand/600 */
+
+    border: 2px solid #3B82BF;
+    /* Drop */
+
+    box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.26);
+    border-radius: 4px;
+}
+
+.text_left {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 0px;
+    gap: 10px;
+
+    position: absolute;
+    width: 402px;
+    height: 97px;
+    left: 331px;
+    top: 677px;
+
+}
+
+.text_right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    padding: 0px;
+    gap: 10px;
+
+    position: absolute;
+    width: 566px;
+    height: 136px;
+    left: 830px;
+    top: 1003px;
+
+}
+
+.text_left_two {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 0px;
+    gap: 10px;
+
+    position: absolute;
+    width: 462px;
+    height: 97px;
+    left: 331px;
+    top: 1385px;
+
+}
+
+.contacts {
+    position: absolute;
+    width: 130px;
+    height: 17px;
+    left: 799px;
+    bottom: 34px;
+
+    /* Paragraph */
+
+    font-family: 'Rubik';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 17px;
+    /* identical to box height */
+
+    text-align: center;
+
+    color: #000000;
+}
+
+.rate1 {
+    position: absolute;
+    width: 256px;
+    height: 256px;
+    left: 1086px;
+    top: 598px;
+
+}

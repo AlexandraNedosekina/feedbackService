@@ -121,7 +121,6 @@ const ProfilePage: NextPageWithLayout = () => {
 
 				<Stack spacing="xs">
 					<Title order={2}>Готовность к личным встречам</Title>
-
 					<Switch />
 				</Stack>
 			</Stack>

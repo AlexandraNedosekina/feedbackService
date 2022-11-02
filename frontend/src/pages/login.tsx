@@ -9,7 +9,7 @@ const LoginPage = () => {
 			</Container>
 			<Center>
 				<Link href="https://git.66bit.ru/users/sign_in" passHref>
-					<Button component="a">Продолжить с GitLab</Button>
+					<Button component="a">Войти через Git</Button>
 				</Link>
 			</Center>
 		</>
