@@ -20,7 +20,7 @@ const navItems: { icon: Icons; href: string; text: string }[] = [
 	{
 		icon: 'star',
 		href: '/feedback',
-		text: 'Оценки',
+		text: 'Обратная связь',
 	},
 	{
 		icon: 'trending_up',
