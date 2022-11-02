@@ -1,5 +1,6 @@
 .card {
     display: contents;
+    background-image: url("../../public/main.png");
 }
 
 .card_content {
@@ -22,7 +23,7 @@
 
 .card__thumb,
 .card__content {
-    grid-area: 1/2;
+    grid-area: 1/-1;
 }
 
 .button_login {

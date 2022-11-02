@@ -21,9 +21,6 @@ const Home: NextPageWithLayout = () => {
 			</Head>
 			<SimpleGrid cols={1}>
 				<article className="card">
-					<div className="card_thumb">
-						<Image src="main.png" alt="background" />
-					</div>
 					<div className="card_content">
 						<Title>Feedback Service</Title>
 						<a>
