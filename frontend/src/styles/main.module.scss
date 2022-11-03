@@ -33,7 +33,7 @@
 }
 
 .content {
-	> div:nth-of-type(2n) {
+	>div:nth-of-type(2n) {
 		text-align: right;
 
 		@media screen and (max-width: 767px) {
@@ -43,6 +43,7 @@
 
 	&_description {
 		padding-block: 6em;
+
 		@media screen and (max-width: 767px) {
 			padding-block: 2em;
 		}
@@ -53,12 +54,35 @@
 		padding-top: 10px;
 	}
 
+	&_footer {
+		text-align: center;
+	}
+
 	&_image {
 		position: relative;
 		height: 240px;
 		align-self: center;
+
 		@media screen and (max-width: 767px) {
 			display: none;
 		}
+	}
+
+	&_line {
+		position: absolute;
+		width: 382.5px;
+		height: 191px;
+		left: 576.5px;
+		top: 801px;
+
+	}
+
+	&_line_t {
+		position: absolute;
+		width: 259.5px;
+		height: 197.5px;
+		left: 754px;
+		top: 1160.5px;
+
 	}
 }

@@ -1,6 +1,7 @@
 import {
 	Button,
 	Container,
+	Footer,
 	Group,
 	SimpleGrid,
 	Text,
@@ -44,7 +45,7 @@ const Home: NextPageWithLayout = () => {
 						height={37}
 						alt="Feedback service 66bit"
 					/>
-					<Link href="#">Войти</Link>
+					<Link href="https://git.66bit.ru/users/sign_in">Войти</Link>
 				</Group>
 
 				{/* 
@@ -58,22 +59,24 @@ const Home: NextPageWithLayout = () => {
 						Сервис для взаимооценивания сотрудников, направленный на
 						повышение эффективности.
 					</Text>
-					<Button
-						leftIcon={
-							// Импортировал картинку из макета, чтобы совпадало. Width и height тоже из макета
-							<Image
-								src="/gitlab-logo.svg"
-								width={22}
-								height={21}
-								alt=""
-							/>
-						}
-						variant="outline"
-						mt={90}
-						size="md"
-					>
-						Войти через Git
-					</Button>
+					<Link href="https://git.66bit.ru/users/sign_in" passHref>
+						<Button
+							leftIcon={
+								// Импортировал картинку из макета, чтобы совпадало. Width и height тоже из макета
+								<Image
+									src="/gitlab-logo.svg"
+									width={22}
+									height={21}
+									alt=""
+								/>
+							}
+							variant="outline"
+							mt={90}
+							size="md"
+						>
+							Войти через Git
+						</Button>
+					</Link>
 				</div>
 			</div>
 
@@ -95,6 +98,12 @@ const Home: NextPageWithLayout = () => {
 							Поставь оценку по критериям, напиши, что понравилось, а что
 							не очень.
 						</Text>
+					</div>
+					<div className={styles.content_line}>
+						<Image src={'/line1.svg'} layout="fill" alt="" />
+					</div>
+					<div className={styles.content_line_t}>
+						<Image src={'/line2.svg'} layout="fill" alt="" />
 					</div>
 					<div className={styles.content_image}>
 						{/* 
@@ -126,6 +135,15 @@ const Home: NextPageWithLayout = () => {
 					</div>
 					<div className={styles.content_image}>
 						<Image src={'/calendar.svg'} layout="fill" alt="" />
+					</div>
+				</SimpleGrid>
+				<SimpleGrid>
+					<div className={styles.content_description}>
+						<Footer height={'17'}>
+							<Text className={styles.content_footer}>
+								support@email.com
+							</Text>
+						</Footer>
 					</div>
 				</SimpleGrid>
 			</Container>
