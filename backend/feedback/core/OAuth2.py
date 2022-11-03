@@ -1,13 +1,16 @@
-import secrets
-from feedback.core.config import settings
-from httpx_oauth.oauth2 import OAuth2, GetAccessTokenError
 import base64
 import json
+import secrets
 from typing import Any
+
+from httpx_oauth.oauth2 import GetAccessTokenError, OAuth2
+
+from feedback import schemas
+from feedback.core.config import settings
 
 
 class RequestError(Exception):
-    """Error raised when recieving a request from provider API."""
+    """Error raised when receiving a request from provider API."""
 
     pass
 
@@ -29,13 +32,14 @@ class GitlabOauth(OAuth2):
         self.callback_url = callback_url
         self.api_url = api_url
 
-    def create_state(self) -> str:
+    @staticmethod
+    def create_state() -> str:
         return secrets.token_urlsafe(32)
 
-    async def get_access_token(self, code: str) -> dict[str, Any]:
+    async def get_access_token(self, code: str) -> schemas.OAuthToken:
         token = await super().get_access_token(code, self.callback_url)
 
-        if not "openid" in self.base_scopes:
+        if "openid" not in self.base_scopes:
             return token
 
         id_token = token.get("id_token")
@@ -47,14 +51,17 @@ class GitlabOauth(OAuth2):
         except Exception:
             raise GetAccessTokenError("Error when decoding token id")
 
-        token["userinfo"] = json.loads(token_payload)
-        return token
+        userinfo = schemas.OAuthTokenData(**json.loads(token_payload))
+        return schemas.OAuthToken(**token, userinfo=userinfo)
 
-    async def get(self, endpoint: str, token: str) -> dict[str, Any]:
+    async def get(self, endpoint: str, access_token: str) -> dict[str, Any]:
         async with self.get_httpx_client() as client:
             response = await client.get(
                 self.api_url + endpoint,
-                headers={**self.request_headers, "Authorization": f"Bearer {token}"},
+                headers={
+                    **self.request_headers,
+                    "Authorization": f"Bearer {access_token}",
+                },
             )
             if response.status_code >= 400:
                 raise RequestError(response.json())

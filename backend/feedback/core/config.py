@@ -1,5 +1,6 @@
-from pydantic import BaseSettings
 from pathlib import Path
+
+from pydantic import BaseSettings
 
 ENV_FILE_DIR = Path(__file__).absolute().parent.parent.parent
 
@@ -8,6 +9,10 @@ class Settings(BaseSettings):
     APP_PORT: int = 8000
     APP_HOST: str = "localhost"
     SECRET_KEY: str
+    CORS_ORIGINS: list[str] = ["http://localhost:3000", "http://localhost:8000"]
+
+    REFRESH_TOKEN_EXPIRES_IN_MINUTES: int = 60 * 60 * 720  # 30 days
+    ACCESS_TOKEN_EXPIRES_IN_MINUTES: int = 60 * 60 * 2  # 2 hours
 
     GITLAB_CLIENT_ID: str
     GITLAB_CLIENT_SECRET: str
