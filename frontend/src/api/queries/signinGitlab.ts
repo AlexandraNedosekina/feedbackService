@@ -2,13 +2,9 @@ import api from '..'
 
 async function signinGitlab() {
 	try {
-		const res = await api.get('/auth/signin-gitlab', {
-			headers: {
-				'Access-Control-Allow-Origin': 'http://localhost:8000',
-				'Access-Control-Allow-Credentials': 'true',
-			},
-		})
-		console.log(res)
+		const res = await api.get<{ authorize_url: string }>(
+			'/auth/signin-gitlab'
+		)
 
 		return res.data
 	} catch (error: any) {
