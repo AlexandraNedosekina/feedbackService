@@ -99,18 +99,15 @@ const Home: NextPageWithLayout = () => {
 							не очень.
 						</Text>
 					</div>
-					<div className={styles.content_line}>
-						<Image src={'/line1.svg'} layout="fill" alt="" />
-					</div>
-					<div className={styles.content_line_t}>
-						<Image src={'/line2.svg'} layout="fill" alt="" />
-					</div>
 					<div className={styles.content_image}>
 						{/* 
 							layout='fill', чтобы не прописывать width и height.
 							В таком случае изображение будет занимать все место родителя с 'position: relative'
 						 */}
 						<Image src={'/rat1.svg'} layout="fill" alt="" />
+					</div>
+					<div className={styles.content_line}>
+						<Image src={'/line1.svg'} layout="fill" alt="" />
 					</div>
 				</SimpleGrid>
 				<SimpleGrid cols={2} breakpoints={[{ maxWidth: 'sm', cols: 1 }]}>
@@ -123,6 +120,9 @@ const Home: NextPageWithLayout = () => {
 							Рекомендации от руководства, необходимые достижения и
 							выполненные задачи
 						</Text>
+					</div>
+					<div className={styles.content_line_t}>
+						<Image src={'/line2.svg'} layout="fill" alt="" />
 					</div>
 				</SimpleGrid>
 				<SimpleGrid cols={2} breakpoints={[{ maxWidth: 'sm', cols: 1 }]}>
