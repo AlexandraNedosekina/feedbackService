@@ -4,7 +4,6 @@ import type { AppProps } from 'next/app'
 import { ReactElement, ReactNode } from 'react'
 import '../styles/global.css'
 import { mantineTheme } from '../styles/mantineTheme'
-import '../styles/style.css'
 
 const child = <Skeleton height={140} radius="md" animate={false} />
 
