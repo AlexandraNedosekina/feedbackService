@@ -7,13 +7,39 @@ import {
 	Text,
 	Title,
 } from '@mantine/core'
+import { useMutation } from '@tanstack/react-query'
 import Head from 'next/head'
 import Image from 'next/image'
-import Link from 'next/link'
+import { useRouter } from 'next/router'
+import { signinGitlab } from 'src/api'
 import styles from 'src/styles/main.module.scss'
 import { NextPageWithLayout } from './_app'
 
 const Home: NextPageWithLayout = () => {
+	const router = useRouter()
+
+	const { mutate: signInHeader, isLoading: isLoadingHeader } = useMutation({
+		mutationFn: signinGitlab,
+		onSuccess: data => {
+			router.push(data.authorize_url)
+		},
+		onError: error => {
+			// TODO display error in notification
+			console.log(error)
+		},
+	})
+
+	const { mutate: signInHero, isLoading: isLoadingHero } = useMutation({
+		mutationFn: signinGitlab,
+		onSuccess: data => {
+			router.push(data.authorize_url)
+		},
+		onError: error => {
+			// TODO display error in notification
+			console.log(error)
+		},
+	})
+
 	return (
 		<>
 			<Head>
@@ -45,7 +71,16 @@ const Home: NextPageWithLayout = () => {
 						height={37}
 						alt="Feedback service 66bit"
 					/>
-					<Link href="https://git.66bit.ru/users/sign_in">Войти</Link>
+					<Button
+						onClick={() => signInHeader()}
+						loading={isLoadingHeader}
+						variant="subtle"
+						sx={() => ({
+							fontSize: '16px',
+						})}
+					>
+						Войти
+					</Button>
 				</Group>
 
 				{/* 
@@ -59,24 +94,24 @@ const Home: NextPageWithLayout = () => {
 						Сервис для взаимооценивания сотрудников, направленный на
 						повышение эффективности.
 					</Text>
-					<Link href="https://git.66bit.ru/users/sign_in" passHref>
-						<Button
-							leftIcon={
-								// Импортировал картинку из макета, чтобы совпадало. Width и height тоже из макета
-								<Image
-									src="/gitlab-logo.svg"
-									width={22}
-									height={21}
-									alt=""
-								/>
-							}
-							variant="outline"
-							mt={90}
-							size="md"
-						>
-							Войти через Git
-						</Button>
-					</Link>
+					<Button
+						onClick={() => signInHero()}
+						loading={isLoadingHero}
+						leftIcon={
+							// Импортировал картинку из макета, чтобы совпадало. Width и height тоже из макета
+							<Image
+								src="/gitlab-logo.svg"
+								width={22}
+								height={21}
+								alt=""
+							/>
+						}
+						variant="outline"
+						mt={90}
+						size="md"
+					>
+						Войти через Git
+					</Button>
 				</div>
 			</div>
 
