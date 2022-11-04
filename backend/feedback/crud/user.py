@@ -61,5 +61,16 @@ class CRUDUser(CRUDBase[models.User, schemas.UserCreate, schemas.UserUpdate]):
         db.refresh(db_obj)
         return db_obj
 
+    def remove(self, db: Session, *, id: int) -> models.User:
+        obj = db.query(self.model).get(id)
+
+        if obj.avatar:
+            self.delete_file_from_os(obj.avatar.original_path)
+            self.delete_file_from_os(obj.avatar.thubmail_path)
+
+        db.delete(obj)
+        db.commit()
+        return obj
+
 
 user = CRUDUser(models.User)

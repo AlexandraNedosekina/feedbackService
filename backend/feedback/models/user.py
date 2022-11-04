@@ -1,6 +1,6 @@
 from sqlalchemy import (Boolean, Column, DateTime, ForeignKey, Integer, String,
                         Time)
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import backref, relationship
 
 from feedback.db.session import Base
 
@@ -27,10 +27,30 @@ class User(Base):
         cascade="all, delete, delete-orphan",
         lazy="joined",
     )
+    avatar = relationship(
+        "Avatars",
+        back_populates="owner",
+        cascade="all, delete, delete-orphan",
+        lazy="select",
+        uselist=False,
+    )
     work_format = Column(String)
     work_hours_start = Column(Time)
     work_hours_end = Column(Time)
     meeting_readiness = Column(Boolean())
+
+
+class Avatars(Base):
+    __tablename__ = "avatars"
+    id = Column(Integer, primary_key=True)
+    original_path = Column(String)
+    thumbnail_path = Column(String)
+    width = Column(Integer)
+    height = Column(Integer)
+    x = Column(Integer)
+    y = Column(Integer)
+    owner_id = Column(Integer, ForeignKey("user.id"))
+    owner = relationship("User", back_populates="avatar")
 
 
 class Facts(Base):

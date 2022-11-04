@@ -15,7 +15,7 @@ router = APIRouter()
 async def create_user(
     user_create: schemas.UserCreate,
     db: Session = Depends(get_db),
-    curr_user: models.User = Depends(get_admin),
+    _: models.User = Depends(get_admin),
 ) -> schemas.User:
     user = crud.user.get_by_email(db, email=user_create.email)
     if user:
@@ -29,7 +29,7 @@ async def create_user(
 @router.get("/", response_model=list[schemas.User])
 async def get_all_users(
     db: Session = Depends(get_db),
-    curr_user: models.User = Depends(get_current_user),
+    _: models.User = Depends(get_current_user),
     *,
     skip: int = 0,
     limit: int = 100
@@ -42,7 +42,7 @@ async def get_all_users(
 async def get_user_by_id(
     user_id: int,
     db: Session = Depends(get_db),
-    curr_user: models.User = Depends(get_current_user),
+    _: models.User = Depends(get_current_user),
 ) -> schemas.User:
 
     user = crud.user.get(db, user_id)
@@ -64,17 +64,22 @@ async def update_user(
         (schemas.UserUpdateOther, ["boss"]),
         (schemas.UserUpdate, ["admin"]),
     )
-    upd_keys = upd.keys()
+    upd_keys = list(upd.keys())
 
     # Проверяю какие поля изменяются, если это обычный пользователь
     # то в нем не должно быть полей из полей для админа и тд.
+    # если поле прошло проверку то убираю его (тк иначе оно не пройдет схему админа, где все поля)
     for s_r in upd_schemas_roles:
         for k in s_r[0].__fields__.keys():
             if k in upd_keys and not is_allowed(curr_user, user_id, s_r[1]):
                 raise HTTPException(status_code=401, detail="Not enough permissions")
+            if k in upd_keys:
+                upd_keys.remove(k)
 
     # Только админ может установить роль админа
-    if not is_allowed(curr_user, user_id, ["admin"]) and "admin" in user_update.roles:
+    if not is_allowed(curr_user, user_id, ["admin"]) and "admin" in upd.get(
+        "roles", []
+    ):
         raise HTTPException(status_code=401, detail="Not enough permissions")
 
     user = crud.user.get(db, user_id)
@@ -90,7 +95,7 @@ async def update_user(
 async def delete_user(
     user_id: int,
     db: Session = Depends(get_db),
-    curr_user: models.User = Depends(get_admin),
+    _: models.User = Depends(get_admin),
 ):
     user = crud.user.get(db, user_id)
     if not user:

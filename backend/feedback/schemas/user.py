@@ -55,7 +55,7 @@ class UserUpdateSelf(Base):
 class UserUpdateOther(Base):
     job_title: str | None
     roles: list[
-        Literal["employee", "trainee", "mentor", "manager", "hr", "boss", "admin"]
+        Literal["employee", "trainee", "mentor", "manager", "hr", "boss"]
     ] | None
 
 
@@ -63,6 +63,9 @@ class UserUpdateOther(Base):
 class UserUpdate(UserUpdateSelf, UserUpdateOther):
     email: str | None
     full_name: str | None
+    roles: list[
+        Literal["employee", "trainee", "mentor", "manager", "hr", "boss", "admin"]
+    ] | None
 
 
 class UserInDB(UserUpdate):
