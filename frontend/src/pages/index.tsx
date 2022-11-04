@@ -7,37 +7,36 @@ import {
 	Text,
 	Title,
 } from '@mantine/core'
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQuery } from '@tanstack/react-query'
 import Head from 'next/head'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
-import { signinGitlab } from 'src/api'
+import { useCallback } from 'react'
+import { getUser, QueryKeys, signinGitlab } from 'src/api'
 import styles from 'src/styles/main.module.scss'
 import { NextPageWithLayout } from './_app'
 
 const Home: NextPageWithLayout = () => {
 	const router = useRouter()
 
+	const { data: user } = useQuery({
+		queryKey: [QueryKeys.USER],
+		queryFn: getUser,
+	})
+
+	const onSignInSuccess = useCallback((url: string) => {
+		router.push(url)
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [])
+
 	const { mutate: signInHeader, isLoading: isLoadingHeader } = useMutation({
 		mutationFn: signinGitlab,
-		onSuccess: data => {
-			router.push(data.authorize_url)
-		},
-		onError: error => {
-			// TODO display error in notification
-			console.log(error)
-		},
+		onSuccess: data => onSignInSuccess(data.authorize_url),
 	})
 
 	const { mutate: signInHero, isLoading: isLoadingHero } = useMutation({
 		mutationFn: signinGitlab,
-		onSuccess: data => {
-			router.push(data.authorize_url)
-		},
-		onError: error => {
-			// TODO display error in notification
-			console.log(error)
-		},
+		onSuccess: data => onSignInSuccess(data.authorize_url),
 	})
 
 	return (
