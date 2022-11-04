@@ -10,6 +10,11 @@ get_admin = GetUserWithRoles(["admin"])
 router = APIRouter()
 
 
+@router.get("/me", response_model=schemas.User)
+async def get_currnet_user_info(curr_user: models.User = Depends(get_current_user)):
+    return curr_user
+
+
 # Admin method
 @router.post("/", response_model=schemas.User)
 async def create_user(
