@@ -1,4 +1,5 @@
 import { MantineProvider } from '@mantine/core'
+import { NotificationsProvider, showNotification } from '@mantine/notifications'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { NextPage } from 'next'
 import type { AppProps } from 'next/app'
@@ -6,10 +7,30 @@ import { ReactElement, ReactNode } from 'react'
 import '../styles/global.css'
 import { mantineTheme } from '../styles/mantineTheme'
 
+function displayErrorNotification(error: Error) {
+	showNotification({
+		title: 'Ошибка',
+		message: error.message,
+		color: 'red',
+	})
+}
+
 const queryClient = new QueryClient({
 	defaultOptions: {
 		queries: {
 			refetchOnWindowFocus: false,
+			onError: error => {
+				if (error instanceof Error) {
+					displayErrorNotification(error)
+				}
+			},
+		},
+		mutations: {
+			onError: error => {
+				if (error instanceof Error) {
+					displayErrorNotification(error)
+				}
+			},
 		},
 	},
 })
@@ -33,7 +54,9 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 				withNormalizeCSS
 				theme={mantineTheme}
 			>
-				{getLayout(<Component {...pageProps} />)}
+				<NotificationsProvider>
+					{getLayout(<Component {...pageProps} />)}
+				</NotificationsProvider>
 			</MantineProvider>
 		</QueryClientProvider>
 	)
