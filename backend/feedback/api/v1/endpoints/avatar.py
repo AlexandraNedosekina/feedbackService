@@ -1,7 +1,7 @@
 import os
 
 import aiofiles
-from fastapi import (APIRouter, Depends, File, Form, HTTPException, Response,
+from fastapi import (APIRouter, Depends, File, HTTPException, Response,
                      UploadFile)
 from fastapi.responses import FileResponse
 from PIL import Image
@@ -59,8 +59,7 @@ async def create_avater(
 
     try:
         result = create_thumbnail(avatar_create, thumbnail_path, original_path)
-    except Exception as e:
-        print(e)
+    except Exception:
         raise HTTPException(status_code=500, detail="Error when creating thumbnail")
 
     if not result:
@@ -68,7 +67,7 @@ async def create_avater(
         raise HTTPException(status_code=400, detail="Bad params for thumbnail")
 
     crud.avatar.create(
-        db, user=user, op=original_path, tp=thumbnail_path, obj_in=avatar_create
+        db, user=user, op=original_path, tp=thumbnail_path, 
     )
     return Response(status_code=201)
 
@@ -95,15 +94,14 @@ async def update_avatar(
         result = create_thumbnail(
             avatar_update, thumbnail_path, user.avatar.original_path
         )
-    except Exception as e:
-        print(e)
+    except Exception:
         raise HTTPException(status_code=500, detail="Error when creating thumbnail")
 
     if not result:
         raise HTTPException(status_code=400, detail="Bad params for thumbnail")
 
     crud.avatar.update(
-        db, user=user, update=avatar_update, thumbnail_path=thumbnail_path
+        db, user=user, thumbnail_path=thumbnail_path
     )
     return Response(status_code=200)
 
@@ -169,7 +167,7 @@ async def get_original(
     return FileResponse(avatar.original_path)
 
 
-def create_thumbnail(options, path: str, original_path: str) -> bool:
+def create_thumbnail(options: schemas.AvatarCreate | schemas.AvatarUpdate, thumbnail_path: str, original_path: str) -> bool:
     img = Image.open(original_path)
     img_w, img_h = img.size
     x = options.x
@@ -189,5 +187,5 @@ def create_thumbnail(options, path: str, original_path: str) -> bool:
         return False
 
     thumbnail = img.crop((left, top, right, bot))
-    thumbnail.save(path)
+    thumbnail.save(thumbnail_path)
     return True
