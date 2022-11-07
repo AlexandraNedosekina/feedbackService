@@ -33,10 +33,7 @@ const ProfilePage: NextPageWithLayout = () => {
 			<Title mb="xl">Профиль</Title>
 
 			<Group mb="xl">
-				<Avatar
-					src={`https://avatars.dicebear.com/api/identicon/${Date.now()}.svg`}
-					// src={null}
-				/>
+				<Avatar src={user?.avatar?.thumbnail_url || null} />
 
 				<Stack spacing={6}>
 					<Text size={18}>{user?.full_name}</Text>
