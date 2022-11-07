@@ -9,6 +9,20 @@
  * ---------------------------------------------------------------
  */
 
+/** Avatar */
+export interface Avatar {
+	/** Id */
+	id?: number
+	/** Original Path */
+	original_path?: string
+	/** Thumbnail Path */
+	thumbnail_path?: string
+	/** Thumbnail Url */
+	thumbnail_url: string
+	/** Owner Id */
+	owner_id?: number
+}
+
 /** AvatarUpdate */
 export interface AvatarUpdate {
 	/** Width */
@@ -123,6 +137,7 @@ export interface User {
 	full_name?: string
 	/** Id */
 	id: number
+	avatar?: Avatar
 }
 
 /** UserCreate */
