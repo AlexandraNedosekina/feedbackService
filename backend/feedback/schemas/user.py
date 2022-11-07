@@ -1,5 +1,6 @@
 import datetime
-from typing import Literal
+from typing import Literal 
+from feedback import schemas
 
 from pydantic import BaseModel
 
@@ -75,7 +76,8 @@ class UserInDB(UserUpdate):
     skills: list[Skill] | None
     job_expectations: list[JobExpectation] | None
     roles: list[Role] | None
-
+    avatar: schemas.Avatar | None
+    
 
 class User(UserInDB):
     pass

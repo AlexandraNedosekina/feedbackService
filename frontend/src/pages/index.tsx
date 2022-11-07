@@ -166,15 +166,10 @@ const Home: NextPageWithLayout = () => {
 						<Image src={'/calendar.svg'} layout="fill" alt="" />
 					</div>
 				</SimpleGrid>
-				<SimpleGrid>
-					<div className={styles.content_description}>
-						<Footer height={'17'}>
-							<Text className={styles.content_footer}>
-								support@email.com
-							</Text>
-						</Footer>
-					</div>
-				</SimpleGrid>
+
+				<footer>
+					<Text align="center">support@email.com</Text>
+				</footer>
 			</Container>
 		</>
 	)

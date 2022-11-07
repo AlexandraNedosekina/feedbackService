@@ -47,12 +47,21 @@ class AvatarUpdate(AvatarCreate):
     pass
 
 
-class AvatarInDB(AvatarUpdate):
+class AvatarInDB(Base):
     id: int
     original_path: str
-    thubmail_path: str
+    thumbnail_path: str
+    thumbnail_url: str
     owner_id: int
 
 
 class Avatar(AvatarInDB):
-    pass
+    id: int | None
+    original_path: str | None
+    thumbnail_path: str | None
+    thumbnail_url: str
+    owner_id: int | None
+
+
+    class Config:
+        fields = {'original_path': {'exclude': True}, 'thumbnail_path': {'exclude': True}, 'id': {'exclude': True}, 'owner_id': {'exclude': True}}

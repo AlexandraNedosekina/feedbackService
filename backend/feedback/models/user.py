@@ -31,7 +31,7 @@ class User(Base):
         "Avatars",
         back_populates="owner",
         cascade="all, delete, delete-orphan",
-        lazy="select",
+        lazy="joined",
         uselist=False,
     )
     work_format = Column(String)
@@ -45,10 +45,7 @@ class Avatars(Base):
     id = Column(Integer, primary_key=True)
     original_path = Column(String)
     thumbnail_path = Column(String)
-    width = Column(Integer)
-    height = Column(Integer)
-    x = Column(Integer)
-    y = Column(Integer)
+    thumbnail_url = Column(String)
     owner_id = Column(Integer, ForeignKey("user.id"))
     owner = relationship("User", back_populates="avatar")
 
