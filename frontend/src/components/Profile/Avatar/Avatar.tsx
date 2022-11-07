@@ -7,7 +7,10 @@ import {
 	Popover,
 	Text,
 } from '@mantine/core'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { FC, useMemo, useState } from 'react'
+import { createAvatar, QueryKeys } from 'src/api'
+import { BodyCreateAvaterUserUserIdAvatarPost } from 'src/api/generatedTypes'
 import styles from './Avatar.module.sass'
 import { EditAvatarModal } from './components'
 
@@ -20,6 +23,17 @@ const Avatar: FC<Props> = ({ src }) => {
 	const [editModalOpen, setEditModalOpen] = useState(false)
 	const [deletePopoverOpen, setDeletePopoverOpen] = useState(false)
 	const [state, setState] = useState<'upload' | 'edit' | null>(null)
+
+	const queryClient = useQueryClient()
+
+	const { mutate, isLoading } = useMutation({
+		mutationFn: (data: BodyCreateAvaterUserUserIdAvatarPost) =>
+			createAvatar(1, data),
+		onSuccess: () => {
+			setEditModalOpen(false)
+			queryClient.invalidateQueries([QueryKeys.USER])
+		},
+	})
 
 	const editAvatarSrc: string = useMemo(() => {
 		if (state === 'upload' && file) {
@@ -40,6 +54,23 @@ const Avatar: FC<Props> = ({ src }) => {
 			setState('upload')
 			setFile(file)
 			setEditModalOpen(true)
+		}
+	}
+
+	function onCreateAvatar({
+		height,
+		width,
+		x,
+		y,
+	}: Omit<BodyCreateAvaterUserUserIdAvatarPost, 'file'>) {
+		if (file) {
+			mutate({
+				file,
+				width,
+				height,
+				x,
+				y,
+			})
 		}
 	}
 
@@ -94,6 +125,8 @@ const Avatar: FC<Props> = ({ src }) => {
 				open={editModalOpen}
 				onClose={() => setEditModalOpen(false)}
 				src={editAvatarSrc}
+				onCreate={onCreateAvatar}
+				isCreateLoading={isLoading}
 			/>
 		</>
 	)
