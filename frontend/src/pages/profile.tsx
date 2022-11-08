@@ -16,7 +16,11 @@ import { BaseLayout } from 'src/layouts'
 import { NextPageWithLayout } from './_app'
 
 const ProfilePage: NextPageWithLayout = () => {
-	const { data: user, isLoading } = useQuery({
+	const {
+		data: user,
+		isLoading,
+		isFetching,
+	} = useQuery({
 		queryKey: [QueryKeys.USER],
 		queryFn: getUser,
 	})
@@ -33,7 +37,10 @@ const ProfilePage: NextPageWithLayout = () => {
 			<Title mb="xl">Профиль</Title>
 
 			<Group mb="xl">
-				<Avatar src={user?.avatar?.thumbnail_url || null} />
+				<Avatar
+					src={user?.avatar?.thumbnail_url ?? null}
+					isAvatarFetching={isFetching}
+				/>
 
 				<Stack spacing={6}>
 					<Text size={18}>{user?.full_name}</Text>

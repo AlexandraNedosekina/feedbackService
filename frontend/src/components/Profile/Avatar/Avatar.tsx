@@ -8,7 +8,7 @@ import {
 	Text,
 } from '@mantine/core'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { FC, useMemo, useState } from 'react'
+import { FC, useMemo, useRef, useState } from 'react'
 import {
 	createAvatar,
 	deleteAvatar,
@@ -21,10 +21,12 @@ import { EditAvatarModal } from './components'
 
 interface Props {
 	src: string | null
+	isAvatarFetching: boolean
 }
 
-const Avatar: FC<Props> = ({ src }) => {
+const Avatar: FC<Props> = ({ src, isAvatarFetching }) => {
 	const [file, setFile] = useState<File | null>(null)
+	const resetRef = useRef<() => void>(null)
 	const [editModalOpen, setEditModalOpen] = useState(false)
 	const [deletePopoverOpen, setDeletePopoverOpen] = useState(false)
 	const [state, setState] = useState<'upload' | 'edit' | null>(null)
@@ -41,6 +43,7 @@ const Avatar: FC<Props> = ({ src }) => {
 		onSuccess: () => {
 			setEditModalOpen(false)
 			queryClient.invalidateQueries([QueryKeys.USER])
+			clearFile()
 		},
 	})
 
@@ -92,13 +95,31 @@ const Avatar: FC<Props> = ({ src }) => {
 		}
 	}
 
+	function onClose() {
+		setEditModalOpen(false)
+		clearFile()
+	}
+
+	function clearFile() {
+		setFile(null)
+		resetRef.current?.()
+	}
+
 	return (
 		<>
 			<div className={styles.wrapper}>
 				<div className={styles.wrapper_circle}>
-					<MantineAvatar src={src} radius={100} size={96} />
+					<MantineAvatar
+						src={!isAvatarFetching ? src : null}
+						radius={100}
+						size={96}
+					/>
 					<div className={styles.controls}>
-						<FileButton onChange={onUpload} accept="image/*">
+						<FileButton
+							resetRef={resetRef}
+							onChange={onUpload}
+							accept="image/*"
+						>
 							{props => (
 								<div {...props} className={styles.controls_button}>
 									<Icon icon="file_upload" />
@@ -147,7 +168,7 @@ const Avatar: FC<Props> = ({ src }) => {
 			</div>
 			<EditAvatarModal
 				open={editModalOpen}
-				onClose={() => setEditModalOpen(false)}
+				onClose={onClose}
 				src={editAvatarSrc}
 				onCreate={onCreateAvatar}
 				isCreateLoading={isLoading}
