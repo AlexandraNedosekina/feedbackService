@@ -9,6 +9,7 @@ const MAX_ZOOM_SIZE = 9
 interface Props {
 	open: boolean
 	onClose: () => void
+	// eslint-disable-next-line no-unused-vars
 	onCreate: (data: Omit<BodyCreateAvaterUserUserIdAvatarPost, 'file'>) => void
 	isCreateLoading: boolean
 	src?: string
@@ -44,10 +45,7 @@ const EditAvatarModal: FC<Props> = ({
 		>
 			<div className={styles['cropper-wrapper']}>
 				<Cropper
-					image={
-						src ||
-						'https://avatars.githubusercontent.com/u/14338007?s=460&u=3b0c0b0c0b0c0b0c0b0c0b0c0b0c0b0c0b0c0b0c&v=4'
-					}
+					image={src}
 					crop={crop}
 					zoom={zoom}
 					aspect={1}
