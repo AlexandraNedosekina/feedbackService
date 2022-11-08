@@ -7,9 +7,14 @@ import {
 	Popover,
 	Text,
 } from '@mantine/core'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { FC, useMemo, useState } from 'react'
-import { createAvatar, QueryKeys } from 'src/api'
+import {
+	createAvatar,
+	deleteAvatar,
+	getOriginalAvatar,
+	QueryKeys,
+} from 'src/api'
 import { BodyCreateAvaterUserUserIdAvatarPost } from 'src/api/generatedTypes'
 import styles from './Avatar.module.sass'
 import { EditAvatarModal } from './components'
@@ -26,6 +31,10 @@ const Avatar: FC<Props> = ({ src }) => {
 
 	const queryClient = useQueryClient()
 
+	const { data: originalAvatar } = useQuery({
+		queryFn: () => getOriginalAvatar(1),
+	})
+
 	const { mutate, isLoading } = useMutation({
 		mutationFn: (data: BodyCreateAvaterUserUserIdAvatarPost) =>
 			createAvatar(1, data),
@@ -35,14 +44,23 @@ const Avatar: FC<Props> = ({ src }) => {
 		},
 	})
 
+	const { mutate: deleteAvatarMutate, isLoading: isDeleteLoading } =
+		useMutation({
+			mutationFn: () => deleteAvatar(1),
+			onSuccess: () => {
+				queryClient.invalidateQueries([QueryKeys.USER])
+				setDeletePopoverOpen(false)
+			},
+		})
+
 	const editAvatarSrc: string = useMemo(() => {
 		if (state === 'upload' && file) {
 			return URL.createObjectURL(file)
-		} else if (state === 'edit' && src) {
-			return src
+		} else if (state === 'edit' && originalAvatar) {
+			return originalAvatar
 		}
 		return ''
-	}, [file, src, state])
+	}, [file, originalAvatar, state])
 
 	function onEdit() {
 		setState('edit')
@@ -112,7 +130,13 @@ const Avatar: FC<Props> = ({ src }) => {
 							<Text>Удалить фото?</Text>
 
 							<Group>
-								<Button color="red">Да</Button>
+								<Button
+									color="red"
+									onClick={() => deleteAvatarMutate()}
+									loading={isDeleteLoading}
+								>
+									Да
+								</Button>
 								<Button onClick={() => setDeletePopoverOpen(false)}>
 									Нет
 								</Button>
