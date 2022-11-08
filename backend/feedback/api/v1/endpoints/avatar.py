@@ -175,17 +175,12 @@ def create_thumbnail(options: schemas.AvatarCreate | schemas.AvatarUpdate, thumb
     w = options.width
     h = options.height
 
-    if img_w < x > img_w or img_h < y > img_h:
+    if x < 0 or y < 0 or w < 0 or h < 0:
         return False
 
-    left = x - w / 2
-    right = x + w / 2
-    top = y - h / 2
-    bot = y + h / 2
-
-    if left < 0 or right > img_w or top < 0 or bot > img_h:
+    if x + w > img_w or y + h > img_h:
         return False
 
-    thumbnail = img.crop((left, top, right, bot))
+    thumbnail = img.crop((x, y, x + w, y + h))
     thumbnail.save(thumbnail_path)
     return True
