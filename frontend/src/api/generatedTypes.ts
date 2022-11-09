@@ -19,6 +19,14 @@ export interface Avatar {
 	thumbnail_path?: string
 	/** Thumbnail Url */
 	thumbnail_url: string
+	/** X */
+	x: number
+	/** Y */
+	y: number
+	/** Width */
+	width: number
+	/** Height */
+	height: number
 	/** Owner Id */
 	owner_id?: number
 }
