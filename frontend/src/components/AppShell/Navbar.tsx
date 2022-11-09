@@ -6,7 +6,9 @@ import {
 	Navbar as NavbarMantine,
 	Stack,
 	UnstyledButton,
+	useMantineTheme,
 } from '@mantine/core'
+import { useMediaQuery } from '@mantine/hooks'
 import { useRouter } from 'next/router'
 import { FC, useEffect, useState } from 'react'
 import NavItem from './NavItem'
@@ -43,6 +45,9 @@ const Navbar: FC<Props> = ({ isOpen, closeMenu }) => {
 	const router = useRouter()
 
 	const [isFull, setIsFull] = useState<boolean>(false)
+
+	const theme = useMantineTheme()
+	const isMobile = useMediaQuery(`(max-width: ${theme.breakpoints.sm}px)`)
 
 	const toggleFull = () => {
 		setIsFull(!isFull)
@@ -94,6 +99,9 @@ const Navbar: FC<Props> = ({ isOpen, closeMenu }) => {
 							display: 'none',
 							[`@media (max-width: ${theme.breakpoints.sm}px)`]: {
 								display: 'block',
+								a: {
+									width: '100%',
+								},
 							},
 						})}
 					>
@@ -112,7 +120,7 @@ const Navbar: FC<Props> = ({ isOpen, closeMenu }) => {
 							icon={item.icon}
 							href={item.href}
 							text={item.text}
-							isFull={isFull}
+							isFull={isMobile ? true : isFull}
 							iconProps={
 								item.icon === 'star'
 									? {
@@ -143,7 +151,7 @@ const Navbar: FC<Props> = ({ isOpen, closeMenu }) => {
 				<Box
 					sx={() => ({
 						width: '100%',
-						display: 'flex',
+						display: isMobile ? 'none' : 'flex',
 						justifyContent: isFull ? 'flex-end' : 'center',
 					})}
 				>

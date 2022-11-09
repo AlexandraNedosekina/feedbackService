@@ -7,13 +7,33 @@ import {
 	Text,
 	Title,
 } from '@mantine/core'
+import { useMutation } from '@tanstack/react-query'
 import Head from 'next/head'
 import Image from 'next/image'
-import Link from 'next/link'
+import { useRouter } from 'next/router'
+import { useCallback } from 'react'
+import { signinGitlab } from 'src/api'
 import styles from 'src/styles/main.module.scss'
 import { NextPageWithLayout } from './_app'
 
 const Home: NextPageWithLayout = () => {
+	const router = useRouter()
+
+	const onSignInSuccess = useCallback((url: string) => {
+		router.push(url)
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [])
+
+	const { mutate: signInHeader, isLoading: isLoadingHeader } = useMutation({
+		mutationFn: signinGitlab,
+		onSuccess: data => onSignInSuccess(data.authorize_url),
+	})
+
+	const { mutate: signInHero, isLoading: isLoadingHero } = useMutation({
+		mutationFn: signinGitlab,
+		onSuccess: data => onSignInSuccess(data.authorize_url),
+	})
+
 	return (
 		<>
 			<Head>
@@ -45,7 +65,16 @@ const Home: NextPageWithLayout = () => {
 						height={37}
 						alt="Feedback service 66bit"
 					/>
-					<Link href="https://git.66bit.ru/users/sign_in">Войти</Link>
+					<Button
+						onClick={() => signInHeader()}
+						loading={isLoadingHeader}
+						variant="subtle"
+						sx={() => ({
+							fontSize: '16px',
+						})}
+					>
+						Войти
+					</Button>
 				</Group>
 
 				{/* 
@@ -59,24 +88,24 @@ const Home: NextPageWithLayout = () => {
 						Сервис для взаимооценивания сотрудников, направленный на
 						повышение эффективности.
 					</Text>
-					<Link href="https://git.66bit.ru/users/sign_in" passHref>
-						<Button
-							leftIcon={
-								// Импортировал картинку из макета, чтобы совпадало. Width и height тоже из макета
-								<Image
-									src="/gitlab-logo.svg"
-									width={22}
-									height={21}
-									alt=""
-								/>
-							}
-							variant="outline"
-							mt={90}
-							size="md"
-						>
-							Войти через Git
-						</Button>
-					</Link>
+					<Button
+						onClick={() => signInHero()}
+						loading={isLoadingHero}
+						leftIcon={
+							// Импортировал картинку из макета, чтобы совпадало. Width и height тоже из макета
+							<Image
+								src="/gitlab-logo.svg"
+								width={22}
+								height={21}
+								alt=""
+							/>
+						}
+						variant="outline"
+						mt={90}
+						size="md"
+					>
+						Войти через Git
+					</Button>
 				</div>
 			</div>
 
@@ -137,15 +166,10 @@ const Home: NextPageWithLayout = () => {
 						<Image src={'/calendar.svg'} layout="fill" alt="" />
 					</div>
 				</SimpleGrid>
-				<SimpleGrid>
-					<div className={styles.content_description}>
-						<Footer height={'17'}>
-							<Text className={styles.content_footer}>
-								support@email.com
-							</Text>
-						</Footer>
-					</div>
-				</SimpleGrid>
+
+				<footer>
+					<Text align="center">support@email.com</Text>
+				</footer>
 			</Container>
 		</>
 	)

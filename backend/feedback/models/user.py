@@ -46,6 +46,10 @@ class Avatars(Base):
     original_path = Column(String)
     thumbnail_path = Column(String)
     thumbnail_url = Column(String)
+    x = Column(Integer)
+    y = Column(Integer)
+    width = Column(Integer)
+    height = Column(Integer)
     owner_id = Column(Integer, ForeignKey("user.id"))
     owner = relationship("User", back_populates="avatar")
 

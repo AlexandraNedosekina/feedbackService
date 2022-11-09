@@ -1,27 +1,39 @@
-import { MantineProvider, Grid, Skeleton, Container } from '@mantine/core'
+import { MantineProvider } from '@mantine/core'
+import { NotificationsProvider, showNotification } from '@mantine/notifications'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { NextPage } from 'next'
 import type { AppProps } from 'next/app'
 import { ReactElement, ReactNode } from 'react'
 import '../styles/global.css'
 import { mantineTheme } from '../styles/mantineTheme'
 
-const child = <Skeleton height={140} radius="md" animate={false} />
-
-export function GridAsymmetrical() {
-	return (
-		<Container my="md">
-			<Grid>
-				<Grid.Col xs={4}>{child}</Grid.Col>
-				<Grid.Col xs={8}>{child}</Grid.Col>
-				<Grid.Col xs={8}>{child}</Grid.Col>
-				<Grid.Col xs={4}>{child}</Grid.Col>
-				<Grid.Col xs={3}>{child}</Grid.Col>
-				<Grid.Col xs={3}>{child}</Grid.Col>
-				<Grid.Col xs={6}>{child}</Grid.Col>
-			</Grid>
-		</Container>
-	)
+function displayErrorNotification(error: Error) {
+	showNotification({
+		title: 'Ошибка',
+		message: error.message,
+		color: 'red',
+	})
 }
+
+const queryClient = new QueryClient({
+	defaultOptions: {
+		queries: {
+			refetchOnWindowFocus: false,
+			onError: error => {
+				if (error instanceof Error) {
+					displayErrorNotification(error)
+				}
+			},
+		},
+		mutations: {
+			onError: error => {
+				if (error instanceof Error) {
+					displayErrorNotification(error)
+				}
+			},
+		},
+	},
+})
 
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
 	getLayout?: (page: ReactElement) => ReactNode
@@ -35,14 +47,18 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 	const getLayout = Component.getLayout ?? (page => page)
 
 	return (
-		<MantineProvider
-			withCSSVariables
-			withGlobalStyles
-			withNormalizeCSS
-			theme={mantineTheme}
-		>
-			{getLayout(<Component {...pageProps} />)}
-		</MantineProvider>
+		<QueryClientProvider client={queryClient}>
+			<MantineProvider
+				withCSSVariables
+				withGlobalStyles
+				withNormalizeCSS
+				theme={mantineTheme}
+			>
+				<NotificationsProvider>
+					{getLayout(<Component {...pageProps} />)}
+				</NotificationsProvider>
+			</MantineProvider>
+		</QueryClientProvider>
 	)
 }
 
