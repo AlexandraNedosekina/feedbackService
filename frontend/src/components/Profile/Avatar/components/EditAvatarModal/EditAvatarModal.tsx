@@ -2,6 +2,7 @@ import { Button, Group, Modal, Slider } from '@mantine/core'
 import { FC, useCallback, useState } from 'react'
 import Cropper, { Area } from 'react-easy-crop'
 import { BodyCreateAvaterUserUserIdAvatarPost } from 'src/api/generatedTypes'
+import { useUser } from 'src/utils/useUser'
 import styles from './EditAvatarModal.module.sass'
 
 const MAX_ZOOM_SIZE = 9
@@ -10,8 +11,8 @@ interface Props {
 	open: boolean
 	onClose: () => void
 	// eslint-disable-next-line no-unused-vars
-	onCreate: (data: Omit<BodyCreateAvaterUserUserIdAvatarPost, 'file'>) => void
-	isCreateLoading: boolean
+	onSave: (data: Omit<BodyCreateAvaterUserUserIdAvatarPost, 'file'>) => void
+	isSaveButtonLoading: boolean
 	src?: string
 }
 
@@ -19,9 +20,11 @@ const EditAvatarModal: FC<Props> = ({
 	onClose,
 	open,
 	src,
-	isCreateLoading,
-	onCreate,
+	isSaveButtonLoading,
+	onSave: onCreate,
 }) => {
+	const user = useUser()
+
 	const [crop, setCrop] = useState({ x: 0, y: 0 })
 	const [zoom, setZoom] = useState(1)
 	const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null)
@@ -55,9 +58,14 @@ const EditAvatarModal: FC<Props> = ({
 					onCropComplete={onCropComplete}
 					onZoomChange={setZoom}
 					maxZoom={MAX_ZOOM_SIZE}
-					// initialCroppedAreaPixels={
-					// 	avatarThumbnail && JSON.parse(avatarThumbnail)
-					// }
+					initialCroppedAreaPixels={
+						user.avatar && {
+							width: user.avatar.width,
+							height: user.avatar.height,
+							x: user.avatar.x,
+							y: user.avatar.y,
+						}
+					}
 				/>
 			</div>
 
@@ -74,7 +82,7 @@ const EditAvatarModal: FC<Props> = ({
 
 				<Group mt="lg" position="right">
 					<Button
-						loading={isCreateLoading}
+						loading={isSaveButtonLoading}
 						onClick={() => {
 							if (croppedAreaPixels) {
 								onCreate({

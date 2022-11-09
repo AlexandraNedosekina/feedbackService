@@ -14,8 +14,12 @@ import {
 	deleteAvatar,
 	getOriginalAvatar,
 	QueryKeys,
+	updateAvatarThumbnail,
 } from 'src/api'
-import { BodyCreateAvaterUserUserIdAvatarPost } from 'src/api/generatedTypes'
+import {
+	AvatarUpdate,
+	BodyCreateAvaterUserUserIdAvatarPost,
+} from 'src/api/generatedTypes'
 import styles from './Avatar.module.sass'
 import { EditAvatarModal } from './components'
 
@@ -37,7 +41,7 @@ const Avatar: FC<Props> = ({ src, isAvatarFetching }) => {
 		queryFn: () => getOriginalAvatar(1),
 	})
 
-	const { mutate, isLoading } = useMutation({
+	const { mutate: createMutate, isLoading: isCreateLoading } = useMutation({
 		mutationFn: (data: BodyCreateAvaterUserUserIdAvatarPost) =>
 			createAvatar(1, data),
 		onSuccess: () => {
@@ -47,12 +51,20 @@ const Avatar: FC<Props> = ({ src, isAvatarFetching }) => {
 		},
 	})
 
-	const { mutate: deleteAvatarMutate, isLoading: isDeleteLoading } =
+	const { mutate: deleteMutate, isLoading: isDeleteLoading } = useMutation({
+		mutationFn: () => deleteAvatar(1),
+		onSuccess: () => {
+			queryClient.invalidateQueries([QueryKeys.USER])
+			setDeletePopoverOpen(false)
+		},
+	})
+
+	const { mutate: updateThumbnailMutate, isLoading: isUpdateLoading } =
 		useMutation({
-			mutationFn: () => deleteAvatar(1),
+			mutationFn: (data: AvatarUpdate) => updateAvatarThumbnail(1, data),
 			onSuccess: () => {
+				setEditModalOpen(false)
 				queryClient.invalidateQueries([QueryKeys.USER])
-				setDeletePopoverOpen(false)
 			},
 		})
 
@@ -78,15 +90,22 @@ const Avatar: FC<Props> = ({ src, isAvatarFetching }) => {
 		}
 	}
 
-	function onCreateAvatar({
+	function onSave({
 		height,
 		width,
 		x,
 		y,
 	}: Omit<BodyCreateAvaterUserUserIdAvatarPost, 'file'>) {
 		if (file) {
-			mutate({
+			createMutate({
 				file,
+				width,
+				height,
+				x,
+				y,
+			})
+		} else {
+			updateThumbnailMutate({
 				width,
 				height,
 				x,
@@ -153,7 +172,7 @@ const Avatar: FC<Props> = ({ src, isAvatarFetching }) => {
 							<Group>
 								<Button
 									color="red"
-									onClick={() => deleteAvatarMutate()}
+									onClick={() => deleteMutate()}
 									loading={isDeleteLoading}
 								>
 									Да
@@ -170,8 +189,8 @@ const Avatar: FC<Props> = ({ src, isAvatarFetching }) => {
 				open={editModalOpen}
 				onClose={onClose}
 				src={editAvatarSrc}
-				onCreate={onCreateAvatar}
-				isCreateLoading={isLoading}
+				onSave={onSave}
+				isSaveButtonLoading={isCreateLoading || isUpdateLoading}
 			/>
 		</>
 	)
