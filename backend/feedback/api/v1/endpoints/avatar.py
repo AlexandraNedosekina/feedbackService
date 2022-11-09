@@ -86,9 +86,10 @@ async def update_avatar(
     if not is_allowed(curr_user, user_id, ["self", "admin"]):
         raise HTTPException(status_code=401, detail="Not enough permissions")
     user = crud.user.get(db, user_id)
+
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
-    if not user.avatar or user.avatar.original_path:
+    if not user.avatar or not user.avatar.original_path:
         raise HTTPException(status_code=404, detail="User does not have avatar")
 
     image_extension = user.avatar.original_path.split(".")[-1]
