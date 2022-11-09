@@ -67,7 +67,11 @@ async def create_avater(
         raise HTTPException(status_code=400, detail="Bad params for thumbnail")
 
     crud.avatar.create(
-        db, user=user, op=original_path, tp=thumbnail_path, 
+        db,
+        user=user,
+        op=original_path,
+        tp=thumbnail_path,
+        obj_in=avatar_create,
     )
     return Response(status_code=201)
 
@@ -84,7 +88,7 @@ async def update_avatar(
     user = crud.user.get(db, user_id)
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
-    if not user.avatar.original_path:
+    if not user.avatar or user.avatar.original_path:
         raise HTTPException(status_code=404, detail="User does not have avatar")
 
     image_extension = user.avatar.original_path.split(".")[-1]
@@ -101,7 +105,10 @@ async def update_avatar(
         raise HTTPException(status_code=400, detail="Bad params for thumbnail")
 
     crud.avatar.update(
-        db, user=user, thumbnail_path=thumbnail_path
+        db,
+        user=user,
+        thumbnail_path=thumbnail_path,
+        obj_in=avatar_update,
     )
     return Response(status_code=200)
 
@@ -167,7 +174,11 @@ async def get_original(
     return FileResponse(avatar.original_path)
 
 
-def create_thumbnail(options: schemas.AvatarCreate | schemas.AvatarUpdate, thumbnail_path: str, original_path: str) -> bool:
+def create_thumbnail(
+    options: schemas.AvatarCreate | schemas.AvatarUpdate,
+    thumbnail_path: str,
+    original_path: str,
+) -> bool:
     img = Image.open(original_path)
     img_w, img_h = img.size
     x = options.x
@@ -175,17 +186,12 @@ def create_thumbnail(options: schemas.AvatarCreate | schemas.AvatarUpdate, thumb
     w = options.width
     h = options.height
 
-    if img_w < x > img_w or img_h < y > img_h:
+    if x < 0 or y < 0 or w < 0 or h < 0:
         return False
 
-    left = x - w / 2
-    right = x + w / 2
-    top = y - h / 2
-    bot = y + h / 2
-
-    if left < 0 or right > img_w or top < 0 or bot > img_h:
+    if x + w > img_w or y + h > img_h:
         return False
 
-    thumbnail = img.crop((left, top, right, bot))
+    thumbnail = img.crop((x, y, x + w, y + h))
     thumbnail.save(thumbnail_path)
     return True

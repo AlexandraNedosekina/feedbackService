@@ -1,8 +1,9 @@
 import datetime
-from typing import Literal 
-from feedback import schemas
+from typing import Literal
 
 from pydantic import BaseModel
+
+from feedback import schemas
 
 
 class Base(BaseModel):
@@ -77,7 +78,7 @@ class UserInDB(UserUpdate):
     job_expectations: list[JobExpectation] | None
     roles: list[Role] | None
     avatar: schemas.Avatar | None
-    
+
 
 class User(UserInDB):
     pass

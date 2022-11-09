@@ -11,7 +11,9 @@ router = APIRouter()
 
 
 @router.get("/me", response_model=schemas.User)
-async def get_currnet_user_info(curr_user: models.User = Depends(get_current_user)) -> schemas.User:
+async def get_currnet_user_info(
+    curr_user: models.User = Depends(get_current_user),
+) -> schemas.User:
     return curr_user
 
 

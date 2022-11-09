@@ -47,11 +47,19 @@ class AvatarUpdate(AvatarCreate):
     pass
 
 
+class AvatarOptions(AvatarCreate):
+    pass
+
+
 class AvatarInDB(Base):
     id: int
     original_path: str
     thumbnail_path: str
     thumbnail_url: str
+    x: int
+    y: int
+    width: int
+    height: int
     owner_id: int
 
 
@@ -62,6 +70,10 @@ class Avatar(AvatarInDB):
     thumbnail_url: str
     owner_id: int | None
 
-
     class Config:
-        fields = {'original_path': {'exclude': True}, 'thumbnail_path': {'exclude': True}, 'id': {'exclude': True}, 'owner_id': {'exclude': True}}
+        fields = {
+            "original_path": {"exclude": True},
+            "thumbnail_path": {"exclude": True},
+            "id": {"exclude": True},
+            "owner_id": {"exclude": True},
+        }
