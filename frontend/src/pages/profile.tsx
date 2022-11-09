@@ -9,11 +9,25 @@ import {
 	Title,
 } from '@mantine/core'
 import { TimeRangeInput } from '@mantine/dates'
+import { useQuery } from '@tanstack/react-query'
 import Head from 'next/head'
+import { getUser, QueryKeys } from 'src/api'
 import { BaseLayout } from 'src/layouts'
 import { NextPageWithLayout } from './_app'
 
 const ProfilePage: NextPageWithLayout = () => {
+	const {
+		data: user,
+		isLoading,
+		isFetching,
+	} = useQuery({
+		queryKey: [QueryKeys.USER],
+		queryFn: getUser,
+	})
+
+	// TODO: Add skeleton
+	if (isLoading) return <div>Загрузка...</div>
+
 	return (
 		<Container>
 			<Head>
@@ -24,17 +38,17 @@ const ProfilePage: NextPageWithLayout = () => {
 
 			<Group mb="xl">
 				<Avatar
-					src={`https://avatars.dicebear.com/api/identicon/${Date.now()}.svg`}
-					// src={null}
+					src={user?.avatar?.thumbnail_url ?? null}
+					isAvatarFetching={isFetching}
 				/>
 
 				<Stack spacing={6}>
-					<Text size={18}>Иван Иванов</Text>
+					<Text size={18}>{user?.full_name}</Text>
 					<Text color="brand.5" weight={600} size={18}>
-						Frontend-разработчик
+						{user?.job_title}
 					</Text>
 					<Text color="gray" size={14}>
-						mail@gmail.com
+						{user?.email}
 					</Text>
 					<Text color="gray" size={14}>
 						День рождения: 12.08.1990 (32 года)
