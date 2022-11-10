@@ -1,4 +1,4 @@
-## Запуск проекта (пока только бэкенд)
+## Запуск проекта
 
 ### В папке backend
 
@@ -6,7 +6,9 @@
 
 ### В папке frontend
 
--  TODO
+-  Создать файл .env и ввести NEXT_PUBLIC_BACKEND_URL=http://localhost:8000
+-  npm i
+-  npm run dev
 
 ### Запуск
 
@@ -14,7 +16,7 @@
 docker-compose up -d
 ```
 
-Через Makefile
+или через Makefile
 
 ```bash
 make docker-up
