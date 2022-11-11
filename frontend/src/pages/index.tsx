@@ -124,8 +124,8 @@ const Home: NextPageWithLayout = () => {
 					<div className={styles.content_description}>
 						<Title>Оценивай коллег</Title>
 						<Text className={styles.content_text}>
-							Поставь оценку по критериям, напиши, что понравилось, а что
-							не очень.
+							Оценка деятельности сотрудников, получение обратной связи
+							от коллег.
 						</Text>
 					</div>
 					<div className={styles.content_image}>
@@ -144,10 +144,10 @@ const Home: NextPageWithLayout = () => {
 						<Image src={'/career-grown.svg'} layout="fill" alt="" />
 					</div>
 					<div className={styles.content_description}>
-						<Title>Узнай, что нужно для карьерного роста</Title>
+						<Title>Следи за возможностью карьерного роста</Title>
 						<Text className={styles.content_text}>
-							Рекомендации от руководства, необходимые достижения и
-							выполненные задачи
+							Рекомендации от руководства, цели и задачи, необходимые для
+							повышения уровня заработной платы
 						</Text>
 					</div>
 					<div className={styles.content_line_t}>
@@ -158,8 +158,8 @@ const Home: NextPageWithLayout = () => {
 					<div className={styles.content_description}>
 						<Title>Назначай личные встречи</Title>
 						<Text className={styles.content_text}>
-							Можно посмотреть график встреч коллеги и выбрать подходящее
-							время
+							Составление расписания, отслеживание занятности коллег,
+							возможность назначить встречу
 						</Text>
 					</div>
 					<div className={styles.content_image}>
