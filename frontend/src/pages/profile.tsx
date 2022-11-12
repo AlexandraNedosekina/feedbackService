@@ -1,13 +1,5 @@
-import { Avatar, ProfileBadgesGroup } from '@components/Profile'
-import {
-	Container,
-	Group,
-	Select,
-	Stack,
-	Switch,
-	Text,
-	Title,
-} from '@mantine/core'
+import { Avatar, ProfileBadgesGroup, WorkFormat } from '@components/Profile'
+import { Container, Group, Stack, Switch, Text, Title } from '@mantine/core'
 import { TimeRangeInput } from '@mantine/dates'
 import Head from 'next/head'
 import { BaseLayout } from 'src/layouts'
@@ -62,27 +54,7 @@ const ProfilePage: NextPageWithLayout = () => {
 					api_key="job_expectations"
 				/>
 
-				<Stack spacing={'xs'}>
-					<Title order={2}>Формат работы</Title>
-
-					<Select
-						sx={() => ({
-							alignSelf: 'flex-start',
-						})}
-						data={[
-							{ label: 'В офисе', value: 'office' },
-							{
-								label: 'Удаленно',
-								value: 'remote',
-							},
-							{
-								label: 'Смешанный формат',
-								value: 'mixed',
-							},
-						]}
-						placeholder="Выберите формат работы"
-					/>
-				</Stack>
+				<WorkFormat />
 
 				<Stack spacing="xs">
 					<Title order={2}>График работы</Title>
