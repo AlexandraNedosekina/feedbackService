@@ -1,10 +1,10 @@
 import api from '..'
 import { User } from '../generatedTypes'
 
-export type UpdateUser =
-	| User['facts']
-	| User['skills']
-	| User['job_expectations']
+export type UpdateUser = Record<
+	keyof Pick<User, 'facts' | 'skills' | 'job_expectations'>,
+	string[]
+>
 
 async function updateUser(userId: number, data: UpdateUser) {
 	try {

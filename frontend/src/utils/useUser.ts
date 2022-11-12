@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { getUser, QueryKeys } from 'src/api'
-import { User } from 'src/api/generatedTypes'
+import { UserAdapter } from 'src/api/adapters/getUserAdapter'
 
 export const useUser = () => {
 	const { data, isLoading, isError, isFetching } = useQuery({
@@ -9,7 +9,7 @@ export const useUser = () => {
 	})
 
 	return {
-		user: data as User,
+		user: data as UserAdapter,
 		isLoading,
 		isError,
 		isFetching,
