@@ -9,6 +9,10 @@ export type TUpdateUser =
 	| {
 			meeting_readiness: boolean
 	  }
+	| {
+			work_hours_start: string | null
+			work_hours_end: string | null
+	  }
 
 async function updateUser(userId: number, data: TUpdateUser) {
 	try {

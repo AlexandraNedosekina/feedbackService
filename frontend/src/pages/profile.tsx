@@ -3,9 +3,9 @@ import {
 	Meeting,
 	ProfileBadgesGroup,
 	WorkFormat,
+	WorkHours,
 } from '@components/Profile'
 import { Container, Group, Stack, Text, Title } from '@mantine/core'
-import { TimeRangeInput } from '@mantine/dates'
 import Head from 'next/head'
 import { BaseLayout } from 'src/layouts'
 import { useUser } from 'src/utils/useUser'
@@ -58,19 +58,8 @@ const ProfilePage: NextPageWithLayout = () => {
 					badges={user.job_expectations}
 					api_key="job_expectations"
 				/>
-
 				<WorkFormat />
-
-				<Stack spacing="xs">
-					<Title order={2}>График работы</Title>
-					<TimeRangeInput
-						clearable
-						sx={() => ({
-							alignSelf: 'flex-start',
-						})}
-					/>
-				</Stack>
-
+				<WorkHours />
 				<Meeting />
 			</Stack>
 		</Container>
