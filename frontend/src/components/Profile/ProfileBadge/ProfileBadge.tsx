@@ -40,11 +40,13 @@ const ProfileBadge: FC<IProps> = ({ badge, onDelete, onUpdate }) => {
 				}
 				onSubmit={() => {
 					if (!updatedLabel.trim()) return
+					if (updatedLabel === badge.label) return
 
 					onUpdate(badge.id, updatedLabel)
 					setIsUpdateOpen(false)
 				}}
 				label={updatedLabel}
+				originalLabel={badge.label}
 			/>
 
 			<DeletePopover
