@@ -1,6 +1,6 @@
 from sqlalchemy import (Boolean, Column, DateTime, ForeignKey, Integer, String,
                         Time)
-from sqlalchemy.orm import backref, relationship
+from sqlalchemy.orm import relationship
 
 from feedback.db.session import Base
 
@@ -16,16 +16,17 @@ class User(Base):
         "Roles", backref="user", cascade="all, delete, delete-orphan", lazy="joined"
     )
     facts = relationship(
-        "Facts", backref="user", cascade="all, delete, delete-orphan", lazy="joined"
+        "Facts", backref="user", cascade="all, delete, delete-orphan", lazy="joined", order_by="Facts.id",
     )
     skills = relationship(
-        "Skills", backref="user", cascade="all, delete, delete-orphan", lazy="joined"
+        "Skills", backref="user", cascade="all, delete, delete-orphan", lazy="joined", order_by="Skills.id",
     )
     job_expectations = relationship(
         "Expectations",
         backref="user",
         cascade="all, delete, delete-orphan",
         lazy="joined",
+        order_by="Expectations.id",
     )
     avatar = relationship(
         "Avatars",
