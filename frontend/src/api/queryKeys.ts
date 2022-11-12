@@ -1,4 +1,6 @@
 export enum QueryKeys {
 	SIGNIN_GITLAB = 'SIGNIN_GITLAB',
 	USER = 'USER',
+	AVATAR = 'AVATAR',
+	AVATAR_ORIGINAL = 'AVATAR_ORIGINAL',
 }
