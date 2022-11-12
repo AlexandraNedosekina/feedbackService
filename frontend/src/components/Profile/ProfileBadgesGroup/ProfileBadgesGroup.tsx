@@ -132,11 +132,7 @@ const ProfileBadgesGroup: FC<Props> = ({ badges, title, api_key }) => {
 							<Input
 								name="label"
 								aria-label="label"
-								sx={() => ({
-									border: 'none !important',
-									margin: 0,
-									padding: 0,
-								})}
+								size="xs"
 								rightSection={
 									<ActionIcon
 										type="submit"
