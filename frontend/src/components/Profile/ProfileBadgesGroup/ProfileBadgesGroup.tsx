@@ -5,8 +5,8 @@ import { showNotification } from '@mantine/notifications'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import React, { FC, useState } from 'react'
 import { QueryKeys } from 'src/api'
-import { TProfileBadges, UserAdapter } from 'src/api/adapters/getUserAdapter'
-import updateUser, { UpdateUser } from 'src/api/user/updateUser'
+import { TProfileBadges, TUserAdapter } from 'src/api/adapters/getUserAdapter'
+import updateUser, { TUpdateUser } from 'src/api/user/updateUser'
 import { IProfileBadge } from 'src/types/profile'
 import { useUser } from 'src/utils/useUser'
 import ProfileBadge from '../ProfileBadge/ProfileBadge'
@@ -27,15 +27,15 @@ const ProfileBadgesGroup: FC<Props> = ({ badges, title, api_key }) => {
 	const { mutate: updateUserMutate } = useMutation({
 		mutationFn: (data: Partial<TProfileBadges>) => {
 			return updateUser(user?.id, {
-				[api_key]: data[api_key]!.map(item => item.label),
-			} as UpdateUser)
+				[api_key]: data[api_key]?.map(item => item.label),
+			} as TUpdateUser)
 		},
 		onMutate: async data => {
 			await queryClient.cancelQueries({ queryKey: [QueryKeys.USER] })
 
 			const previousUser = queryClient.getQueryData([QueryKeys.USER])
 
-			queryClient.setQueryData<UserAdapter>([QueryKeys.USER], old => {
+			queryClient.setQueryData<TUserAdapter>([QueryKeys.USER], old => {
 				if (!old) return undefined
 
 				return {

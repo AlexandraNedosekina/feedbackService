@@ -12,10 +12,10 @@ export type TProfileBadges = Record<
 	keyof Pick<User, 'facts' | 'skills' | 'job_expectations'>,
 	IProfileBadge[]
 >
-export type UserAdapter = Omit<User, 'facts' | 'skills' | 'job_expectations'> &
+export type TUserAdapter = Omit<User, 'facts' | 'skills' | 'job_expectations'> &
 	TProfileBadges
 
-export default function getUserAdapter(user: User): UserAdapter {
+export default function getUserAdapter(user: User): TUserAdapter {
 	const facts = user.facts!.map(getBadge)
 	const skills = user.skills!.map(getBadge)
 	const job_expectations = user.job_expectations!.map(getBadge)

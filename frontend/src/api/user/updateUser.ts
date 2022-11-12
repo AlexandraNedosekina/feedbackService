@@ -1,12 +1,12 @@
 import api from '..'
 import { User } from '../generatedTypes'
 
-export type UpdateUser = Record<
+export type TUpdateUser = Record<
 	keyof Pick<User, 'facts' | 'skills' | 'job_expectations'>,
 	string[]
 >
 
-async function updateUser(userId: number, data: UpdateUser) {
+async function updateUser(userId: number, data: TUpdateUser) {
 	try {
 		const res = await api.patch(`user/${userId}`, data)
 
