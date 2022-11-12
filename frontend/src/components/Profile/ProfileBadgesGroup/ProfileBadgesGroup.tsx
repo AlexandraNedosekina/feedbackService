@@ -4,12 +4,16 @@ import { useClickOutside, useFocusTrap } from '@mantine/hooks'
 import { showNotification } from '@mantine/notifications'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import React, { FC, useState } from 'react'
-import { QueryKeys } from 'src/api'
-import { TProfileBadges, TUserAdapter } from 'src/api/adapters/getUserAdapter'
-import updateUser, { TUpdateUser } from 'src/api/user/updateUser'
+import {
+	QueryKeys,
+	TProfileBadges,
+	TUpdateUser,
+	TUserAdapter,
+	updateUser,
+} from 'src/api'
 import { IProfileBadge } from 'src/types/profile'
 import { useUser } from 'src/utils/useUser'
-import ProfileBadge from '../ProfileBadge/ProfileBadge'
+import ProfileBadge from '../ProfileBadge'
 import { useStyles } from './useStyles'
 
 interface Props {

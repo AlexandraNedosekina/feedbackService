@@ -1,13 +1,6 @@
 import { IProfileBadge } from 'src/types/profile'
 import { Fact, JobExpectation, Skill, User } from '../generatedTypes'
 
-function getBadge(item: Fact | Skill | JobExpectation): IProfileBadge {
-	return {
-		id: item.id!,
-		label: item.description,
-	}
-}
-
 export type TProfileBadges = Record<
 	keyof Pick<User, 'facts' | 'skills' | 'job_expectations'>,
 	IProfileBadge[]
@@ -25,5 +18,12 @@ export default function getUserAdapter(user: User): TUserAdapter {
 		facts,
 		skills,
 		job_expectations,
+	}
+}
+
+function getBadge(item: Fact | Skill | JobExpectation): IProfileBadge {
+	return {
+		id: item.id!,
+		label: item.description,
 	}
 }
