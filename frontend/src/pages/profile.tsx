@@ -9,21 +9,13 @@ import {
 	Title,
 } from '@mantine/core'
 import { TimeRangeInput } from '@mantine/dates'
-import { useQuery } from '@tanstack/react-query'
 import Head from 'next/head'
-import { getUser, QueryKeys } from 'src/api'
 import { BaseLayout } from 'src/layouts'
+import { useUser } from 'src/utils/useUser'
 import { NextPageWithLayout } from './_app'
 
 const ProfilePage: NextPageWithLayout = () => {
-	const {
-		data: user,
-		isLoading,
-		isFetching,
-	} = useQuery({
-		queryKey: [QueryKeys.USER],
-		queryFn: getUser,
-	})
+	const { user, isLoading, isFetching } = useUser()
 
 	// TODO: Add skeleton
 	if (isLoading) return <div>Загрузка...</div>
@@ -59,46 +51,18 @@ const ProfilePage: NextPageWithLayout = () => {
 			<Stack spacing={'xl'}>
 				<ProfileBadgesGroup
 					title="Навыки"
-					badges={[
-						{
-							id: '1',
-							label: 'React',
-						},
-						{
-							id: '2',
-							label: 'Next.js',
-						},
-					]}
+					badges={user.skills}
+					api_key="skills"
 				/>
 				<ProfileBadgesGroup
 					title="Факты о себе"
-					badges={[
-						{
-							id: '1',
-							label: 'интроверт',
-						},
-						{
-							id: '2',
-							label: 'пицца',
-						},
-						{
-							id: '3',
-							label: 'котики',
-						},
-					]}
+					badges={user.facts}
+					api_key="facts"
 				/>
 				<ProfileBadgesGroup
 					title="Ожидания"
-					badges={[
-						{
-							id: '1',
-							label: 'профессиональный рост',
-						},
-						{
-							id: '2',
-							label: 'зп 250к',
-						},
-					]}
+					badges={user.job_expectations}
+					api_key="job_expectations"
 				/>
 
 				<Stack spacing={'xs'}>
