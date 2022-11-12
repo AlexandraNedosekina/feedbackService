@@ -1,5 +1,10 @@
-import { Avatar, ProfileBadgesGroup, WorkFormat } from '@components/Profile'
-import { Container, Group, Stack, Switch, Text, Title } from '@mantine/core'
+import {
+	Avatar,
+	Meeting,
+	ProfileBadgesGroup,
+	WorkFormat,
+} from '@components/Profile'
+import { Container, Group, Stack, Text, Title } from '@mantine/core'
 import { TimeRangeInput } from '@mantine/dates'
 import Head from 'next/head'
 import { BaseLayout } from 'src/layouts'
@@ -66,10 +71,7 @@ const ProfilePage: NextPageWithLayout = () => {
 					/>
 				</Stack>
 
-				<Stack spacing="xs">
-					<Title order={2}>Готовность к личным встречам</Title>
-					<Switch />
-				</Stack>
+				<Meeting />
 			</Stack>
 		</Container>
 	)

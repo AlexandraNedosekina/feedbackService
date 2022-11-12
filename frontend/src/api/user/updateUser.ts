@@ -6,6 +6,9 @@ export type TUpdateUser =
 	| {
 			work_format: User['work_format']
 	  }
+	| {
+			meeting_readiness: boolean
+	  }
 
 async function updateUser(userId: number, data: TUpdateUser) {
 	try {
