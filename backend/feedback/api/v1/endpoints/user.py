@@ -67,8 +67,8 @@ async def update_user(
 ) -> schemas.User:
     upd = user_update.dict(exclude_unset=True, exclude_none=True)
     upd_schemas_roles = (
-        (schemas.UserUpdateSelf, ["self"]),
-        (schemas.UserUpdateOther, ["boss"]),
+        (schemas.UserUpdateSelf, ["self", "boss", "admin"]),
+        (schemas.UserUpdateOther, ["boss", "admin"]),
         (schemas.UserUpdate, ["admin"]),
     )
     upd_keys = list(upd.keys())
