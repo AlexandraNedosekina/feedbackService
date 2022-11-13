@@ -14,8 +14,12 @@ import { NextPageWithLayout } from './_app'
 const ProfilePage: NextPageWithLayout = () => {
 	const { user, isLoading } = useUser()
 
-	// TODO: Add skeleton
-	if (isLoading) return <div>Загрузка...</div>
+	if (isLoading)
+		return (
+			<Container>
+				<Text>Загрузка...</Text>
+			</Container>
+		)
 
 	return (
 		<Container>
