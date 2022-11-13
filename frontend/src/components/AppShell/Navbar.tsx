@@ -14,11 +14,11 @@ import { FC, useEffect, useState } from 'react'
 import NavItem from './NavItem'
 
 const navItems: { icon: Icons; href: string; text: string }[] = [
-	{
-		icon: 'home',
-		href: '/',
-		text: 'Главная',
-	},
+	// {
+	// 	icon: 'home',
+	// 	href: '/',
+	// 	text: 'Главная',
+	// },
 	{
 		icon: 'star',
 		href: '/feedback',
