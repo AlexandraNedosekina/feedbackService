@@ -1,9 +1,17 @@
 from fastapi.encoders import jsonable_encoder
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session 
+from sqlalchemy.sql import update 
 
 from feedback import models, schemas
 from feedback.crud.base import CRUDBase
 
+
+relationship_models = {
+    "skills" : models.Skills,
+    "facts": models.Facts,
+    "job_expectations": models.Expectations,
+    "roles": models.Roles
+}
 
 class CRUDUser(CRUDBase[models.User, schemas.UserCreate, schemas.UserUpdate]):
     def get_by_email(self, db: Session, *, email: str) -> models.User | None:
@@ -30,36 +38,23 @@ class CRUDUser(CRUDBase[models.User, schemas.UserCreate, schemas.UserUpdate]):
         update_data = obj_in.dict(exclude_unset=True)
 
         for field in obj_data:
-            if field in update_data and field not in (
-                "skills",
-                "job_expectations",
-                "facts",
-                "roles",
-            ):
-                setattr(db_obj, field, update_data[field])
-
-        # Needs custom setting for ref data
-        if update_data.get("skills"):
-            db_obj.skills = [
-                models.Skills(description=d) for d in update_data["skills"]
-            ]
-
-        if update_data.get("facts"):
-            db_obj.facts = [models.Facts(description=d) for d in update_data["facts"]]
-
-        if update_data.get("job_expectations"):
-            db_obj.job_expectations = [
-                models.Expectations(description=d)
-                for d in update_data["job_expectations"]
-            ]
-
-        if update_data.get("roles"):
-            db_obj.roles = [models.Roles(description=d) for d in update_data["roles"]]
-
+            if field in update_data:
+                # Create relationship model and then add it to obj 
+                if relationship_models.get(field):
+                    rel_data = self.create_relation(relationship_models[field], update_data[field])
+                    setattr(db_obj, field, rel_data)
+                else:
+                    setattr(db_obj, field, update_data[field])
+                
         db.add(db_obj)
         db.commit()
         db.refresh(db_obj)
         return db_obj
+ 
+
+    def create_relation(self, model: models.Skills | models.Roles | models.Facts| models.Expectations, data: list[str]):
+        return [model(description=d) for d in data]
+
 
     def remove(self, db: Session, *, id: int) -> models.User:
         obj = db.query(self.model).get(id)
