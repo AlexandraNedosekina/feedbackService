@@ -14,7 +14,7 @@ import { NextPageWithLayout } from './_app'
 const ProfilePage: NextPageWithLayout = () => {
 	const { user, isLoading } = useUser()
 
-	if (isLoading)
+	if (isLoading || !user)
 		return (
 			<Container>
 				<Text>Загрузка...</Text>
@@ -49,17 +49,17 @@ const ProfilePage: NextPageWithLayout = () => {
 			<Stack spacing={'xl'}>
 				<ProfileBadgesGroup
 					title="Навыки"
-					badges={user.skills}
+					badges={user?.skills}
 					api_key="skills"
 				/>
 				<ProfileBadgesGroup
 					title="Факты о себе"
-					badges={user.facts}
+					badges={user?.facts}
 					api_key="facts"
 				/>
 				<ProfileBadgesGroup
 					title="Ожидания"
-					badges={user.job_expectations}
+					badges={user?.job_expectations}
 					api_key="job_expectations"
 				/>
 				<WorkFormat />

@@ -1,4 +1,5 @@
 import axios from 'axios'
+import router from 'next/router'
 
 export const baseURL = process.env.NEXT_PUBLIC_BACKEND_URL
 
@@ -7,26 +8,34 @@ const axiosApi = axios.create({
 	withCredentials: true,
 })
 
+let refreshRetryCount = 0
+
 axiosApi.interceptors.response.use(
 	response => response,
 	error => {
 		const { response, config } = error
 
-		if (response.status !== 401) {
-			return Promise.reject(error)
+		const isUnauthorized = response?.status === 401
+		const isRefresh = config.url === '/auth/refresh'
+		const isPublicPage = ['/'].includes(router.pathname)
+
+		if (isUnauthorized && !isRefresh && !isPublicPage) {
+			if (refreshRetryCount < 3) {
+				refreshRetryCount++
+				return axiosApi
+					.get('/auth/refresh')
+					.then(() => {
+						return axiosApi(config)
+					})
+					.catch(() => {
+						return Promise.reject(error)
+					})
+			} else {
+				router.push('/')
+			}
 		}
 
-		return axios
-			.get('/auth/refresh', {
-				baseURL,
-				withCredentials: true,
-			})
-			.then(() => {
-				return axiosApi(config)
-			})
-			.catch(() => {
-				return Promise.reject(error)
-			})
+		return Promise.reject(error)
 	}
 )
 
