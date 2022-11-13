@@ -1,7 +1,6 @@
 import {
 	Button,
 	Container,
-	Footer,
 	Group,
 	SimpleGrid,
 	Text,
