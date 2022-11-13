@@ -31,6 +31,10 @@ axiosApi.interceptors.response.use(
 						return Promise.reject(error)
 					})
 			} else {
+				document.cookie =
+					'access-token=;expires=Thu, 01 Jan 1970 00:00:01 GMT;'
+				document.cookie =
+					'refresh-token=;expires=Thu, 01 Jan 1970 00:00:01 GMT;'
 				router.push('/')
 			}
 		}
