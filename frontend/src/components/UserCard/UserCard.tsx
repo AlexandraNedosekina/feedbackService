@@ -68,7 +68,9 @@ const UserCard: FC<Props> = ({ image, name, post }) => {
 
 			<Group mt="xl">
 				<Button>Сохранить</Button>
-				<Button variant="default">Отмена</Button>
+				<Button variant="outline" style={{ background: 'white' }}>
+					Отмена
+				</Button>
 			</Group>
 		</Box>
 	)
