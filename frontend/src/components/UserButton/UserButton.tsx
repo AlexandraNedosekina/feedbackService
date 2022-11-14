@@ -1,25 +1,24 @@
 import {
+	Avatar,
+	createStyles,
+	Group,
+	Text,
+	Title,
 	UnstyledButton,
 	UnstyledButtonProps,
-	Group,
-	Avatar,
-	Text,
-	createStyles,
 } from '@mantine/core'
-import { IconChevronRight } from '@tabler/icons'
+import { useRouter } from 'next/router'
 
-const useStyles = createStyles(theme => ({
+const useStyles = createStyles((theme, params: { isActive: boolean }) => ({
 	user: {
-		display: 'block',
 		width: '100%',
-		padding: theme.spacing.md,
+		padding: theme.spacing.sm,
 		color: theme.colorScheme === 'dark' ? theme.colors.dark[0] : theme.black,
+		backgroundColor: params.isActive ? theme.colors.brand[1] : theme.white,
+		borderRadius: '4px',
 
 		'&:hover': {
-			backgroundColor:
-				theme.colorScheme === 'dark'
-					? theme.colors.dark[8]
-					: theme.colors.gray[0],
+			backgroundColor: params.isActive ? undefined : theme.colors.brand[0],
 		},
 	},
 }))
@@ -27,34 +26,40 @@ const useStyles = createStyles(theme => ({
 interface UserButtonProps extends UnstyledButtonProps {
 	image: string
 	name: string
-	email: string
-	icon?: boolean
-	// id: number
+	post: string
+	userId: number
+	isActive: boolean
 }
 
-export function UserButton({
+export default function UserButton({
 	image,
 	name,
-	email,
-	icon,
+	post,
+	userId,
+	isActive,
 	...others
 }: UserButtonProps) {
-	const { classes } = useStyles()
+	const { classes } = useStyles({ isActive })
+
+	const router = useRouter()
+
+	function goToUser() {
+		router.push(`/feedback/${userId}`)
+	}
 
 	return (
-		<UnstyledButton className={classes.user} {...others}>
+		<UnstyledButton className={classes.user} {...others} onClick={goToUser}>
 			<Group>
-				<Avatar src={image} radius="xl" />
+				<Avatar src={image} radius="xl" size={'lg'} />
 				<div style={{ flex: 1 }}>
-					<Text size="sm" weight={500}>
+					<Title order={4} color="brand.5">
 						{name}
-					</Text>
+					</Title>
 
-					<Text color="dimmed" size="xs">
-						{email}
+					<Text color="brand.4" size={14}>
+						{post}
 					</Text>
 				</div>
-				{icon || <IconChevronRight size={14} stroke={1.5} />}
 			</Group>
 		</UnstyledButton>
 	)
