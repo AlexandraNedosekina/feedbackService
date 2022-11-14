@@ -1,74 +1,76 @@
-import { UserButton } from '@components/UserButton/UserButton'
 import {
-	Rating,
-	Group,
-	Stack,
-	Textarea,
-	SimpleGrid,
+	Avatar,
+	Box,
 	Button,
+	Group,
+	Rating,
+	Stack,
+	Text,
+	Textarea,
+	Title,
 } from '@mantine/core'
+import { FC } from 'react'
+import { useStyles } from './useStyles'
 
-function UserCard() {
+interface Props {
+	image: string
+	name: string
+	post: string
+}
+
+const UserCard: FC<Props> = ({ image, name, post }) => {
+	const { classes } = useStyles()
+
 	return (
-		<>
-			<div>
-				<UserButton
-					image="https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=255&q=80"
-					name="Иван Иванов"
-					email="Backend-developer"
-				/>
-			</div>
-			<Stack>
-				<Group>
+		<Box className={classes.root}>
+			<Group>
+				<Avatar src={null} size={64} radius={100} />
+				<Stack spacing={5}>
+					<Title order={2} color="brand.5">
+						{name}
+					</Title>
+					<Text color="brand.5">{post}</Text>
+				</Stack>
+			</Group>
+			<Stack
+				sx={() => ({
+					maxWidth: 'max-content',
+				})}
+				my={40}
+			>
+				<Group position="apart">
 					<div>Выполнение задач</div>
-					<Rating defaultValue={1.5} />
+					<Rating defaultValue={1.5} size="md" />
 				</Group>
-				<Group>
+				<Group position="apart">
 					<div>Вовлеченность</div>
-					<Rating defaultValue={0} />
+					<Rating defaultValue={0} size="md" />
 				</Group>
-				<Group>
+				<Group position="apart">
 					<div>Мотивация</div>
-					<Rating defaultValue={0} />
+					<Rating defaultValue={0} size="md" />
 				</Group>
-				<Group>
+				<Group position="apart">
 					<div>Взаимодействие с командой</div>
-					<Rating defaultValue={0} />
+					<Rating defaultValue={0} size="md" />
 				</Group>
 			</Stack>
-			<div>
+
+			<Stack>
 				<Textarea
 					placeholder="Опишите, какие успехи достигнуты"
 					label="Достижения"
-					withAsterisk
 				/>
-				<Textarea
-					placeholder="Что можно сделать лучше"
-					label="Пожелания"
-					withAsterisk
-				/>
-				<Textarea
-					placeholder="Что получилось не очень"
-					label="Замечания"
-					withAsterisk
-				/>
-				<Textarea
-					placeholder="Любые комментарии"
-					label="Комментарии"
-					withAsterisk
-				/>
-			</div>
-			<div>
-				<SimpleGrid cols={2} breakpoints={[{ maxWidth: 'sm', cols: 1 }]}>
-					<div>
-						<Button>Сохранить</Button>
-					</div>
-					<div>
-						<Button variant="default">Отмена</Button>
-					</div>
-				</SimpleGrid>
-			</div>
-		</>
+				<Textarea placeholder="Что можно сделать лучше" label="Пожелания" />
+				<Textarea placeholder="Что получилось не очень" label="Замечания" />
+				<Textarea placeholder="Любые комментарии" label="Комментарии" />
+			</Stack>
+
+			<Group mt="xl">
+				<Button>Сохранить</Button>
+				<Button variant="default">Отмена</Button>
+			</Group>
+		</Box>
 	)
 }
 
