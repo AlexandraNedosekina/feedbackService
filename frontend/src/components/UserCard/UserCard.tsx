@@ -59,7 +59,7 @@ function UserCard() {
 				/>
 			</div>
 			<div>
-				<SimpleGrid>
+				<SimpleGrid cols={2} breakpoints={[{ maxWidth: 'sm', cols: 1 }]}>
 					<div>
 						<Button>Сохранить</Button>
 					</div>

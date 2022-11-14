@@ -13,11 +13,14 @@ const useStyles = createStyles(theme => ({
 		display: 'block',
 		width: '100%',
 		padding: theme.spacing.md,
-		// color: theme.colorScheme === 'dark' ? theme.colors.dark[0] : theme.black,
+		color: theme.colorScheme === 'dark' ? theme.colors.dark[0] : theme.black,
 
-		// '&:hover': {
-		//   backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[0],
-		// },
+		'&:hover': {
+			backgroundColor:
+				theme.colorScheme === 'dark'
+					? theme.colors.dark[8]
+					: theme.colors.gray[0],
+		},
 	},
 }))
 
@@ -26,6 +29,7 @@ interface UserButtonProps extends UnstyledButtonProps {
 	name: string
 	email: string
 	icon?: boolean
+	// id: number
 }
 
 export function UserButton({
@@ -41,7 +45,6 @@ export function UserButton({
 		<UnstyledButton className={classes.user} {...others}>
 			<Group>
 				<Avatar src={image} radius="xl" />
-
 				<div style={{ flex: 1 }}>
 					<Text size="sm" weight={500}>
 						{name}
@@ -51,7 +54,6 @@ export function UserButton({
 						{email}
 					</Text>
 				</div>
-
 				{icon || <IconChevronRight size={14} stroke={1.5} />}
 			</Group>
 		</UnstyledButton>
