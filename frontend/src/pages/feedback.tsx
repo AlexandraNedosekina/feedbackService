@@ -1,4 +1,4 @@
-import { Container, Navbar, SimpleGrid, Title, Text } from '@mantine/core'
+import { SimpleGrid, Title, Text } from '@mantine/core'
 import Head from 'next/head'
 import { BaseLayout } from 'src/layouts'
 import { NextPageWithLayout } from './_app'
@@ -7,7 +7,7 @@ import styles from 'src/styles/main.module.scss'
 
 const FeedbackPage: NextPageWithLayout = () => {
 	return (
-		<Container>
+		<>
 			<Head>
 				<title>Обратная связь</title>
 			</Head>
@@ -17,7 +17,6 @@ const FeedbackPage: NextPageWithLayout = () => {
 				breakpoints={[{ maxWidth: 'sm', cols: 1 }]}
 			>
 				<div>
-					<div></div>
 					<Title size={19}>Оценка сотрудников</Title>
 					<UserButton
 						image="https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=255&q=80"
@@ -53,7 +52,7 @@ const FeedbackPage: NextPageWithLayout = () => {
 					<div></div>
 				</SimpleGrid>
 			</SimpleGrid>
-		</Container>
+		</>
 	)
 }
 
