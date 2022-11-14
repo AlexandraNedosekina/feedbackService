@@ -66,12 +66,7 @@ const UserCard: FC<Props> = ({ image, name, post }) => {
 				<Textarea placeholder="Любые комментарии" label="Комментарии" />
 			</Stack>
 
-			<Group mt="xl">
-				<Button>Сохранить</Button>
-				<Button variant="outline" style={{ background: 'white' }}>
-					Отмена
-				</Button>
-			</Group>
+			<Button mt="xl">Сохранить</Button>
 		</Box>
 	)
 }
