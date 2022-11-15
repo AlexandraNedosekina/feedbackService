@@ -1,4 +1,4 @@
-import Search from '@components/SearchBar/SearchBar'
+import Search from '@components/SearchBar'
 import UserButton from '@components/UserButton'
 import { Box } from '@mantine/core'
 import { useRouter } from 'next/router'
