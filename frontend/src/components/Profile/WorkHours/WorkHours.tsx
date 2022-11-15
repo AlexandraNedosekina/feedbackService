@@ -58,6 +58,13 @@ const WorkHours: FC = () => {
 				})}
 				value={value}
 				onChange={onChange}
+				styles={{
+					input: {
+						['.mantine-Input-input']: {
+							border: 'none',
+						},
+					},
+				}}
 			/>
 		</Stack>
 	)
