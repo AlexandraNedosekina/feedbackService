@@ -111,5 +111,27 @@ export const mantineTheme: MantineThemeOverride = {
 				},
 			}),
 		},
+		Input: {
+			styles: theme => ({
+				input: {
+					border: `1px solid ${theme.colors.brand[5]}`,
+					borderRadius: '4px',
+					['::placeholder']: {
+						color: theme.colors.brand[3],
+					},
+				},
+				icon: {
+					color: theme.colors.brand[5],
+				},
+			}),
+		},
+		InputWrapper: {
+			styles: theme => ({
+				label: {
+					fontFamily: 'Montserrat, sans-serif',
+					fontWeight: 700,
+				},
+			}),
+		},
 	},
 }
