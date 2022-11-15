@@ -19,6 +19,7 @@ export type Icons =
 	| 'expand_more'
 	| 'file_upload'
 	| 'delete'
+	| 'sort'
 type IconType = 'outlined' | 'rounded' | 'sharp'
 
 export interface IconProps {
