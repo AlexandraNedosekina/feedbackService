@@ -128,7 +128,10 @@ const Navbar: FC<Props> = ({ isOpen, closeMenu }) => {
 									  }
 									: undefined
 							}
-							active={router.pathname === item.href}
+							active={
+								router.pathname.split('/')[1] ===
+								item.href.split('/')[1]
+							}
 							closeMenu={closeMenu}
 						/>
 					))}
