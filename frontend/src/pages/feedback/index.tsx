@@ -1,5 +1,5 @@
 import UserList from '@components/UserList'
-import { SimpleGrid, Text, Title } from '@mantine/core'
+import { Box, SimpleGrid, Text, Title } from '@mantine/core'
 import Head from 'next/head'
 import { BaseLayout } from 'src/layouts'
 import styles from 'src/styles/main.module.scss'
@@ -20,11 +20,17 @@ const FeedbackPage: NextPageWithLayout = () => {
 				mt="md"
 			>
 				<UserList />
-				<div>
+				<Box
+					sx={theme => ({
+						backgroundColor: theme.colors.brand[1],
+						borderRadius: '4px',
+						padding: theme.spacing.xl,
+					})}
+				>
 					<Text className={styles.info_text}>
 						Выберите сотрудника для оценки
 					</Text>
-				</div>
+				</Box>
 			</SimpleGrid>
 		</>
 	)
