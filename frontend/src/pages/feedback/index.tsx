@@ -27,7 +27,7 @@ const FeedbackPage: NextPageWithLayout = () => {
 						padding: theme.spacing.xl,
 					})}
 				>
-					<Text className={styles.info_text}>
+					<Text className={styles.info_text} weight={600}>
 						Выберите сотрудника для оценки
 					</Text>
 				</Box>
