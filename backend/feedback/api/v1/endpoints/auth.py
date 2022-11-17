@@ -142,7 +142,7 @@ async def refresh(request: Request, response: Response, db: Session = Depends(ge
     return response
 
 
-@router.get("/logout")
+@router.get("/signout")
 async def logout(response: Response, _: models.User = Depends(get_current_user)):
     response.delete_cookie("access-token")
     response.delete_cookie("refresh-token")
