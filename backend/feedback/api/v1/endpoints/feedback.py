@@ -5,13 +5,13 @@ from feedback import crud, schemas, models
 
 router = APIRouter()
 
-@router.get("/{user_id}") #response_model=list[schemas.Colleagues]
+
+@router.get("/{user_id}") #, response_model=list[schemas.Colleagues]
 async def get_colleagues_by_user(user_id: int, db: Session = Depends(get_db)):
     user = crud.user.get(db, user_id)
     if not user:
         raise HTTPException(status_code=404, detail="No user with such id")
-    collegues = user.colleagues
-    return collegues
+    return user.colleagues
 
 
 @router.post("/{user_id}")  # response_model=schemas.UserShowColleagues
@@ -30,7 +30,7 @@ async def add_user_colleagues(user_id: int, colleagues_ids: schemas.ColleaguesId
         if not colleague:
             raise HTTPException(status_code=404, detail=f"No user with such id - {colleague}")
 
-        #Add colleague to user and user to colleague
+        # Add colleague to user and user to colleague
         upd_user_colls.append(models.Colleagues(colleague_id=coll_id, owner_id=user_id))
 
         colleague.colleagues = [models.Colleagues(colleague_id=user_id, owner_id=coll_id)]
@@ -52,8 +52,7 @@ async def delete_user_colleagues(user_id: int, colleagues_ids: schemas.Colleague
     if not user:
         raise HTTPException(status_code=404, detail="No user with such id")
 
-
-    user_colleagues_ids = db.query(user.colleagues.colleague_id).all()
+    user_colleagues_ids = list(map(lambda x: x.colleague_id, user.colleagues))
 
     for coll_id in to_delete_colleagues_ids:
         if coll_id == user_id:
@@ -65,10 +64,10 @@ async def delete_user_colleagues(user_id: int, colleagues_ids: schemas.Colleague
         if coll_id not in user_colleagues_ids:
             raise HTTPException(status_code=404, detail=f"User has no colleague with id {colleague} to be deleted")
 
-
-        #нужно получить id связи для пользователя и
-        delete_user_relation = db.query(user).filter(user.colleagues.colleague_id == coll_id).first()
-        delete_colleague_relation = db.query(colleague).filter(colleague.colleagues.colleague_id == user_id).first()
+        delete_user_relation = db.query(models.Colleagues)\
+            .filter(models.Colleagues.owner_id == user_id, models.Colleagues.colleague_id == coll_id).first()
+        delete_colleague_relation = db.query(models.Colleagues)\
+            .filter(models.Colleagues.owner_id == coll_id, models.Colleagues.colleague_id == user_id).first()
 
         db.delete(delete_user_relation)
         db.delete(delete_colleague_relation)
