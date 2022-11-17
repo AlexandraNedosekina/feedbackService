@@ -39,6 +39,13 @@ class User(Base):
     work_hours_start = Column(Time)
     work_hours_end = Column(Time)
     meeting_readiness = Column(Boolean())
+    colleagues = relationship(
+        "Colleagues",
+        backref="user",
+        cascade="all, delete, delete-orphan",
+        lazy="joined",
+        order_by="Colleagues.id",
+    )
 
 
 class Avatars(Base):
@@ -80,4 +87,11 @@ class Roles(Base):
     __tablename__ = "roles"
     id = Column(Integer, primary_key=True, index=True)
     description = Column(String, index=True)
+    owner_id = Column(Integer, ForeignKey("user.id"))
+
+
+class Colleagues(Base):
+    __tablename__ = "colleagues"
+    id = Column(Integer, primary_key=True, index=True)
+    colleague_id = Column(Integer, index=True)
     owner_id = Column(Integer, ForeignKey("user.id"))
