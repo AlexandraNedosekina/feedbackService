@@ -5,11 +5,6 @@ from feedback import crud, schemas, models
 
 router = APIRouter()
 
-#todo необходимо сделать так, чтобы при обновлении коллег (например кого-то удалили) у удалённого пользователя (тот, который есть в старом списке, но его нет в новом)
-#   происходило удаление конкретного юзера из списка. Т.е. новый список без этого. Или можно удалить запись с ним и данными из бд...
-#  Либо необходимо разделить метод patch на post и delete с
-
-
 @router.get("/{user_id}") #response_model=list[schemas.Colleagues]
 async def get_colleagues_by_user(user_id: int, db: Session = Depends(get_db)):
     user = crud.user.get(db, user_id)
