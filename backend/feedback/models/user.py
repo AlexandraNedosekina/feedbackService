@@ -95,3 +95,10 @@ class Colleagues(Base):
     id = Column(Integer, primary_key=True, index=True)
     colleague_id = Column(Integer, index=True)
     owner_id = Column(Integer, ForeignKey("user.id"))
+
+
+class SkillPromts(Base):
+    __tablename__ = "skillpromts"
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, index=True, unique=True)
+

@@ -82,3 +82,11 @@ class UserInDB(UserUpdate):
 
 class User(UserInDB):
     pass
+
+
+class AddSkillPromts(Base):
+    name: list[str]
+
+class ShowSkillPromts(Base):
+    id: int
+    name: str
