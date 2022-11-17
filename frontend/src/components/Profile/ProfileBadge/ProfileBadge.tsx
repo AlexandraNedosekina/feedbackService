@@ -6,8 +6,10 @@ import { useStyles } from './useStyles'
 
 interface IProps {
 	badge: IProfileBadge
-	onDelete: (id: string) => void
-	onUpdate: (id: string, label: string) => void
+	// eslint-disable-next-line no-unused-vars
+	onDelete: (id: number) => void
+	// eslint-disable-next-line no-unused-vars
+	onUpdate: (id: number, label: string) => void
 }
 
 const ProfileBadge: FC<IProps> = ({ badge, onDelete, onUpdate }) => {
@@ -19,7 +21,7 @@ const ProfileBadge: FC<IProps> = ({ badge, onDelete, onUpdate }) => {
 	const [updatedLabel, setUpdatedLabel] = useState(badge.label)
 
 	return (
-		<Badge key={badge.id} className={classes.badge} data-testid="badge">
+		<Badge className={classes.badge} data-testid="badge">
 			{badge.label}
 
 			<UpdatePopover
@@ -38,11 +40,13 @@ const ProfileBadge: FC<IProps> = ({ badge, onDelete, onUpdate }) => {
 				}
 				onSubmit={() => {
 					if (!updatedLabel.trim()) return
+					if (updatedLabel === badge.label) return
 
 					onUpdate(badge.id, updatedLabel)
 					setIsUpdateOpen(false)
 				}}
 				label={updatedLabel}
+				originalLabel={badge.label}
 			/>
 
 			<DeletePopover

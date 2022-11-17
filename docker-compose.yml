@@ -8,4 +8,10 @@ services:
          dockerfile: Dockerfile
       ports:
          - '8000:8000'
-      # TODO frontend
+   frontend:
+      image: frontend
+      build:
+         context: ./frontend
+         dockerfile: Dockerfile
+      ports:
+         - '3000:3000'

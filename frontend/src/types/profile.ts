@@ -1,4 +1,4 @@
 export interface IProfileBadge {
-	id: string
+	id: number
 	label: string
 }

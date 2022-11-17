@@ -23,7 +23,7 @@ const EditAvatarModal: FC<Props> = ({
 	isSaveButtonLoading,
 	onSave: onCreate,
 }) => {
-	const user = useUser()
+	const { user } = useUser()
 
 	const [crop, setCrop] = useState({ x: 0, y: 0 })
 	const [zoom, setZoom] = useState(1)

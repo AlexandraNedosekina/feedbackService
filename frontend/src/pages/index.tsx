@@ -7,6 +7,7 @@ import {
 	Title,
 } from '@mantine/core'
 import { useMutation } from '@tanstack/react-query'
+import { GetServerSideProps } from 'next'
 import Head from 'next/head'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
@@ -14,6 +15,23 @@ import { useCallback } from 'react'
 import { signinGitlab } from 'src/api'
 import styles from 'src/styles/main.module.scss'
 import { NextPageWithLayout } from './_app'
+
+export const getServerSideProps: GetServerSideProps = async ({ req }) => {
+	const { cookies } = req
+
+	if (cookies['refresh-token']) {
+		return {
+			redirect: {
+				destination: '/profile',
+				permanent: false,
+			},
+		}
+	}
+
+	return {
+		props: {},
+	}
+}
 
 const Home: NextPageWithLayout = () => {
 	const router = useRouter()
@@ -39,25 +57,8 @@ const Home: NextPageWithLayout = () => {
 				<title>Главная</title>
 			</Head>
 
-			{/* 
-				Здесь и далее будет использован css modules (https://nextjs.org/docs/basic-features/built-in-css-support#adding-component-level-css),
-				чтобы классы не были глобальными и использовались только в рамках этой страницы.
-				Импортирован выше import styles from 'src/styles/main.module.scss'
-
-				Для использования класса, нужно прописать className={styles.название_класса} или className={styles['название_класса']}
-			
-				Обычно приветственный блок называется hero
-			 */}
 			<div className={styles.hero}>
-				{/* 
-					Group - flex компонент, весьма удобно, не нужно самому прописывать display: flex и прочие justify-content и align-items.
-					В данном случае, у нас изображение и ссылка, по макету они в разных сторонах, и нам нужен justify-content: space-between, что равняется пропсу position='apart' в Group
-				 */}
 				<Group position="apart" className={styles.hero_header}>
-					{/* 
-						https://nextjs.org/docs/basic-features/image-optimization
-						Image - специальный компонент next.js, который оптимизирует статичные изображения при билде, конвертирует их в webp
-					 */}
 					<Image
 						src="/logo-blue.svg"
 						width={91}
@@ -75,10 +76,6 @@ const Home: NextPageWithLayout = () => {
 						Войти
 					</Button>
 				</Group>
-
-				{/* 
-					Здесь блок с контентом hero
-				 */}
 				<div className={styles.hero_content}>
 					<Title color="brand.6" size={48}>
 						Feedback Service
@@ -91,7 +88,6 @@ const Home: NextPageWithLayout = () => {
 						onClick={() => signInHero()}
 						loading={isLoadingHero}
 						leftIcon={
-							// Импортировал картинку из макета, чтобы совпадало. Width и height тоже из макета
 							<Image
 								src="/gitlab-logo.svg"
 								width={22}
@@ -108,17 +104,7 @@ const Home: NextPageWithLayout = () => {
 				</div>
 			</div>
 
-			{/* 
-				Идет основной контент страницы.
-
-				Container для padding, который уже адаптирован под разные разрешения экрана
-			 */}
 			<Container className={styles.content} py={60}>
-				{/* 
-					SimpileGrid имеет 'display: grid', в нашем случае 2 колонки при ширине экрана 768px (sm) и больше, и 1 колонка при ширине экрана меньше 768px.
-
-					content_image имеет 'display: none' при 768px и меньше.
-				 */}
 				<SimpleGrid cols={2} breakpoints={[{ maxWidth: 'sm', cols: 1 }]}>
 					<div className={styles.content_description}>
 						<Title>Оценивай коллег</Title>
@@ -128,10 +114,6 @@ const Home: NextPageWithLayout = () => {
 						</Text>
 					</div>
 					<div className={styles.content_image}>
-						{/* 
-							layout='fill', чтобы не прописывать width и height.
-							В таком случае изображение будет занимать все место родителя с 'position: relative'
-						 */}
 						<Image src={'/rat1.svg'} layout="fill" alt="" />
 					</div>
 					<div className={styles.content_line}>

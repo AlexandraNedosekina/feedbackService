@@ -22,7 +22,7 @@ const FeedbackPage: NextPageWithLayout = () => {
 				<UserList />
 				<Box
 					sx={theme => ({
-						backgroundColor: theme.colors.brand[1],
+						backgroundColor: theme.colors.brand[0],
 						borderRadius: '4px',
 						padding: theme.spacing.xl,
 					})}
