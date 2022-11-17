@@ -14,11 +14,11 @@ import { FC, useEffect, useState } from 'react'
 import NavItem from './NavItem'
 
 const navItems: { icon: Icons; href: string; text: string }[] = [
-	{
-		icon: 'home',
-		href: '/',
-		text: 'Главная',
-	},
+	// {
+	// 	icon: 'home',
+	// 	href: '/',
+	// 	text: 'Главная',
+	// },
 	{
 		icon: 'star',
 		href: '/feedback',
@@ -128,7 +128,10 @@ const Navbar: FC<Props> = ({ isOpen, closeMenu }) => {
 									  }
 									: undefined
 							}
-							active={router.pathname === item.href}
+							active={
+								router.pathname.split('/')[1] ===
+								item.href.split('/')[1]
+							}
 							closeMenu={closeMenu}
 						/>
 					))}

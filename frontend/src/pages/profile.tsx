@@ -1,32 +1,25 @@
-import { Avatar, ProfileBadgesGroup } from '@components/Profile'
 import {
-	Container,
-	Group,
-	Select,
-	Stack,
-	Switch,
-	Text,
-	Title,
-} from '@mantine/core'
-import { TimeRangeInput } from '@mantine/dates'
-import { useQuery } from '@tanstack/react-query'
+	Avatar,
+	Meeting,
+	ProfileBadgesGroup,
+	WorkFormat,
+	WorkHours,
+} from '@components/Profile'
+import { Container, Group, Stack, Text, Title } from '@mantine/core'
 import Head from 'next/head'
-import { getUser, QueryKeys } from 'src/api'
 import { BaseLayout } from 'src/layouts'
+import { useUser } from 'src/utils/useUser'
 import { NextPageWithLayout } from './_app'
 
 const ProfilePage: NextPageWithLayout = () => {
-	const {
-		data: user,
-		isLoading,
-		isFetching,
-	} = useQuery({
-		queryKey: [QueryKeys.USER],
-		queryFn: getUser,
-	})
+	const { user, isLoading } = useUser()
 
-	// TODO: Add skeleton
-	if (isLoading) return <div>Загрузка...</div>
+	if (isLoading || !user)
+		return (
+			<Container>
+				<Text>Загрузка...</Text>
+			</Container>
+		)
 
 	return (
 		<Container>
@@ -37,10 +30,7 @@ const ProfilePage: NextPageWithLayout = () => {
 			<Title mb="xl">Профиль</Title>
 
 			<Group mb="xl">
-				<Avatar
-					src={user?.avatar?.thumbnail_url ?? null}
-					isAvatarFetching={isFetching}
-				/>
+				<Avatar />
 
 				<Stack spacing={6}>
 					<Text size={18}>{user?.full_name}</Text>
@@ -59,84 +49,22 @@ const ProfilePage: NextPageWithLayout = () => {
 			<Stack spacing={'xl'}>
 				<ProfileBadgesGroup
 					title="Навыки"
-					badges={[
-						{
-							id: '1',
-							label: 'React',
-						},
-						{
-							id: '2',
-							label: 'Next.js',
-						},
-					]}
+					badges={user?.skills}
+					api_key="skills"
 				/>
 				<ProfileBadgesGroup
 					title="Факты о себе"
-					badges={[
-						{
-							id: '1',
-							label: 'интроверт',
-						},
-						{
-							id: '2',
-							label: 'пицца',
-						},
-						{
-							id: '3',
-							label: 'котики',
-						},
-					]}
+					badges={user?.facts}
+					api_key="facts"
 				/>
 				<ProfileBadgesGroup
 					title="Ожидания"
-					badges={[
-						{
-							id: '1',
-							label: 'профессиональный рост',
-						},
-						{
-							id: '2',
-							label: 'зп 250к',
-						},
-					]}
+					badges={user?.job_expectations}
+					api_key="job_expectations"
 				/>
-
-				<Stack spacing={'xs'}>
-					<Title order={2}>Формат работы</Title>
-
-					<Select
-						sx={() => ({
-							alignSelf: 'flex-start',
-						})}
-						data={[
-							{ label: 'В офисе', value: 'office' },
-							{
-								label: 'Удаленно',
-								value: 'remote',
-							},
-							{
-								label: 'Смешанный формат',
-								value: 'mixed',
-							},
-						]}
-						placeholder="Выберите формат работы"
-					/>
-				</Stack>
-
-				<Stack spacing="xs">
-					<Title order={2}>График работы</Title>
-					<TimeRangeInput
-						clearable
-						sx={() => ({
-							alignSelf: 'flex-start',
-						})}
-					/>
-				</Stack>
-
-				<Stack spacing="xs">
-					<Title order={2}>Готовность к личным встречам</Title>
-					<Switch />
-				</Stack>
+				<WorkFormat />
+				<WorkHours />
+				<Meeting />
 			</Stack>
 		</Container>
 	)

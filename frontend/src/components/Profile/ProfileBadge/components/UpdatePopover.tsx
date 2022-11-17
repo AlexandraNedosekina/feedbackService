@@ -11,6 +11,7 @@ interface IProps {
 	onInputChange: (e: ChangeEvent<HTMLInputElement>) => void
 	onSubmit: () => void
 	label: string
+	originalLabel: string
 }
 
 const UpdatePopover: FC<IProps> = ({
@@ -21,6 +22,7 @@ const UpdatePopover: FC<IProps> = ({
 	onInputChange,
 	onSubmit,
 	label,
+	originalLabel,
 }) => {
 	const { classes, cx } = useStyles()
 
@@ -62,12 +64,14 @@ const UpdatePopover: FC<IProps> = ({
 							color="green"
 							type="submit"
 							data-testid="update-badge-submit"
+							disabled={label === originalLabel || !label.trim()}
 						>
 							<Icon icon="done" />
 						</ActionIcon>
 						<ActionIcon
 							onClick={onClose}
 							data-testid="update-badge-close"
+							color="red"
 						>
 							<Icon icon="close" />
 						</ActionIcon>

@@ -111,12 +111,16 @@ async def authorize_gitlab(
 
 @router.get("/refresh")
 async def refresh(request: Request, response: Response, db: Session = Depends(get_db)):
-    refresh_token = request.cookies.get("refresh-token").split(" ")
+    refresh_token_request = request.cookies.get("refresh-token")
+    
+    if not refresh_token_request:
+        raise HTTPException(status_code=400, detail="No refresh token provided")
+    
+    refresh_token = refresh_token_request.split(" ")
     if not len(refresh_token) > 1:
         raise HTTPException(status_code=400, detail="Invalid token")
     refresh_token = refresh_token[1]
-    if not refresh_token:
-        raise HTTPException(status_code=400, detail="No refresh-token provided")
+    
     refresh_token_payload = jwt.decode_token(refresh_token)
     user = crud.user.get(db, refresh_token_payload.sub)
     if not user:

@@ -3,8 +3,8 @@
 ### В папке backend
 
 -  Файл .env.example переименовать в .env и ввести поля
-   -  SECRET_KEY=secret
-   -  GITLAB_CLIENT_ID = 521cd2b06148230d72a63375ddaaabab69e921816a11552b40e4dba242cd78d2
+   -  SECRET_KEY = secret
+   -  GITLAB_CLIENT_ID= 521cd2b06148230d72a63375ddaaabab69e921816a11552b40e4dba242cd78d2
    -  GITLAB_CLIENT_SECRET = 4282320d8738b55f81119e4840428f68f05dd16ad4a9976905221b54654d8d16
 
 ### В папке frontend
@@ -29,6 +29,9 @@ docker-compose up -d
 ```bash
 make up
 ```
+
+Backend - http://localhost:8000,
+Frontend - http://localhost:3000
 
 ### Только backend
 
