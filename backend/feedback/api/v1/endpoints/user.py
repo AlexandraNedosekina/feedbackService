@@ -109,5 +109,3 @@ async def delete_user(
         raise HTTPException(status_code=404, detail="No user with such id")
     _ = crud.user.remove(db, id=user_id)
     return Response(status_code=204)
-
-

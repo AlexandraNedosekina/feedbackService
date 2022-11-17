@@ -87,6 +87,7 @@ class User(UserInDB):
 class AddSkillPromts(Base):
     name: list[str]
 
+
 class ShowSkillPromts(Base):
     id: int
     name: str

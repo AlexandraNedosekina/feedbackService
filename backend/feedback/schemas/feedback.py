@@ -9,6 +9,7 @@ class Base(BaseModel):
 class ColleaguesIdList(Base):
     colleagues_ids: list[int]
 
+
 class Colleagues(Base):
     id: int
     colleague_id: int

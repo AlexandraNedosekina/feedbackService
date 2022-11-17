@@ -16,10 +16,18 @@ class User(Base):
         "Roles", backref="user", cascade="all, delete, delete-orphan", lazy="joined"
     )
     facts = relationship(
-        "Facts", backref="user", cascade="all, delete, delete-orphan", lazy="joined", order_by="Facts.id",
+        "Facts",
+        backref="user",
+        cascade="all, delete, delete-orphan",
+        lazy="joined",
+        order_by="Facts.id",
     )
     skills = relationship(
-        "Skills", backref="user", cascade="all, delete, delete-orphan", lazy="joined", order_by="Skills.id",
+        "Skills",
+        backref="user",
+        cascade="all, delete, delete-orphan",
+        lazy="joined",
+        order_by="Skills.id",
     )
     job_expectations = relationship(
         "Expectations",
@@ -101,4 +109,3 @@ class SkillPromts(Base):
     __tablename__ = "skillpromts"
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, index=True, unique=True)
-
