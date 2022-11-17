@@ -9,6 +9,7 @@ import {
 	Textarea,
 	Title,
 } from '@mantine/core'
+import router from 'next/router'
 import { FC } from 'react'
 import { useStyles } from './useStyles'
 
@@ -20,6 +21,9 @@ interface Props {
 
 const UserCard: FC<Props> = ({ image, name, post }) => {
 	const { classes } = useStyles()
+	function goToEmpty() {
+		router.push('/feedback/')
+	}
 
 	return (
 		<Box className={classes.root}>
@@ -68,7 +72,11 @@ const UserCard: FC<Props> = ({ image, name, post }) => {
 
 			<Group mt="xl">
 				<Button>Сохранить</Button>
-				<Button variant="outline" style={{ background: 'white' }}>
+				<Button
+					variant="outline"
+					style={{ background: 'white' }}
+					onClick={goToEmpty}
+				>
 					Отмена
 				</Button>
 			</Group>
