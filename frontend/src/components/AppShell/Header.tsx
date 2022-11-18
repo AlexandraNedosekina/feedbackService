@@ -6,10 +6,12 @@ import {
 	Menu,
 	MediaQuery,
 } from '@mantine/core'
+import { useMutation } from '@tanstack/react-query'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { FC } from 'react'
+import { signOut } from 'src/api'
 
 const useStyles = createStyles(theme => ({
 	header: {
@@ -35,6 +37,10 @@ const Header: FC<Props> = ({ openMenu, isOpen }) => {
 	const { classes } = useStyles()
 
 	const router = useRouter()
+
+	const { mutate: signOutMutate } = useMutation({
+		mutationFn: signOut,
+	})
 
 	return (
 		<HeaderMantine
@@ -94,7 +100,8 @@ const Header: FC<Props> = ({ openMenu, isOpen }) => {
 						</Menu.Item>
 						<Menu.Item
 							onClick={() => {
-								router.push('/login')
+								signOutMutate()
+								router.push('/')
 							}}
 						>
 							Выйти

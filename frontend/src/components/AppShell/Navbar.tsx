@@ -9,8 +9,10 @@ import {
 	useMantineTheme,
 } from '@mantine/core'
 import { useMediaQuery } from '@mantine/hooks'
+import { useMutation } from '@tanstack/react-query'
 import { useRouter } from 'next/router'
 import { FC, useEffect, useState } from 'react'
+import { signOut } from 'src/api'
 import NavItem from './NavItem'
 
 const navItems: { icon: Icons; href: string; text: string }[] = [
@@ -56,6 +58,10 @@ const Navbar: FC<Props> = ({ isOpen, closeMenu }) => {
 			window.localStorage.setItem('isFull', JSON.stringify(!isFull))
 		}
 	}
+
+	const { mutate: signOutMutate } = useMutation({
+		mutationFn: signOut,
+	})
 
 	useEffect(() => {
 		if (typeof window !== 'undefined') {
@@ -143,7 +149,8 @@ const Navbar: FC<Props> = ({ isOpen, closeMenu }) => {
 							})}
 							ml="sm"
 							onClick={() => {
-								router.push('/login')
+								signOutMutate()
+								router.push('/')
 							}}
 						>
 							Выйти
