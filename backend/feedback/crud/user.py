@@ -1,17 +1,17 @@
 from fastapi.encoders import jsonable_encoder
-from sqlalchemy.orm import Session 
-from sqlalchemy.sql import update 
+from sqlalchemy.orm import Session
+from sqlalchemy.sql import update
 
 from feedback import models, schemas
 from feedback.crud.base import CRUDBase
 
-
 relationship_models = {
-    "skills" : models.Skills,
+    "skills": models.Skills,
     "facts": models.Facts,
     "job_expectations": models.Expectations,
-    "roles": models.Roles
+    "roles": models.Roles,
 }
+
 
 class CRUDUser(CRUDBase[models.User, schemas.UserCreate, schemas.UserUpdate]):
     def get_by_email(self, db: Session, *, email: str) -> models.User | None:
@@ -39,22 +39,26 @@ class CRUDUser(CRUDBase[models.User, schemas.UserCreate, schemas.UserUpdate]):
 
         for field in obj_data:
             if field in update_data:
-                # Create relationship model and then add it to obj 
+                # Create relationship model and then add it to obj
                 if relationship_models.get(field):
-                    rel_data = self.create_relation(relationship_models[field], update_data[field])
+                    rel_data = self.create_relation(
+                        relationship_models[field], update_data[field]
+                    )
                     setattr(db_obj, field, rel_data)
                 else:
                     setattr(db_obj, field, update_data[field])
-                
+
         db.add(db_obj)
         db.commit()
         db.refresh(db_obj)
         return db_obj
- 
 
-    def create_relation(self, model: models.Skills | models.Roles | models.Facts| models.Expectations, data: list[str]):
+    def create_relation(
+        self,
+        model: models.Skills | models.Roles | models.Facts | models.Expectations,
+        data: list[str],
+    ):
         return [model(description=d) for d in data]
-
 
     def remove(self, db: Session, *, id: int) -> models.User:
         obj = db.query(self.model).get(id)

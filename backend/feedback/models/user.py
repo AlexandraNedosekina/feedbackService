@@ -16,10 +16,18 @@ class User(Base):
         "Roles", backref="user", cascade="all, delete, delete-orphan", lazy="joined"
     )
     facts = relationship(
-        "Facts", backref="user", cascade="all, delete, delete-orphan", lazy="joined", order_by="Facts.id",
+        "Facts",
+        backref="user",
+        cascade="all, delete, delete-orphan",
+        lazy="joined",
+        order_by="Facts.id",
     )
     skills = relationship(
-        "Skills", backref="user", cascade="all, delete, delete-orphan", lazy="joined", order_by="Skills.id",
+        "Skills",
+        backref="user",
+        cascade="all, delete, delete-orphan",
+        lazy="joined",
+        order_by="Skills.id",
     )
     job_expectations = relationship(
         "Expectations",
@@ -39,6 +47,13 @@ class User(Base):
     work_hours_start = Column(Time)
     work_hours_end = Column(Time)
     meeting_readiness = Column(Boolean())
+    colleagues = relationship(
+        "Colleagues",
+        backref="user",
+        cascade="all, delete, delete-orphan",
+        lazy="joined",
+        order_by="Colleagues.id",
+    )
 
 
 class Avatars(Base):
@@ -81,3 +96,16 @@ class Roles(Base):
     id = Column(Integer, primary_key=True, index=True)
     description = Column(String, index=True)
     owner_id = Column(Integer, ForeignKey("user.id"))
+
+
+class Colleagues(Base):
+    __tablename__ = "colleagues"
+    id = Column(Integer, primary_key=True, index=True)
+    colleague_id = Column(Integer, index=True)
+    owner_id = Column(Integer, ForeignKey("user.id"))
+
+
+class SkillPromts(Base):
+    __tablename__ = "skillpromts"
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, index=True, unique=True)

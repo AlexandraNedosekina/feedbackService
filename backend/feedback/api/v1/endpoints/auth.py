@@ -1,12 +1,13 @@
 import datetime
 
-from fastapi import APIRouter, Depends, HTTPException, Request, Response
+from fastapi import (APIRouter, Depends, HTTPException, Request, Response,
+                     responses)
 from fastapi.responses import RedirectResponse
 from httpx_oauth.oauth2 import GetAccessTokenError
 from sqlalchemy.orm import Session
 
 from feedback import crud, models, schemas
-from feedback.api.deps import get_db
+from feedback.api.deps import get_current_user, get_db
 from feedback.core import jwt
 from feedback.core.config import settings
 from feedback.core.OAuth2 import RequestError, gitlab
@@ -112,15 +113,15 @@ async def authorize_gitlab(
 @router.get("/refresh")
 async def refresh(request: Request, response: Response, db: Session = Depends(get_db)):
     refresh_token_request = request.cookies.get("refresh-token")
-    
+
     if not refresh_token_request:
         raise HTTPException(status_code=400, detail="No refresh token provided")
-    
+
     refresh_token = refresh_token_request.split(" ")
     if not len(refresh_token) > 1:
         raise HTTPException(status_code=400, detail="Invalid token")
     refresh_token = refresh_token[1]
-    
+
     refresh_token_payload = jwt.decode_token(refresh_token)
     user = crud.user.get(db, refresh_token_payload.sub)
     if not user:
@@ -137,5 +138,13 @@ async def refresh(request: Request, response: Response, db: Session = Depends(ge
         str(refresh_token),
         max_age=settings.REFRESH_TOKEN_EXPIRES_IN_MINUTES,
     )
+    response.status_code = 200
+    return response
+
+
+@router.get("/signout")
+async def logout(response: Response, _: models.User = Depends(get_current_user)):
+    response.delete_cookie("access-token")
+    response.delete_cookie("refresh-token")
     response.status_code = 200
     return response

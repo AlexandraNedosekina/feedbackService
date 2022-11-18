@@ -1,2 +1,2 @@
-from feedback.models.user import (Avatars, Base, Expectations, Facts, Roles,
-                                  Skills, User)
+from feedback.models.user import (Avatars, Base, Colleagues, Expectations,
+                                  Facts, Roles, SkillPromts, Skills, User)
