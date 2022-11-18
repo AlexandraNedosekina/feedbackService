@@ -1,113 +1,87 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Response
+from pydantic import parse_obj_as
 from sqlalchemy.orm import Session
 
 from feedback import crud, models, schemas
-from feedback.api.deps import get_db
+from feedback.api.deps import (GetUserWithRoles, get_current_user, get_db,
+                               is_allowed)
 
+# Change roles according to TZ
+get_admin = GetUserWithRoles(["admin"])
 router = APIRouter()
 
 
-@router.get("/{user_id}")  # , response_model=list[schemas.Colleagues]
-async def get_colleagues_by_user(user_id: int, db: Session = Depends(get_db)):
-    user = crud.user.get(db, user_id)
-    if not user:
-        raise HTTPException(status_code=404, detail="No user with such id")
-    return user.colleagues
-
-
-@router.post("/{user_id}")  # response_model=schemas.UserShowColleagues
-async def add_user_colleagues(
-    user_id: int,
-    colleagues_ids: schemas.ColleaguesIdList,
+@router.get("/", response_model=list[schemas.Feedback])
+async def get_all_feedback(
     db: Session = Depends(get_db),
-):
-    upd_user_colls = []
-    upd_colls_list = []
-    colleagues_ids = colleagues_ids.colleagues_ids
-    user = crud.user.get(db, user_id)
-    if not user:
-        raise HTTPException(status_code=404, detail="No user with such id")
-
-    for coll_id in colleagues_ids:
-        if coll_id == user_id:
-            raise HTTPException(
-                status_code=404,
-                detail=f"Can not add colleague with users(self) id - {coll_id}",
-            )
-        colleague = crud.user.get(db, coll_id)
-        if not colleague:
-            raise HTTPException(
-                status_code=404, detail=f"No user with such id - {colleague}"
-            )
-
-        # Add colleague to user and user to colleague
-        upd_user_colls.append(models.Colleagues(colleague_id=coll_id, owner_id=user_id))
-
-        colleague.colleagues = [
-            models.Colleagues(colleague_id=user_id, owner_id=coll_id)
-        ]
-        upd_colls_list.append(colleague)
-
-    user.colleagues = upd_user_colls
-
-    db.add(user)
-    db.add_all(upd_colls_list)
-    db.commit()
-    db.refresh(user)
-    return user
+    _: models.User = Depends(get_current_user),
+    skip: int = 0,
+    limit: int = 100,
+) -> list[schemas.Feedback]:
+    return parse_obj_as(
+        list[schemas.Feedback], crud.feedback.get_multi(db, skip=skip, limit=limit)
+    )
 
 
-@router.delete("/user_id")
-async def delete_user_colleagues(
-    user_id: int,
-    colleagues_ids: schemas.ColleaguesIdList,
+# Change
+@router.post("/event/{event_id}", response_model=schemas.Feedback)
+async def create_feedback(
+    event_id: int,
+    feedback_create: schemas.FeedbackCreate,
     db: Session = Depends(get_db),
-):
-    to_delete_colleagues_ids = colleagues_ids.colleagues_ids
-    user = crud.user.get(db, user_id)
-    if not user:
-        raise HTTPException(status_code=404, detail="No user with such id")
+    curr_user: models.User = Depends(get_current_user),
+) -> schemas.Event:
+    event = crud.event.get(db, event_id)
+    if not event:
+        raise HTTPException(status_code=404, detail="Event not found")
 
-    user_colleagues_ids = list(map(lambda x: x.colleague_id, user.colleagues))
-
-    for coll_id in to_delete_colleagues_ids:
-        if coll_id == user_id:
-            raise HTTPException(
-                status_code=404,
-                detail=f"Can not delete colleague with users(self) id - {coll_id}",
-            )
-        colleague = crud.user.get(db, coll_id)
-        if not colleague:
-            raise HTTPException(
-                status_code=404, detail=f"No user with such id - {colleague}"
-            )
-
-        if coll_id not in user_colleagues_ids:
-            raise HTTPException(
-                status_code=404,
-                detail=f"User has no colleague with id {colleague} to be deleted",
-            )
-
-        delete_user_relation = (
-            db.query(models.Colleagues)
-            .filter(
-                models.Colleagues.owner_id == user_id,
-                models.Colleagues.colleague_id == coll_id,
-            )
-            .first()
-        )
-        delete_colleague_relation = (
-            db.query(models.Colleagues)
-            .filter(
-                models.Colleagues.owner_id == coll_id,
-                models.Colleagues.colleague_id == user_id,
-            )
-            .first()
+    # Check if user can send feedback in this event
+    user_colleagues_ids = [c.colleague_id for c in curr_user.colleagues]
+    if event.user_id not in user_colleagues_ids:
+        raise HTTPException(
+            status_code=401, detail="You can not send feedback to this user"
         )
 
-        db.delete(delete_user_relation)
-        db.delete(delete_colleague_relation)
+    # Check if user already has sent feedback to this event
+    feedback = crud.feedback.get_by_user_and_event(db, curr_user.id, event.id)
+    if feedback:
+        raise HTTPException(status_code=404, detail="You have already sent feedback")
 
-    db.commit()
-    db.refresh(user)
-    return user
+    feedback = crud.feedback.create(
+        db, obj_in=feedback_create, owner_id=curr_user.id, intendend_for=event.user_id
+    )
+    return feedback
+
+
+@router.get("/{id}", response_model=schemas.Feedback)
+async def get_feedback_by_id(
+    id: int, db: Session = Depends(get_db), _: models.User = Depends(get_admin)
+) -> schemas.Feedback:
+    # !!! Check permissions ??? or not
+    feedback = crud.feedback.get(db, id)
+    if not feedback:
+        raise HTTPException(status_code=404, detail="Feedback does not exist")
+    return feedback
+
+
+@router.patch("/{id}", response_model=schemas.Feedback)
+async def update_feedback(
+    id: int, db: Session = Depends(get_db), _: models.User = Depends(get_current_user)
+) -> schemas.Event:
+    raise HTTPException(status_code=404, detail="Not implemented")
+
+
+# check roles
+@router.delete("/{id}")
+async def delete_event(
+    id: int,
+    response: Response,
+    db: Session = Depends(get_db),
+    _: models.User = Depends(get_admin),
+):
+    feedback = crud.feedback.get(db, id)
+    if not feedback:
+        raise HTTPException(status_code=404, detail="Feedback does not exist")
+    crud.feedback.remove(db, id=id)
+    response.status_code = 200
+    return response
