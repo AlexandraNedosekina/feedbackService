@@ -16,10 +16,7 @@ class Event(Base):
     avg_rating = Column(Integer)
 
     users_feedback = relationship(
-        "Feedback",
-        backref="event",
-        cascade="all, delete, delete-orphan",
-        lazy="select",
+        "Feedback", backref="event", cascade="all, delete, delete-orphan", lazy="select"
     )
 
 
@@ -27,7 +24,7 @@ class Feedback(Base):
     __tablename__ = "feedback"
 
     id = Column(Integer, primary_key=True)
-    event_id = Column(Integer, ForeignKey("event.id"))  # Do we really need this?
+    event_id = Column(Integer, ForeignKey("event.id"))
     intendend_for = Column(Integer, ForeignKey("user.id"))
     owner_id = Column(Integer, ForeignKey("user.id"))
 

@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException
+from pydantic import parse_obj_as
 from sqlalchemy.orm import Session
 
 from feedback import crud, models, schemas
@@ -7,15 +8,15 @@ from feedback.api.deps import get_db
 router = APIRouter()
 
 
-@router.get("/{user_id}")  # , response_model=list[schemas.Colleagues]
+@router.get("/{user_id}", response_model=list[schemas.Colleagues])
 async def get_colleagues_by_user(user_id: int, db: Session = Depends(get_db)):
     user = crud.user.get(db, user_id)
     if not user:
         raise HTTPException(status_code=404, detail="No user with such id")
-    return user.colleagues
+    return parse_obj_as(list[schemas.Colleagues], user.colleagues)
 
 
-@router.post("/{user_id}")  # response_model=schemas.UserShowColleagues
+@router.post("/{user_id}")  # response_model=schemas.UserShowColleagues)
 async def add_user_colleagues(
     user_id: int,
     colleagues_ids: schemas.ColleaguesIdList,

@@ -48,7 +48,7 @@ class GetUserWithRoles:
 
 def is_allowed(
     current_user: models.User,
-    target_user_id: int,
+    target_user_id: int | None,
     permitted_roles: list[
         Literal[
             "HR", "manager", "employee", "trainee", "boss", "mentor", "self", "admin"
@@ -61,7 +61,7 @@ def is_allowed(
         if role in permitted_roles:
             return True
 
-    if "self" in permitted_roles:
+    if "self" in permitted_roles and target_user_id:
         if current_user.id == target_user_id:
             return True
     return False
