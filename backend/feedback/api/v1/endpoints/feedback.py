@@ -64,7 +64,7 @@ async def create_feedback(
         raise HTTPException(status_code=400, detail="You can not send feedback here")
 
     # Check if user can send feedback in this event
-    if not is_allowed_to_send_feedback(db, curr_user, event):
+    if not await is_allowed_to_send_feedback(db, curr_user, event):
         raise HTTPException(
             status_code=401, detail="You can not send feedback to this user"
         )
@@ -75,7 +75,7 @@ async def create_feedback(
         raise HTTPException(status_code=404, detail="You have already sent feedback")
 
     # Check if date between Event start and stop date
-    if not (event.date_start < datetime.now(timezone.utc) < event.date_stop):
+    if not (event.date_start < datetime.utcnow() < event.date_stop):
         raise HTTPException(
             status_code=400,
             detail="You can not send feedback here. Time limit has expired",

@@ -49,6 +49,10 @@ async def create_event(
     db: Session = Depends(get_db),
     _: models.User = Depends(get_admin_boss_manager),
 ) -> schemas.Event:
+    user = crud.user.get(db, event_create.user_id)
+    if not user:
+        raise HTTPException(status_code=400, detail="User with such id does not exist")
+
     prev_event = crud.event.get_prev_event_for_user(db, event_create.user_id)
     if prev_event:
         crud.event.update_status(db, db_obj=prev_event, status="archived")
