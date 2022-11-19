@@ -1,16 +1,10 @@
 .hero {
-	// url прописан так, поскольку файлы из папки public досутпны по http://localhost:3000/имя_файла,
-	// так что путь можно прописать через /имя_файла
-	// в css будет выглядеть так: background-image: url('/main.png');
-	// что в итоге интерпретируется в http://localhost:3000/main.png
 	background-image: url('/main.png');
 	background-size: cover;
 	// переменные css https://mantine.dev/theming/mantine-provider/#css-variables
 	padding-block: var(--mantine-spacing-xl);
 	padding-inline: var(--mantine-spacing-xl);
 
-	// scss позволяет использовать вложенность
-	// в css было бы .hero .hero_header {}
 	&_header {
 		a {
 			color: var(--mantine-color-brand-6);
@@ -33,7 +27,7 @@
 }
 
 .content {
-	>div:nth-of-type(2n) {
+	> div:nth-of-type(2n) {
 		text-align: right;
 
 		@media screen and (max-width: 767px) {
@@ -42,11 +36,7 @@
 	}
 
 	&_description {
-		padding-block: 6em;
-
-		@media screen and (max-width: 767px) {
-			padding-block: 2em;
-		}
+		align-self: center;
 	}
 
 	&_text {
@@ -69,19 +59,13 @@
 	}
 
 	&_line {
-		position: absolute;
-		width: 383px;
-		height: 192px;
-		margin-left: 10%;
-		margin-top: 15%;
-	}
-
-	&_line_t {
-		position: absolute;
-		width: 253px;
-		height: 198px;
-		margin-left: 30%;
-		margin-top: 20%
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		> div {
+			position: relative;
+			height: 120px;
+		}
 	}
 }
 
@@ -91,12 +75,11 @@
 	&_grate {
 		background-color: #b8d7ff;
 	}
-
 }
 
 .info {
 	&_text {
-		color: #3B82BF;
+		color: #3b82bf;
 		font-family: 'Rubik';
 		font-size: 19px;
 	}
