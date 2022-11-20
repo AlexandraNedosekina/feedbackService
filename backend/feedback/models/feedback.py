@@ -1,4 +1,4 @@
-from sqlalchemy import Column, DateTime, ForeignKey, Integer, String
+from sqlalchemy import Column, DateTime, ForeignKey, Integer, Numeric, String
 from sqlalchemy.orm import relationship
 
 from feedback.db.session import Base
@@ -13,7 +13,6 @@ class Event(Base):
     date_start = Column(DateTime, nullable=False)
     date_stop = Column(DateTime, nullable=False)
     status = Column(String)
-    avg_rating = Column(Integer)
 
     users_feedback = relationship(
         "Feedback", backref="event", cascade="all, delete, delete-orphan", lazy="select"
@@ -25,8 +24,8 @@ class Feedback(Base):
 
     id = Column(Integer, primary_key=True)
     event_id = Column(Integer, ForeignKey("event.id"))
-    intendend_for = Column(Integer, ForeignKey("user.id"))
     owner_id = Column(Integer, ForeignKey("user.id"))
+    avg_rating = Column(Numeric)
 
     task_completion = Column(Integer, nullable=False)
     involvement = Column(Integer, nullable=False)

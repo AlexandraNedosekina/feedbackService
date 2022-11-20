@@ -19,18 +19,12 @@ class CRUDEvent(CRUDBase[models.Event, schemas.EventCreate, schemas.EventUpdate]
         db.refresh(db_obj)
         return db_obj
 
-    def update_avg_rating(
-        self, db: Session, *, db_obj: models.Event, avg_rating: float
-    ) -> models.Event:
-        obj_in = {"avg_rating": avg_rating}
-        return super().update(db, db_obj=db_obj, obj_in=obj_in)
-
     def update_status(
         self,
         db: Session,
         *,
         db_obj: models.Event,
-        status: Literal["active", "archived", "finished"]
+        status: Literal["active", "archived"]
     ) -> models.Event:
         obj_in = {"status": status}
         return super().update(db, db_obj=db_obj, obj_in=obj_in)
@@ -40,7 +34,7 @@ class CRUDEvent(CRUDBase[models.Event, schemas.EventCreate, schemas.EventUpdate]
         db: Session,
         skip: int,
         limit: int,
-        status: Literal["active", "archived", "finished"],
+        status: Literal["active", "archived"],
     ) -> list[models.Event]:
         return (
             db.query(models.Event)
@@ -120,21 +114,6 @@ class CRUDEvent(CRUDBase[models.Event, schemas.EventCreate, schemas.EventUpdate]
                 models.Event.status == status
             )
         return event_with_feedback.all()
-
-    def get_avg_rating(self, db: Session, user_id: int) -> float:
-        events = db.query(models.Event).filter(models.Event.user_id == user_id).all()
-        avg_ratings = []
-        for e in events:
-            for fb in e.users_feedback:
-                rating = [
-                    fb.involvement,
-                    fb.task_completion,
-                    fb.motivation,
-                    fb.interaction,
-                ]
-                ar = sum(rating) / len(rating)
-                avg_ratings.append(ar)
-        return sum(avg_ratings) / len(avg_ratings)
 
 
 event = CRUDEvent(models.Event)

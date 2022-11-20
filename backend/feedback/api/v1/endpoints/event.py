@@ -28,7 +28,7 @@ async def get_events_for_current_user(
 async def get_all_events(
     db: Session = Depends(get_db),
     _: models.User = Depends(get_current_user),
-    q: Literal["active", "archived", "finished"] | None = None,
+    q: Literal["active", "archived"] | None = None,
     skip: int = 0,
     limit: int = 100,
 ) -> list[schemas.Event]:
@@ -39,7 +39,7 @@ async def get_all_events(
         )
     return parse_obj_as(
         list[schemas.Event],
-        crud.event.get_with_status(db, skip=skip, limit=limit, status=q),
+        crud.event.get_with_status_multi(db, skip=skip, limit=limit, status=q),
     )
 
 

@@ -4,7 +4,6 @@ from feedback import models, schemas
 from feedback.crud.base import CRUDBase
 
 
-# Update is not implemented
 class CRUDFeedback(CRUDBase[models.Feedback, schemas.FeedbackCreate, schemas.Feedback]):
     def create(
         self,
@@ -12,12 +11,17 @@ class CRUDFeedback(CRUDBase[models.Feedback, schemas.FeedbackCreate, schemas.Fee
         *,
         obj_in: schemas.FeedbackCreate,
         owner_id: int,
-        intendend_for: int
     ) -> models.Feedback:
+        user_rating = [
+            obj_in.task_completion,
+            obj_in.involvement,
+            obj_in.motivation,
+            obj_in.interaction,
+        ]
+        avg_rating = sum(user_rating) / len(user_rating)
+
         db_obj = models.Feedback(
-            **obj_in.dict(),
-            owner_id=owner_id,
-            intendend_for=intendend_for,
+            **obj_in.dict(), owner_id=owner_id, avg_rating=avg_rating
         )
         return super().create(db, obj_in=db_obj)
 

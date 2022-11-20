@@ -55,7 +55,7 @@ class EventUpdate(Base):
         if start_date:
             if v < start_date:
                 raise ValueError("stop can not be earlier than start")
-        return values
+        return v
 
 
 class EventInDB(Base):
@@ -63,8 +63,7 @@ class EventInDB(Base):
     user_id: int
     date_start: datetime
     date_stop: datetime
-    status: Literal["active", "archived", "finished"]
-    avg_rating: float | None
+    status: Literal["active", "archived"]
 
 
 class Event(EventInDB):
@@ -95,6 +94,7 @@ class FeedbackInDB(Base):
     id: int
     event_id: int
     owner_id: int
+    avg_rating: float
 
     task_completion: int
     involvement: int

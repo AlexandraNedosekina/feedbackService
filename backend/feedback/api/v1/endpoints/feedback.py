@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import datetime
 from typing import Literal
 
 from fastapi import APIRouter, Depends, HTTPException, Response
@@ -61,7 +61,9 @@ async def create_feedback(
     if not event:
         raise HTTPException(status_code=404, detail="Event not found")
     if not event.status == "active":
-        raise HTTPException(status_code=400, detail="You can not send feedback here")
+        raise HTTPException(
+            status_code=400, detail="You can not send feedback here. Event is archived"
+        )
 
     # Check if user can send feedback in this event
     if not await is_allowed_to_send_feedback(db, curr_user, event):
@@ -78,20 +80,18 @@ async def create_feedback(
     if not (event.date_start < datetime.utcnow() < event.date_stop):
         raise HTTPException(
             status_code=400,
-            detail="You can not send feedback here. Time limit has expired",
+            detail="You can not send feedback here. Event has not started or already ended",
         )
 
-    feedback = crud.feedback.create(
-        db, obj_in=feedback_create, owner_id=curr_user.id, intendend_for=event.user_id
-    )
+    feedback = crud.feedback.create(db, obj_in=feedback_create, owner_id=curr_user.id)
     return feedback
 
 
 @router.get("/{id}", response_model=schemas.Feedback)
 async def get_feedback_by_id(
     id: int,
-    db: Session = Depends(get_admin_boss_manager_hr),
-    _: models.User = Depends(get_admin),
+    db: Session = Depends(get_db),
+    _: models.User = Depends(get_admin_boss_manager_hr),
 ) -> schemas.Feedback:
     feedback = crud.feedback.get(db, id)
     if not feedback:
@@ -99,11 +99,10 @@ async def get_feedback_by_id(
     return feedback
 
 
-# Not in place
 @router.get("/user/{user_id}")
 async def get_feedback_by_user_id(
     user_id: int,
-    status: Literal["active", "archived", "finished"] | None = None,
+    status: Literal["active", "archived"] | None = None,
     db: Session = Depends(get_db),
     _: models.User = Depends(get_admin_boss_manager_hr),
 ):

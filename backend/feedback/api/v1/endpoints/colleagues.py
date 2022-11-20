@@ -3,13 +3,17 @@ from pydantic import parse_obj_as
 from sqlalchemy.orm import Session
 
 from feedback import crud, models, schemas
-from feedback.api.deps import get_db
+from feedback.api.deps import get_current_user, get_db
 
 router = APIRouter()
 
 
 @router.get("/{user_id}", response_model=list[schemas.Colleagues])
-async def get_colleagues_by_user(user_id: int, db: Session = Depends(get_db)):
+async def get_colleagues_by_user(
+    user_id: int,
+    db: Session = Depends(get_db),
+    _: models.User = Depends(get_current_user),
+):
     user = crud.user.get(db, user_id)
     if not user:
         raise HTTPException(status_code=404, detail="No user with such id")
@@ -21,6 +25,7 @@ async def add_user_colleagues(
     user_id: int,
     colleagues_ids: schemas.ColleaguesIdList,
     db: Session = Depends(get_db),
+    _: models.User = Depends(get_current_user),
 ):
     upd_user_colls = []
     upd_colls_list = []
@@ -63,6 +68,7 @@ async def delete_user_colleagues(
     user_id: int,
     colleagues_ids: schemas.ColleaguesIdList,
     db: Session = Depends(get_db),
+    _: models.User = Depends(get_current_user),
 ):
     to_delete_colleagues_ids = colleagues_ids.colleagues_ids
     user = crud.user.get(db, user_id)
