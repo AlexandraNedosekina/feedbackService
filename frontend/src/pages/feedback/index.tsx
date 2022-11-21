@@ -12,26 +12,33 @@ const FeedbackPage: NextPageWithLayout = () => {
 				<title>Обратная связь</title>
 			</Head>
 
-			<Title order={2}>Оценка сотрудников</Title>
-			<SimpleGrid
-				className={styles.card}
-				cols={2}
-				breakpoints={[{ maxWidth: 'sm', cols: 1 }]}
-				mt="md"
+			<Box
+				sx={theme => ({
+					backgroundColor: theme.colors.brand[0],
+				})}
+				p="xl"
 			>
-				<UserList />
-				<Box
-					sx={theme => ({
-						backgroundColor: theme.colors.brand[0],
-						borderRadius: '4px',
-						padding: theme.spacing.xl,
-					})}
+				<Title order={2}>Оценка сотрудников</Title>
+				<SimpleGrid
+					className={styles.card}
+					cols={2}
+					breakpoints={[{ maxWidth: 'sm', cols: 1 }]}
+					mt="md"
 				>
-					<Text className={styles.info_text} weight={600}>
-						Выберите сотрудника для оценки
-					</Text>
-				</Box>
-			</SimpleGrid>
+					<UserList />
+					<Box
+						sx={theme => ({
+							backgroundColor: 'white',
+							borderRadius: '4px',
+							padding: theme.spacing.xl,
+						})}
+					>
+						<Text className={styles.info_text} weight={600}>
+							Выберите сотрудника для оценки
+						</Text>
+					</Box>
+				</SimpleGrid>
+			</Box>
 		</>
 	)
 }

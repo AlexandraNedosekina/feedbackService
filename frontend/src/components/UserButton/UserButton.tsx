@@ -18,7 +18,7 @@ const useStyles = createStyles((theme, params: { isActive: boolean }) => ({
 		borderRadius: '4px',
 
 		'&:hover': {
-			backgroundColor: params.isActive ? undefined : theme.colors.brand[0],
+			backgroundColor: params.isActive ? undefined : theme.colors.brand[1],
 		},
 	},
 }))
