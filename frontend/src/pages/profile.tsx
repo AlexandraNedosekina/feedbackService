@@ -22,7 +22,7 @@ const ProfilePage: NextPageWithLayout = () => {
 		)
 
 	return (
-		<Container>
+		<Container pt="xl">
 			<Head>
 				<title>Профиль</title>
 			</Head>
