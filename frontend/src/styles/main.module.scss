@@ -68,19 +68,3 @@
 		}
 	}
 }
-
-.card {
-	grid-template-columns: 1fr 3fr;
-
-	&_grate {
-		background-color: #b8d7ff;
-	}
-}
-
-.info {
-	&_text {
-		color: #3b82bf;
-		font-family: 'Rubik';
-		font-size: 19px;
-	}
-}

@@ -1,8 +1,6 @@
-import UserList from '@components/UserList'
-import { Box, SimpleGrid, Text, Title } from '@mantine/core'
+import { Box, Text } from '@mantine/core'
 import Head from 'next/head'
-import { BaseLayout } from 'src/layouts'
-import styles from 'src/styles/main.module.scss'
+import { BaseLayout, FeedbackLayout } from 'src/layouts'
 import { NextPageWithLayout } from '../_app'
 
 const FeedbackPage: NextPageWithLayout = () => {
@@ -12,33 +10,20 @@ const FeedbackPage: NextPageWithLayout = () => {
 				<title>Обратная связь</title>
 			</Head>
 
-			<Box
-				sx={theme => ({
-					backgroundColor: theme.colors.brand[0],
-				})}
-				p="xl"
-			>
-				<Title order={2}>Оценка сотрудников</Title>
-				<SimpleGrid
-					className={styles.card}
-					cols={2}
-					breakpoints={[{ maxWidth: 'sm', cols: 1 }]}
-					mt="md"
+			<FeedbackLayout>
+				<Box
+					sx={theme => ({
+						backgroundColor: 'white',
+						borderRadius: '4px',
+						padding: theme.spacing.xl,
+						height: '100%',
+					})}
 				>
-					<UserList />
-					<Box
-						sx={theme => ({
-							backgroundColor: 'white',
-							borderRadius: '4px',
-							padding: theme.spacing.xl,
-						})}
-					>
-						<Text className={styles.info_text} weight={600}>
-							Выберите сотрудника для оценки
-						</Text>
-					</Box>
-				</SimpleGrid>
-			</Box>
+					<Text color="brand" weight={600} size={19}>
+						Выберите сотрудника для оценки
+					</Text>
+				</Box>
+			</FeedbackLayout>
 		</>
 	)
 }

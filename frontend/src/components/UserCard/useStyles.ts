@@ -5,5 +5,6 @@ export const useStyles = createStyles(theme => ({
 		backgroundColor: 'white',
 		borderRadius: '4px',
 		padding: theme.spacing.lg,
+		height: '100%',
 	},
 }))
