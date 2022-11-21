@@ -38,7 +38,7 @@ const UserCard: FC<Props> = ({ image, name, post }) => {
 		<Flex direction={'column'} className={classes.root} gap="md">
 			<ScrollArea>
 				<Group>
-					<Avatar src={null} size={64} radius={100} />
+					<Avatar src={image} size={64} radius={100} />
 					<Stack spacing={5}>
 						<Title order={2} color="brand.5">
 							{name}

@@ -22,7 +22,7 @@ const ProfilePage: NextPageWithLayout = () => {
 		)
 
 	return (
-		<Container py="xl">
+		<Container py={{ base: 'md', xl: 'xl' }}>
 			<Head>
 				<title>Профиль</title>
 			</Head>

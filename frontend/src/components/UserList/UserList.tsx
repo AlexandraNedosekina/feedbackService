@@ -83,7 +83,13 @@ const UserList: FC<Props> = () => {
 	return (
 		<Flex direction={'column'} h={'100%'}>
 			<Search />
-			<ScrollArea mt="md" bg="white">
+			<ScrollArea
+				mt="md"
+				bg="white"
+				sx={() => ({
+					borderRadius: '4px',
+				})}
+			>
 				{users.map(user => (
 					<UserButton
 						key={user.id}

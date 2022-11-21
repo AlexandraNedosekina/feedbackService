@@ -52,11 +52,11 @@ export default function UserButton({
 			<Group>
 				<Avatar src={image} radius="xl" size={'lg'} />
 				<div style={{ flex: 1 }}>
-					<Title order={4} color="brand.5">
+					<Title order={4} color="brand.6">
 						{name}
 					</Title>
 
-					<Text color="brand.4" size={14}>
+					<Text color="black" size={14}>
 						{post}
 					</Text>
 				</div>
