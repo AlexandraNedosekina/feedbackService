@@ -29,7 +29,7 @@ async def create_user(
         raise HTTPException(
             status_code=400, detail="User with such email already exists"
         )
-    created_user = crud.user.create(db=db, obj_in=user_create)
+    created_user = crud.user.create(db=db, obj_in=user_create, owner_id=)
     return created_user
 
 

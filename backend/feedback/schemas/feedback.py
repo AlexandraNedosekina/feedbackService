@@ -1,5 +1,5 @@
 from datetime import datetime, timezone
-from typing import Literal
+from enum import Enum
 
 from pydantic import BaseModel, validator
 
@@ -20,7 +20,6 @@ class Colleagues(Base):
 
 
 class EventCreate(Base):
-    user_id: int
     date_start: datetime
     date_stop: datetime
 
@@ -38,7 +37,6 @@ class EventCreate(Base):
         return v
 
 
-#
 class EventUpdate(Base):
     date_start: datetime | None
     date_stop: datetime | None
@@ -58,21 +56,23 @@ class EventUpdate(Base):
         return v
 
 
+class EventStatus(str, Enum):
+    active = "active"
+    archived = "archived"
+
+
 class EventInDB(Base):
     id: int
-    user_id: int
     date_start: datetime
     date_stop: datetime
-    status: Literal["active", "archived"]
+    status: EventStatus
 
 
 class Event(EventInDB):
     pass
 
 
-class FeedbackCreate(Base):
-    event_id: int
-
+class FeedbackFromUser(Base):
     task_completion: int
     involvement: int
     motivation: int
@@ -90,16 +90,25 @@ class FeedbackCreate(Base):
         return v
 
 
+class FeedbackCreateEmpty(Base):
+    event_id: int
+    sender_id: int
+    receiver_id: int
+
+
 class FeedbackInDB(Base):
     id: int
     event_id: int
-    owner_id: int
-    avg_rating: float
+    sender_id: int
+    receiver_id: int
 
-    task_completion: int
-    involvement: int
-    motivation: int
-    interaction: int
+    completed: bool
+    avg_rating: float | None
+
+    task_completion: int | None
+    involvement: int | None
+    motivation: int | None
+    interaction: int | None
 
     achievements: str | None
     wishes: str | None

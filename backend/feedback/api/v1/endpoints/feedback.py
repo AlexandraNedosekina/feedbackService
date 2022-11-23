@@ -52,15 +52,17 @@ async def is_allowed_to_send_feedback(
 
 
 @router.post("/", response_model=schemas.Feedback)
-async def create_feedback(
-    feedback_create: schemas.FeedbackCreate,
+async def create_or_update_feedback(
+    sent_feedback: schemas.FeedbackFromUser,
     db: Session = Depends(get_db),
     curr_user: models.User = Depends(get_current_user),
-) -> schemas.Event:
+) -> schemas.Feedback:
+
     event = crud.event.get(db, feedback_create.event_id)
     if not event:
         raise HTTPException(status_code=404, detail="Event not found")
-    if not event.status == "active":
+
+    if not event.status == schemas.EventStatus.active:
         raise HTTPException(
             status_code=400, detail="You can not send feedback here. Event is archived"
         )
@@ -77,7 +79,7 @@ async def create_feedback(
         raise HTTPException(status_code=404, detail="You have already sent feedback")
 
     # Check if date between Event start and stop date
-    if not (event.date_start < datetime.utcnow() < event.date_stop):
+    if not (event.date_start < datetime.utcnow() < event.date_end):
         raise HTTPException(
             status_code=400,
             detail="You can not send feedback here. Event has not started or already ended",
@@ -99,22 +101,23 @@ async def get_feedback_by_id(
     return feedback
 
 
-@router.get("/user/{user_id}")
-async def get_feedback_by_user_id(
-    user_id: int,
-    status: Literal["active", "archived"] | None = None,
-    db: Session = Depends(get_db),
-    _: models.User = Depends(get_admin_boss_manager_hr),
-):
-    user = crud.user.get(db, user_id)
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
-
-    events_and_feedback = crud.event.get_by_user_id(db, user_id, status=status)
-    for i, e in enumerate(events_and_feedback):
-        events_and_feedback[i].users_feedback = e.users_feedback
-
-    return events_and_feedback
+# @router.get("/user/{user_id}")
+# async def get_feedback_by_user_id(
+#     user_id: int,
+#     status: Literal["active", "archived"] | None = None,
+#     db: Session = Depends(get_db),
+#     _: models.User = Depends(get_admin_boss_manager_hr),
+# ):
+#
+#     user = crud.user.get(db, user_id)
+#     if not user:
+#         raise HTTPException(status_code=404, detail="User not found")
+#
+#     events_and_feedback = crud.event.get_by_user_id(db, user_id, status=status)
+#     for i, e in enumerate(events_and_feedback):
+#         events_and_feedback[i].users_feedback = e.users_feedback
+#
+#     return events_and_feedback
 
 
 @router.delete("/{id}")
