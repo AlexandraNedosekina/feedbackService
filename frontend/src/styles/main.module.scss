@@ -101,3 +101,13 @@
 		font-size: 19px;
 	}
 }
+
+.TimeLine {
+	>&_Item:nth-child(2) {
+		align-content: left;
+	}
+
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}

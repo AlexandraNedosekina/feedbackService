@@ -17,20 +17,16 @@ const CareerPage: NextPageWithLayout = () => {
 		<>
 			<Container>
 				<Head>
-					<title>Твой карьерный рост</title>
+					<title>Карьерный рост</title>
 				</Head>
 				<Stack spacing={'xl'}>
 					<Title>Карьерный рост</Title>
 					<Text color="brand.5">Frontend-разработчик</Text>
-					<div>
+					<div className={styles.TimeLine}>
 						<Timeline active={1} bulletSize={24} lineWidth={2}>
-							<Timeline.Item
-								title="Middle, текущий уровень"
-								color="brand.5"
-							>
+							<Timeline.Item title="Middle, текущий уровень">
 								<Button variant="light">120 т.р.</Button>
 							</Timeline.Item>
-
 							<Timeline.Item title="Senior" lineVariant="dashed">
 								<Button variant="light">200+ т.р.</Button>
 								<Text fz="md" mt={6} fw={500}>
@@ -53,7 +49,6 @@ const CareerPage: NextPageWithLayout = () => {
 									</List.Item>
 								</List>
 							</Timeline.Item>
-
 							<Timeline.Item title="Тимлид">
 								<Button variant="light">200+ т.р.</Button>
 								<Text fz="md" mt={6} fw={500}>
