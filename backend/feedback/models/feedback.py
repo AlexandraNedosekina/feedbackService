@@ -12,7 +12,7 @@ class Event(Base):
 
     date_start = Column(DateTime, nullable=False)
     date_end = Column(DateTime, nullable=False)
-    status = Column(String)
+    status = Column(String) #waiting, active, archive
 
 
 class Feedback(Base):

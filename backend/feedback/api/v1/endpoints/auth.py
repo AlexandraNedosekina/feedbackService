@@ -25,7 +25,7 @@ async def register_user(token: schemas.OAuthToken, db: Session) -> models.User |
     user_create_schema = schemas.UserCreate(
         email=user_data.email, full_name=user_data.name
     )
-    db_user = crud.user.create(db, obj_in=user_create_schema, owner_id=)
+    db_user = crud.user.create(db, obj_in=user_create_schema)
     return db_user
 
 

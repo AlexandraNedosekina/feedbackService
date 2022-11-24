@@ -57,6 +57,7 @@ class EventUpdate(Base):
 
 
 class EventStatus(str, Enum):
+    waiting = "waiting"
     active = "active"
     archived = "archived"
 

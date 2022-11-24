@@ -6,7 +6,7 @@ from feedback.crud.base import CRUDBase
 
 class CRUDEvent(CRUDBase[models.Event, schemas.EventCreate, schemas.EventUpdate]):
     def create(self, db: Session, *, obj_in: schemas.EventCreate) -> models.Event:
-        db_obj = models.Event(**obj_in.dict(), status=schemas.EventStatus.active)
+        db_obj = models.Event(**obj_in.dict(), status=schemas.EventStatus.waiting)
         return super().create(db, obj_in=db_obj)
 
     def update_status(
