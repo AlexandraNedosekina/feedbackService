@@ -99,8 +99,6 @@ async def get_feedback_by_id(
     if not feedback:
         raise HTTPException(status_code=404, detail="Feedback does not exist")
     return feedback
-
-
 # @router.get("/user/{user_id}")
 # async def get_feedback_by_user_id(
 #     user_id: int,
@@ -131,3 +129,8 @@ async def delete_feedback(
         raise HTTPException(status_code=404, detail="Feedback does not exist")
     crud.feedback.remove(db, id=id)
     return Response(status_code=204)
+
+
+
+
+
