@@ -1,78 +1,95 @@
-import {
-	Container,
-	Timeline,
-	Title,
-	Text,
-	Stack,
-	Button,
-	List,
-} from '@mantine/core'
+import { Badge, Container, Text, Title } from '@mantine/core'
 import Head from 'next/head'
 import { BaseLayout } from 'src/layouts'
+import styles from 'src/styles/career.module.sass'
 import { NextPageWithLayout } from './_app'
-import styles from 'src/styles/main.module.scss'
 
 const CareerPage: NextPageWithLayout = () => {
 	return (
 		<>
+			<Head>
+				<title>Карьерный рост</title>
+			</Head>
 			<Container>
-				<Head>
-					<title>Карьерный рост</title>
-				</Head>
-				<Stack spacing={'xl'}>
-					<Title>Карьерный рост</Title>
-					<Text color="brand.5">Frontend-разработчик</Text>
-					<div className={styles.TimeLine}>
-						<Timeline active={1} bulletSize={24} lineWidth={2}>
-							<Timeline.Item title="Middle, текущий уровень">
-								<Button variant="light">120 т.р.</Button>
-							</Timeline.Item>
-							<Timeline.Item title="Senior" lineVariant="dashed">
-								<Button variant="light">200+ т.р.</Button>
-								<Text fz="md" mt={6} fw={500}>
-									Что необходимо изучить:
-								</Text>
-								<List withPadding>
-									<List.Item>архитектуру ПО</List.Item>
-									<List.Item>паттерны проектирования</List.Item>
-								</List>
-								<Text fz="md" mt={6} fw={500}>
-									Что необходимо сделать:
-								</Text>
-								<List withPadding>
-									<List.Item>
-										закончить проект “Рога и Копыта”
-									</List.Item>
-									<List.Item>
-										пройти техническое интервью у старшего
-										разработчика
-									</List.Item>
-								</List>
-							</Timeline.Item>
-							<Timeline.Item title="Тимлид">
-								<Button variant="light">200+ т.р.</Button>
-								<Text fz="md" mt={6} fw={500}>
-									Что необходимо изучить:
-								</Text>
-								<List withPadding>
-									<List.Item>курс по управлению персоналом</List.Item>
-								</List>
-								<Text fz="md" mt={6} fw={500}>
-									Что необходимо сделать:
-								</Text>
-								<List withPadding>
-									<List.Item>
-										продемонстрировать управленческие навыки
-									</List.Item>
-									<List.Item>
-										зарекомендовать себя надежным соратником для
-										коллег
-									</List.Item>
-								</List>
-							</Timeline.Item>
-						</Timeline>
+				<Title order={2}>Карьерный рост</Title>
+
+				<Title order={4} color="brand" mt="md">
+					Frontend-разработчик
+				</Title>
+
+				<div className={styles.timeline}>
+					<div className={styles.timeline_item}>
+						<div
+							className={styles.timeline_item_content}
+							data-line-active
+						>
+							<Title order={4} color="brand.6">
+								Middle, текущий уровень
+							</Title>
+
+							<Badge mt="sm">120 т.р.</Badge>
+							<div className={styles.timeline_bullet} data-active></div>
+						</div>
+						<div className={styles.timeline_item_span}></div>
 					</div>
-				</Stack>
+					<div className={styles.timeline_item}>
+						<div className={styles.timeline_item_span}></div>
+						<div className={styles.timeline_item_content}>
+							<Title order={4} color="brand.6">
+								Senior
+							</Title>
+
+							<Badge mt="sm">200+ т.р.</Badge>
+
+							<Text fz="md" mt={'md'} fw={500}>
+								Что необходимо изучить:
+							</Text>
+							<ul>
+								<li>архитектуру ПО</li>
+								<li>паттерны проектирования</li>
+							</ul>
+							<Text fz="md" mt={6} fw={500}>
+								Что необходимо сделать:
+							</Text>
+							<ul>
+								<li>закончить проект “Рога и Копыта”</li>
+								<li>
+									пройти техническое интервью у старшего разработчика
+								</li>
+							</ul>
+							<div className={styles.timeline_bullet}></div>
+						</div>
+					</div>
+					<div className={styles.timeline_item}>
+						<div className={styles.timeline_item_content}>
+							<Title order={4} color="brand.6">
+								Тимлид
+							</Title>
+
+							<Badge mt="sm">200+ т.р.</Badge>
+
+							<Text fz="md" mt={'md'} fw={500}>
+								Что необходимо изучить:
+							</Text>
+							<ul>
+								<li>курс по управлению персоналом</li>
+							</ul>
+
+							<Text fz="md" mt={6} fw={500}>
+								Что необходимо сделать:
+							</Text>
+							<ul>
+								<li>продемонстрировать управленческие навыки</li>
+								<li>
+									зарекомендовать себя надежным соратником для коллег
+								</li>
+							</ul>
+
+							<div className={styles.timeline_bullet}></div>
+						</div>
+						<div className={styles.timeline_item_span}></div>
+					</div>
+				</div>
 			</Container>
 		</>
 	)
