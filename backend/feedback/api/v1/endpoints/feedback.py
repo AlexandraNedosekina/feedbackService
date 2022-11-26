@@ -1,6 +1,6 @@
 from datetime import datetime
-from typing import Literal
-
+import sys
+from fastapi_utils.tasks import repeat_every
 from fastapi import APIRouter, Depends, HTTPException, Response
 from pydantic import parse_obj_as
 from sqlalchemy.orm import Session
@@ -14,12 +14,44 @@ get_admin_boss_manager_hr = GetUserWithRoles(["admin", "boss", "manager", "hr"])
 router = APIRouter()
 
 
-@router.get("/", response_model=list[schemas.Feedback])
+@router.post("/", description="Method for button 'Отправить', user_id belongs to receiver")
+async def send_feedback(feedback_upd: schemas.FeedbackFromUser,
+                        curr_user: models.User = Depends(get_current_user),
+                        db: Session = Depends(get_db)):
+    # проверки user_exists, user in colleagues
+    # либо получать event_id, sender_id, reciver_id и проверять curr_user на sender_id и находить запись самостоятельно
+
+    # либо, что будет проще для меня, запрашивать feedback_id, проверять curr_user с sender_id и находить зап
+    # по id feedback
+    db_obj = crud.feedback.get(db=db, id=feedback_upd.id)
+    if curr_user.id != db_obj.sender_id:
+        HTTPException(400, detail="You have no permissions to send this feedback")
+    feedback = crud.feedback.update_user_feedback(db=db, db_obj=db_obj, obj_in=feedback_upd)
+    return feedback
+
+
+@router.get("/me", response_model=list[schemas.Feedback], description="Show curr user active and archived feedback ")
+async def show_current_user_feedback_list(curr_user: models.User = Depends(get_current_user),
+                                          db: Session = Depends(get_db)):
+    try:
+        events_ids = db.query(models.Event.id).filter(models.Event.status == schemas.EventStatus.active and
+                                                      models.Event.status == schemas.EventStatus.archived).all()
+        feedbacks = db.query(models.Feedback).filter(models.Feedback.sender_id == curr_user.id and
+                                                     models.Feedback.event_id in events_ids).all()
+    except Exception as e:
+        return repr(e)
+    return feedbacks
+
+
+#Todo не получается пройти проверку с ролью админ, пишет method not allowed
+# поэтому пока закомментировал Depends(get_admin_boss_manager_hr)
+@router.get("/all", response_model=list[schemas.Feedback])
 async def get_all_feedback(
-    db: Session = Depends(get_db),
-    _: models.User = Depends(get_admin_boss_manager_hr),
-    skip: int = 0,
-    limit: int = 100,
+        db: Session = Depends(get_db),
+        # _: models.User = Depends(get_admin_boss_manager_hr),
+        _:models.User = Depends(get_admin),
+        skip: int = 0,
+        limit: int = 100,
 ) -> list[schemas.Feedback]:
     return parse_obj_as(
         list[schemas.Feedback], crud.feedback.get_multi(db, skip=skip, limit=limit)
@@ -27,7 +59,7 @@ async def get_all_feedback(
 
 
 async def is_allowed_to_send_feedback(
-    db: Session, curr_user: models.User, event: models.Event
+        db: Session, curr_user: models.User, event: models.Event
 ) -> bool:
     event_user = crud.user.get(db, event.user_id)
     event_user_roles = [r.description for r in event_user.roles]
@@ -38,7 +70,7 @@ async def is_allowed_to_send_feedback(
 
     # Only boss, manager, admin can send feedback to user with trainee role
     if "trainee" in event_user_roles and is_allowed(
-        curr_user, None, ["admin", "boss", "manager"]
+            curr_user, None, ["admin", "boss", "manager"]
     ):
         return True
     elif "trainee" in event_user_roles:
@@ -51,78 +83,23 @@ async def is_allowed_to_send_feedback(
     return True
 
 
-@router.post("/", response_model=schemas.Feedback)
-async def create_or_update_feedback(
-    sent_feedback: schemas.FeedbackFromUser,
-    db: Session = Depends(get_db),
-    curr_user: models.User = Depends(get_current_user),
-) -> schemas.Feedback:
-
-    event = crud.event.get(db, feedback_create.event_id)
-    if not event:
-        raise HTTPException(status_code=404, detail="Event not found")
-
-    if not event.status == schemas.EventStatus.active:
-        raise HTTPException(
-            status_code=400, detail="You can not send feedback here. Event is archived"
-        )
-
-    # Check if user can send feedback in this event
-    if not await is_allowed_to_send_feedback(db, curr_user, event):
-        raise HTTPException(
-            status_code=401, detail="You can not send feedback to this user"
-        )
-
-    # Check if user already has sent feedback to this event
-    feedback = crud.feedback.get_by_user_and_event(db, curr_user.id, event.id)
-    if feedback:
-        raise HTTPException(status_code=404, detail="You have already sent feedback")
-
-    # Check if date between Event start and stop date
-    if not (event.date_start < datetime.utcnow() < event.date_end):
-        raise HTTPException(
-            status_code=400,
-            detail="You can not send feedback here. Event has not started or already ended",
-        )
-
-    feedback = crud.feedback.create(db, obj_in=feedback_create, owner_id=curr_user.id)
-    return feedback
-
-
 @router.get("/{id}", response_model=schemas.Feedback)
 async def get_feedback_by_id(
-    id: int,
-    db: Session = Depends(get_db),
-    _: models.User = Depends(get_admin_boss_manager_hr),
+        id: int,
+        db: Session = Depends(get_db),
+        _: models.User = Depends(get_admin_boss_manager_hr),
 ) -> schemas.Feedback:
     feedback = crud.feedback.get(db, id)
     if not feedback:
         raise HTTPException(status_code=404, detail="Feedback does not exist")
     return feedback
-# @router.get("/user/{user_id}")
-# async def get_feedback_by_user_id(
-#     user_id: int,
-#     status: Literal["active", "archived"] | None = None,
-#     db: Session = Depends(get_db),
-#     _: models.User = Depends(get_admin_boss_manager_hr),
-# ):
-#
-#     user = crud.user.get(db, user_id)
-#     if not user:
-#         raise HTTPException(status_code=404, detail="User not found")
-#
-#     events_and_feedback = crud.event.get_by_user_id(db, user_id, status=status)
-#     for i, e in enumerate(events_and_feedback):
-#         events_and_feedback[i].users_feedback = e.users_feedback
-#
-#     return events_and_feedback
 
 
 @router.delete("/{id}")
 async def delete_feedback(
-    id: int,
-    db: Session = Depends(get_db),
-    _: models.User = Depends(get_admin),
+        id: int,
+        db: Session = Depends(get_db),
+        _: models.User = Depends(get_admin),
 ):
     feedback = crud.feedback.get(db, id)
     if not feedback:
@@ -132,5 +109,121 @@ async def delete_feedback(
 
 
 
+# @router.get("/sender/active/{user_id}", description="User method.Only active events. Optional method")
+# async def show_sender_active_feedback_list_by_user_id(user_id: int, db: Session = Depends(get_db)):
+#     user = crud.user.get(db=db, id=user_id)
+#     # показываем только сообщения активные и архивные (возможно только активные будем оставлять)
+#
+#     events = db.query(models.Event).filter(models.Event.status == schemas.EventStatus.active).all()
+#     feedbacks = db.query(models.Feedback).filter(models.Feedback.sender_id == user.id,
+#                                                  models.Feedback.event_id in events).all()
+#     # прочитать в нотпаде
+#     return feedbacks
+#
+#
+# @router.get("/sender/archieved/{user_id}", description="User method. Only archived events. Optional method")
+# async def show_sender_archived_feedback_list_by_user_id(user_id: int, db: Session = Depends(get_db)):
+#     user = crud.user.get(db=db, id=user_id)
+#     if not user:
+#         raise HTTPException(status_code=404, detail=f"No user with such id - {user_id}")
+#     # показываем только сообщения активные и архивные (возможно только активные будем оставлять)
+#
+#     events = db.query(models.Event).filter(models.Event.status == schemas.EventStatus.archived).all()
+#     feedbacks = db.query(models.Feedback).filter(models.Feedback.sender_id == user.id,
+#                                                  models.Feedback.event_id in events).all()
+#
+#     return feedbacks
 
+@router.get("/table/{user_id}", description="Admin method to show him table of feedbacks about user")
+async def show_receiver_active_feedback_list_by_user_id(user_id: int, db: Session = Depends(get_db)):
+    user = crud.user.get(db=db, id=user_id)
+    if not user:
+        raise HTTPException(status_code=404, detail=f"No user with such id - {user_id}")
+
+    events = db.query(models.Event).filter(models.Event.status == schemas.EventStatus.active).all()
+    feedbacks = db.query(models.Feedback).filter(models.Feedback.receiver_id == user.id,
+                                                 models.Feedback.event_id in events).all()
+    return feedbacks
+
+@router.get("/archieve/{user_id}", description="Admin method to show him archived feedbacks about user")
+async def show_receiver_active_feedback_list_by_user_id(user_id: int, db: Session = Depends(get_db)):
+    user = crud.user.get(db=db, id=user_id)
+    if not user:
+        raise HTTPException(status_code=404, detail=f"No user with such id - {user_id}")
+
+    events = db.query(models.Event).filter(models.Event.status == schemas.EventStatus.archived).all()
+    feedbacks = db.query(models.Feedback).filter(models.Feedback.receiver_id == user.id,
+                                                 models.Feedback.event_id in events).all()
+    return feedbacks
+
+@router.post("/create_oneway/{user_id}",
+             description="Creates task only for colleagues of specific user")  # response_model=list[schemas.Feedback]
+async def create_oneway_feedback_task(user_id: int,
+                                      event_create: schemas.EventCreate,
+                                      db: Session = Depends(get_db)):
+    # check user_exist method
+    user = crud.user.get(db=db, id=user_id)
+    if not user:
+        raise HTTPException(status_code=404, detail=f"No user with such id - {user_id}")
+
+    ###create_event crud method #подумать, какой статус добавить
+    event = crud.event.create(db=db, obj_in=event_create)
+
+    # для каждого коллеги создать задание по текущему пользователю
+    feedback_to_add = []
+    for colleague in user.colleagues:
+        ###create_feedback_oneway crud method
+        obj_in = schemas.FeedbackCreateEmpty(event_id=event.id,
+                                             sender_id=colleague.colleague_id,
+                                             receiver_id=user.id)
+
+        feed = crud.feedback.create_empty(db=db, obj_in=obj_in)
+        feedback_to_add.append(feed)
+
+    # Todo из-за ошибки возвращается только последний созданный feedback из всего списка, нужно понять в чем проблема.
+    return feedback_to_add
+
+
+# Todo возвращать список целиком
+@router.post('/all', description="Creates task for all users")
+async def create_feedback_task_for_all(event_create: schemas.EventCreate,
+                                       db: Session = Depends(get_db)):
+    event = crud.event.create(db=db, obj_in=event_create)
+    users = crud.user.get_multi(db=db)
+    for user in users:
+        for colleagues in user.colleagues:
+            obj_in = schemas.FeedbackCreateEmpty(
+                event_id=event.id,
+                sender_id=colleagues.colleague_id,
+                receiver_id=user.id)
+            feed = crud.feedback.create_empty(db=db, obj_in=obj_in)
+
+    return Response(status_code=200)
+
+
+@router.post("/create_twoway/{user_id}", description="Creates task for user and his colleagues")
+async def create_twoway_feedback_task(user_id: int, event_create: schemas.EventCreate, db: Session = Depends(get_db)):
+    event = crud.event.create(db=db, obj_in=event_create)
+    user = crud.user.get(db=db, id=user_id)
+    for colleague in user.colleagues:
+        obj_in_user = schemas.FeedbackCreateEmpty(event_id=event.id,
+                                                  sender_id=user.id,
+                                                  receiver_id=colleague.colleague_id)
+
+        obj_in_colleague = schemas.FeedbackCreateEmpty(event_id=event.id,
+                                                       sender_id=colleague.colleague_id,
+                                                       receiver_id=user.id)
+        crud.feedback.create_empty(db=db, obj_in=obj_in_user)
+        crud.feedback.create_empty(db=db, obj_in=obj_in_colleague)
+
+
+@router.delete("/")
+async def test_method_delete_all_feedback(db: Session = Depends(get_db)):
+    obj = crud.feedback.remove_all(db=db)
+    return Response(headers={"num of rows deleted": obj}, status_code=200)
+
+
+
+#написать метод, который будет осуществлять
+# @repeat_every(seconds=60)
 

@@ -27,13 +27,13 @@ async def get_all_events(
     )
 
 
-@router.post("/", response_model=schemas.Event)
-async def create_event(
-    event_create: schemas.EventCreate,
-    db: Session = Depends(get_db),
-    _: models.User = Depends(get_admin_boss_manager),
-) -> schemas.Event:
-    return crud.event.create(db, obj_in=event_create)
+# @router.post("/", response_model=schemas.Event)
+# async def create_event(
+#     event_create: schemas.EventCreate,
+#     db: Session = Depends(get_db),
+#     _: models.User = Depends(get_admin_boss_manager),
+# ) -> schemas.Event:
+#     return crud.event.create(db, obj_in=event_create)
 
 
 @router.get("/{id}", response_model=schemas.Event)

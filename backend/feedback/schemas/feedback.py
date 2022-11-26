@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import datetime, timezone, date
 from enum import Enum
 
 from pydantic import BaseModel, validator
@@ -23,37 +23,37 @@ class EventCreate(Base):
     date_start: datetime
     date_stop: datetime
 
-    @validator("date_start", "date_stop")
-    def validate_dates(cls, v):
-        if v < datetime.now(timezone.utc):
-            raise ValueError("date can not be earlier than now")
-        return v
-
-    @validator("date_stop")
-    def validate_both_dates(cls, v, values):
-        start_date = values.get("date_start")
-        if v < start_date:
-            raise ValueError("stop can not be earlier than start")
-        return v
+    # @validator("date_start", "date_stop")
+    # def validate_dates(cls, v):
+    #     if v < datetime.now(timezone.utc):
+    #         raise ValueError("date can not be earlier than now")
+    #     return v
+    #
+    # @validator("date_stop")
+    # def validate_both_dates(cls, v, values):
+    #     start_date = values.get("date_start")
+    #     if v < start_date:
+    #         raise ValueError("stop can not be earlier than start")
+    #     return v
 
 
 class EventUpdate(Base):
     date_start: datetime | None
     date_stop: datetime | None
 
-    @validator("date_start", "date_stop")
-    def validate_dates(cls, v):
-        if v < datetime.now(timezone.utc):
-            raise ValueError("date can not be earlier than now")
-        return v
-
-    @validator("date_stop")
-    def validate_both_dates(cls, v, values):
-        start_date = values.get("start_date")
-        if start_date:
-            if v < start_date:
-                raise ValueError("stop can not be earlier than start")
-        return v
+    # @validator("date_start", "date_stop")
+    # def validate_dates(cls, v):
+    #     if v < datetime.now(timezone.utc):
+    #         raise ValueError("date can not be earlier than now")
+    #     return v
+    #
+    # @validator("date_stop")
+    # def validate_both_dates(cls, v, values):
+    #     start_date = values.get("start_date")
+    #     if start_date:
+    #         if v < start_date:
+    #             raise ValueError("stop can not be earlier than start")
+    #     return v
 
 
 class EventStatus(str, Enum):
@@ -74,6 +74,7 @@ class Event(EventInDB):
 
 
 class FeedbackFromUser(Base):
+    id: int
     task_completion: int
     involvement: int
     motivation: int

@@ -1,17 +1,27 @@
 from sqlalchemy import (Boolean, Column, DateTime, ForeignKey, Integer,
-                        Numeric, String)
+                        Numeric, String, TypeDecorator)
+from datetime import datetime
 from sqlalchemy.orm import relationship
 
 from feedback.db.session import Base
 
+
+class MyDateTime(TypeDecorator):
+    impl = DateTime
+
+    def process_bind_param(self, value, dialect):
+        if type(value) is str:
+            value = value.split(".")[0]
+            return datetime.strptime(value, '%Y-%m-%dT%H:%M:%S')
+        return value
 
 class Event(Base):
     __tablename__ = "event"
 
     id = Column(Integer, primary_key=True)
 
-    date_start = Column(DateTime, nullable=False)
-    date_end = Column(DateTime, nullable=False)
+    date_start = Column(MyDateTime, nullable=False)
+    date_stop = Column(MyDateTime, nullable=False)
     status = Column(String) #waiting, active, archive
 
 

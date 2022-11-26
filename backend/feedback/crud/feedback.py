@@ -1,3 +1,5 @@
+from typing import List
+
 from sqlalchemy.orm import Session
 
 from feedback import models, schemas
@@ -26,11 +28,16 @@ class CRUDFeedback(
         upd = {**obj_in.dict(), "avg_rating": avg_rating, "completed": True}
         return super().update(db, db_obj=db_obj, obj_in=upd)
 
-    def create_empty_feedback(
+    def create_empty(
         self, db: Session, *, obj_in: schemas.FeedbackCreateEmpty
     ) -> models.Feedback:
         db_obj = models.Feedback(**obj_in.dict(), completed=False)
         return super().create(db, obj_in=db_obj)
+
+    def remove_all(self, db: Session): #-> List[models.Feedback]
+        db_obj = db.query(self.model).delete()
+        db.commit()
+        return db_obj
 
     # def create(self, db: Session, *, obj_in: schemas.FeedbackCreate, sender_id: int) -> models.Feedback:
     #     user_rating = [
