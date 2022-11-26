@@ -33,7 +33,7 @@
 }
 
 .content {
-	>div:nth-of-type(2n) {
+	> div:nth-of-type(2n) {
 		text-align: right;
 
 		@media screen and (max-width: 767px) {
@@ -81,7 +81,7 @@
 		width: 253px;
 		height: 198px;
 		margin-left: 30%;
-		margin-top: 20%
+		margin-top: 20%;
 	}
 }
 
@@ -91,23 +91,12 @@
 	&_grate {
 		background-color: #b8d7ff;
 	}
-
 }
 
 .info {
 	&_text {
-		color: #3B82BF;
+		color: #3b82bf;
 		font-family: 'Rubik';
 		font-size: 19px;
 	}
-}
-
-.TimeLine {
-	>&_Item:nth-child(2) {
-		align-content: left;
-	}
-
-	display: flex;
-	justify-content: center;
-	align-items: center;
 }
