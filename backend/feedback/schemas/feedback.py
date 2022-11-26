@@ -1,4 +1,4 @@
-from datetime import datetime, timezone, date
+from datetime import date, datetime, timezone
 from enum import Enum
 
 from pydantic import BaseModel, validator
@@ -74,7 +74,6 @@ class Event(EventInDB):
 
 
 class FeedbackFromUser(Base):
-    id: int
     task_completion: int
     involvement: int
     motivation: int

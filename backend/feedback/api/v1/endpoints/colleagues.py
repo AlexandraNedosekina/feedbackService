@@ -16,9 +16,9 @@ async def get_all_colleagues(db: Session = Depends(get_db)):
 
 @router.get("/{user_id}", response_model=list[schemas.Colleagues])
 async def get_colleagues_by_user(
-        user_id: int,
-        db: Session = Depends(get_db),
-        _: models.User = Depends(get_current_user),
+    user_id: int,
+    db: Session = Depends(get_db),
+    _: models.User = Depends(get_current_user),
 ):
     user = crud.user.get(db, user_id)
     if not user:
@@ -28,10 +28,10 @@ async def get_colleagues_by_user(
 
 @router.post("/{user_id}")  # response_model=schemas.UserShowColleagues)
 async def add_user_colleagues(
-        user_id: int,
-        colleagues_ids: schemas.ColleaguesIdList,
-        db: Session = Depends(get_db),
-        _: models.User = Depends(get_current_user),
+    user_id: int,
+    colleagues_ids: schemas.ColleaguesIdList,
+    db: Session = Depends(get_db),
+    _: models.User = Depends(get_current_user),
 ):
     upd_user_colls = []
     upd_colls_list = []
@@ -71,10 +71,10 @@ async def add_user_colleagues(
 
 @router.delete("/user_id")
 async def delete_user_colleagues(
-        user_id: int,
-        colleagues_ids: schemas.ColleaguesIdList,
-        db: Session = Depends(get_db),
-        _: models.User = Depends(get_current_user),
+    user_id: int,
+    colleagues_ids: schemas.ColleaguesIdList,
+    db: Session = Depends(get_db),
+    _: models.User = Depends(get_current_user),
 ):
     to_delete_colleagues_ids = colleagues_ids.colleagues_ids
     user = crud.user.get(db, user_id)
