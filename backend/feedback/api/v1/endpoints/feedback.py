@@ -216,6 +216,9 @@ async def create_twoway_feedback_task(user_id: int, event_create: schemas.EventC
         crud.feedback.create_empty(db=db, obj_in=obj_in_user)
         crud.feedback.create_empty(db=db, obj_in=obj_in_colleague)
 
+    #Todo возвращать список
+    return Response(status_code=200)
+
 
 @router.delete("/")
 async def test_method_delete_all_feedback(db: Session = Depends(get_db)):
@@ -223,7 +226,33 @@ async def test_method_delete_all_feedback(db: Session = Depends(get_db)):
     return Response(headers={"num of rows deleted": obj}, status_code=200)
 
 
+from feedback.db.session import engine
+from fastapi.encoders import jsonable_encoder
 
-#написать метод, который будет осуществлять
-# @repeat_every(seconds=60)
+
+@router.on_event("startup")
+@repeat_every(seconds=3600)
+async def sheduled_update_event_status():
+    try:
+        db = Session(engine)
+        def update_event_status(db: Session):
+            events = db.query(models.Event).filter(models.Event.status == "waiting")
+
+            events_to_add = []
+            time = datetime.datetime.now()
+            for event in jsonable_encoder(events):
+                if event.date_start <= time < event.date_end:
+                    event.status = "active"
+                    events_to_add.append(event)
+            db.add(events_to_add)
+            db.commit()
+            db.refresh(events_to_add)
+            return events_to_add
+
+        ev = update_event_status(db)
+
+    except Exception as e:
+        #Todo log exception and send notifications to telegram bot
+        sys.stdout.write(str(e))
+        sys.stdout.flush()
 
