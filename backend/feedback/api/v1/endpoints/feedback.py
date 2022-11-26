@@ -190,7 +190,7 @@ async def show_receiver_active_feedback_list_by_user_id(
     feedbacks = (
         db.query(models.Feedback)
         .filter(
-            models.Feedback.receiver_id == user.id, models.Feedback.event_id in events
+            models.Feedback.receiver_id == user.id, models.Feedback.event_id._in(events)
         )
         .all()
     )
@@ -216,7 +216,7 @@ async def show_receiver_archive_feedback_list_by_user_id(
     feedbacks = (
         db.query(models.Feedback)
         .filter(
-            models.Feedback.receiver_id == user.id, models.Feedback.event_id in events
+            models.Feedback.receiver_id == user.id, models.Feedback.event_id.in_(events)
         )
         .all()
     )
