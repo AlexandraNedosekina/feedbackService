@@ -70,7 +70,7 @@ const UserCard: FC<Props> = ({ image, name, post }) => {
 					</Group>
 				</Stack>
 
-				<Stack maw={'40%'}>
+				<Stack maw={'400px'}>
 					<Textarea
 						placeholder="Опишите, какие успехи достигнуты"
 						label="Достижения"
