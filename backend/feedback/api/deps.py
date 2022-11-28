@@ -30,16 +30,13 @@ async def get_current_user(
 
 
 class GetUserWithRoles:
-    def __init__(self, permitted_roles: list[str] = None):
+    def __init__(self, permitted_roles: list[str]):
         self.roles = permitted_roles
-        if not permitted_roles:
-            self.roles = []
 
     def __call__(
         self, current_user: models.User = Depends(get_current_user)
     ) -> models.User:
         current_user_roles = [r.description for r in current_user.roles]
-        print(f"{current_user.full_name} tying to access {self.roles} endpoint")
         for role in current_user_roles:
             if role in self.roles:
                 return current_user
@@ -48,7 +45,7 @@ class GetUserWithRoles:
 
 def is_allowed(
     current_user: models.User,
-    target_user_id: int,
+    target_user_id: int | None,
     permitted_roles: list[
         Literal[
             "HR", "manager", "employee", "trainee", "boss", "mentor", "self", "admin"
@@ -61,7 +58,7 @@ def is_allowed(
         if role in permitted_roles:
             return True
 
-    if "self" in permitted_roles:
+    if "self" in permitted_roles and target_user_id:
         if current_user.id == target_user_id:
             return True
     return False

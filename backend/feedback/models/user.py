@@ -52,7 +52,6 @@ class User(Base):
         backref="user",
         cascade="all, delete, delete-orphan",
         lazy="joined",
-        order_by="Colleagues.id",
     )
 
 
