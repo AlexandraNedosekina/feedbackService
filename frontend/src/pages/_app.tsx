@@ -1,6 +1,7 @@
 import { MantineProvider } from '@mantine/core'
 import { NotificationsProvider, showNotification } from '@mantine/notifications'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { NextPage } from 'next'
 import type { AppProps } from 'next/app'
 import { ReactElement, ReactNode } from 'react'
@@ -58,6 +59,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 					{getLayout(<Component {...pageProps} />)}
 				</NotificationsProvider>
 			</MantineProvider>
+			<ReactQueryDevtools initialIsOpen={false} />
 		</QueryClientProvider>
 	)
 }
