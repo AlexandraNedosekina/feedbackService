@@ -11,7 +11,6 @@ from feedback import crud, models, schemas
 from feedback.api.deps import (GetUserWithRoles, get_current_user, get_db,
                                is_allowed)
 
-logging.basicConfig(level=logging.DEBUG, format="%(asctime)s;%(levelname)s;%(message)s")
 logger = logging.getLogger(__name__)
 
 get_admin = GetUserWithRoles(["admin"])
@@ -19,30 +18,47 @@ get_admin_boss_manager_hr = GetUserWithRoles(["admin", "boss", "manager", "hr"])
 get_admin_boss_manager = GetUserWithRoles(["admin", "boss", "manager"])
 router = APIRouter()
 
-    
+
 @router.post("/send-out-of-turn", response_model=schemas.Feedback)
-async def send_feedback_out_of_turn(user_id: int, user_feedback: schemas.FeedbackFromUser, db: Session = Depends(get_db), curr_user: models.User = Depends(get_admin_boss_manager)):
+async def send_feedback_out_of_turn(
+    user_id: int,
+    user_feedback: schemas.FeedbackFromUser,
+    db: Session = Depends(get_db),
+    curr_user: models.User = Depends(get_admin_boss_manager),
+):
     user = crud.user.get(db, user_id)
     if not user:
         raise HTTPException(status_code=404, detail="User does not exist")
-    
+
     user_roles = [r.description for r in user.roles]
     can_send_feedback = True
-    
-    for el in ('manager', 'hr', 'boss', 'admin'):
+
+    for el in ("manager", "hr", "boss", "admin"):
         if el in user_roles:
             can_send_feedback = False
             break
-    
+
     if not can_send_feedback:
-        raise HTTPException(status_code=403, detail="You can not send feedback to user with that role")
+        raise HTTPException(
+            status_code=403, detail="You can not send feedback to user with that role"
+        )
 
     curr_utc_datetime = datetime.now(tz=timezone.utc) + timedelta(seconds=2)
-    new_event_params = schemas.EventCreate(date_start=curr_utc_datetime, date_stop=curr_utc_datetime + timedelta(seconds=4))
+    new_event_params = schemas.EventCreate(
+        date_start=curr_utc_datetime, date_stop=curr_utc_datetime + timedelta(seconds=4)
+    )
     new_event = crud.event.create(db, obj_in=new_event_params)
-    
-    new_feedback = crud.feedback.create(db, obj_in=user_feedback, sender_id=curr_user.id, receiver_id=user.id, event_id=new_event.id)
-    _ = crud.event.update_status(db, db_obj=new_event, status=schemas.EventStatus.archived)
+
+    new_feedback = crud.feedback.create(
+        db,
+        obj_in=user_feedback,
+        sender_id=curr_user.id,
+        receiver_id=user.id,
+        event_id=new_event.id,
+    )
+    _ = crud.event.update_status(
+        db, db_obj=new_event, status=schemas.EventStatus.archived
+    )
     return new_feedback
 
 
@@ -84,6 +100,7 @@ async def send_feedback(
                 receiver_id=feedback.receiver_id,
                 event_id=feedback.event_id,
             )
+
         return crud.feedback.update_user_feedback(
             db=db, db_obj=_feedback, obj_in=feedback_upd
         )
@@ -151,11 +168,15 @@ async def show_current_user_feedback_list(
 async def get_feedback_by_id(
     id: int,
     db: Session = Depends(get_db),
-    _: models.User = Depends(get_admin_boss_manager_hr),
+    curr_user: models.User = Depends(get_current_user),
 ) -> schemas.Feedback:
     feedback = crud.feedback.get(db, id)
     if not feedback:
         raise HTTPException(status_code=404, detail="Feedback does not exist")
+    if not is_allowed(
+        curr_user, feedback.sender_id, ["admin", "boss", "manager", "HR", "self"]
+    ):
+        raise HTTPException(status_code=401, detail="Not enough permissions")
     return feedback
 
 
@@ -197,14 +218,16 @@ async def is_allowed_to_send_feedback(
     description="Admin method to show him table of feedbacks about user",
 )
 async def show_receiver_active_feedback_list_by_user_id(
-        user_id: int, db: Session = Depends(get_db), _: models.User = Depends(get_admin_boss_manager_hr)
+    user_id: int,
+    db: Session = Depends(get_db),
+    _: models.User = Depends(get_admin_boss_manager_hr),
 ):
     user = crud.user.get(db=db, id=user_id)
     if not user:
         raise HTTPException(status_code=404, detail="User does not exist")
-    
+
     events_ids = set()
-    for val in  (
+    for val in (
         db.query(models.Event)
         .filter(models.Event.status == schemas.EventStatus.active)
         .distinct()
@@ -215,7 +238,7 @@ async def show_receiver_active_feedback_list_by_user_id(
         db.query(models.Feedback)
         .filter(
             models.Feedback.receiver_id == user.id,
-            models.Feedback.event_id.in_(events_ids)
+            models.Feedback.event_id.in_(events_ids),
         )
         .all()
     )
@@ -227,18 +250,18 @@ async def show_receiver_active_feedback_list_by_user_id(
     description="Admin method to show him archived feedbacks about user",
 )
 async def show_receiver_archive_feedback_list_by_user_id(
-        user_id: int, db: Session = Depends(get_db), _: models.User = Depends(get_admin_boss_manager_hr)
+    user_id: int,
+    db: Session = Depends(get_db),
+    _: models.User = Depends(get_admin_boss_manager_hr),
 ):
     user = crud.user.get(db=db, id=user_id)
     if not user:
         raise HTTPException(status_code=404, detail="User does not exist")
-    
+
     events_ids = set()
     for val in (
         db.query(models.Event.id)
-        .filter(
-            models.Event.status == schemas.EventStatus.archived
-        )
+        .filter(models.Event.status == schemas.EventStatus.archived)
         .distinct()
     ):
         events_ids.add(val[0])
@@ -247,7 +270,7 @@ async def show_receiver_archive_feedback_list_by_user_id(
         db.query(models.Feedback)
         .filter(
             models.Feedback.receiver_id == user.id,
-            models.Feedback.event_id.in_(events_ids)
+            models.Feedback.event_id.in_(events_ids),
         )
         .all()
     )
@@ -297,7 +320,9 @@ async def sheduled_update_event_status():
             events_to_add = []
             time = datetime.utcnow()
             for event in events:
-                logger.debug(f"[Scheduler (Archived)] checking  {time} > {event.date_stop}")
+                logger.debug(
+                    f"[Scheduler (Archived)] checking  {time} > {event.date_stop}"
+                )
                 if time > event.date_stop:
                     logger.debug(f"Updating event: {event.id} status to: Archived")
                     event = crud.event.update_status(
