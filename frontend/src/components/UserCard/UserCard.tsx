@@ -1,18 +1,16 @@
 import {
 	Avatar,
-	Button,
 	Flex,
 	Group,
-	Rating,
 	ScrollArea,
 	Stack,
 	Text,
-	Textarea,
-	TextareaProps,
 	Title,
 } from '@mantine/core'
-import router from 'next/router'
 import { FC } from 'react'
+import { Buttons } from './Buttons'
+import { Rating } from './Rating'
+import { Textarea } from './Textarea'
 import { useStyles } from './useStyles'
 
 interface Props {
@@ -21,18 +19,8 @@ interface Props {
 	post: string
 }
 
-const textareaConfig: TextareaProps = {
-	autosize: true,
-	minRows: 3,
-	maxRows: 8,
-}
-
 const UserCard: FC<Props> = ({ image, name, post }) => {
 	const { classes } = useStyles()
-
-	function goToEmpty() {
-		router.push('/feedback/')
-	}
 
 	return (
 		<Flex direction={'column'} className={classes.root} gap="md">
@@ -46,64 +34,43 @@ const UserCard: FC<Props> = ({ image, name, post }) => {
 						<Text color="brand.5">{post}</Text>
 					</Stack>
 				</Group>
+
 				<Stack
 					sx={() => ({
 						maxWidth: 'max-content',
 					})}
 					my={40}
 				>
-					<Group position="apart">
-						<div>Выполнение задач</div>
-						<Rating defaultValue={0} size="md" />
-					</Group>
-					<Group position="apart">
-						<div>Вовлеченность</div>
-						<Rating defaultValue={0} size="md" />
-					</Group>
-					<Group position="apart">
-						<div>Мотивация</div>
-						<Rating defaultValue={0} size="md" />
-					</Group>
-					<Group position="apart">
-						<div>Взаимодействие с командой</div>
-						<Rating defaultValue={0} size="md" />
-					</Group>
+					<Rating title="Выполнение задач" name="task_completion" />
+					<Rating title="Вовлеченность" name="involvement" />
+					<Rating title="Мотивация" name="motivation" />
+					<Rating title="Взаимодействие с командой" name="interaction" />
 				</Stack>
 
-				<Stack maw={'400px'}>
+				<Stack maw={'400px'} pb={1}>
 					<Textarea
 						placeholder="Опишите, какие успехи достигнуты"
 						label="Достижения"
-						{...textareaConfig}
+						name="achievements"
 					/>
 					<Textarea
 						placeholder="Что можно сделать лучше"
 						label="Пожелания"
-						{...textareaConfig}
+						name="wishes"
 					/>
 					<Textarea
 						placeholder="Что получилось не очень"
 						label="Замечания"
-						{...textareaConfig}
+						name="remarks"
 					/>
 					<Textarea
 						placeholder="Любые комментарии"
 						label="Комментарии"
-						{...textareaConfig}
-						pb={1}
+						name="comment"
 					/>
 				</Stack>
 			</ScrollArea>
-			<Group>
-				<Button>Сохранить</Button>
-				<Button
-					variant="outline"
-					style={{ background: 'white' }}
-					onClick={goToEmpty}
-				>
-					Отмена
-				</Button>
-			</Group>
+			<Buttons />
 		</Flex>
 	)
 }
