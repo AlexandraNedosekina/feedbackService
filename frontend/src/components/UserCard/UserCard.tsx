@@ -7,7 +7,11 @@ import {
 	Text,
 	Title,
 } from '@mantine/core'
+import { useQuery } from '@tanstack/react-query'
+import { useRouter } from 'next/router'
 import { FC } from 'react'
+import { getFeedback, QueryKeys } from 'src/api'
+import { useFeedbackStore } from 'src/stores'
 import { Buttons } from './Buttons'
 import { Rating } from './Rating'
 import { Textarea } from './Textarea'
@@ -21,6 +25,31 @@ interface Props {
 
 const UserCard: FC<Props> = ({ image, name, post }) => {
 	const { classes } = useStyles()
+	const update = useFeedbackStore(state => state.update)
+
+	const {
+		query: { feedbackId },
+	} = useRouter()
+
+	const { isLoading } = useQuery({
+		queryKey: [QueryKeys.FEEDBACK, +(feedbackId as string)],
+		queryFn: () => getFeedback(+(feedbackId as string)),
+		enabled: !!feedbackId,
+		onSuccess: data => {
+			update({
+				task_completion: data.task_completion,
+				involvement: data.involvement,
+				motivation: data.motivation,
+				interaction: data.interaction,
+				achievements: data.achievements,
+				wishes: data.wishes,
+				remarks: data.remarks,
+				comment: data.comment,
+			})
+		},
+	})
+
+	if (isLoading) return <p>Загузка...</p>
 
 	return (
 		<Flex direction={'column'} className={classes.root} gap="md">

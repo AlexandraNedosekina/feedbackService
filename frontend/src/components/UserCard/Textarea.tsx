@@ -1,6 +1,5 @@
 import { Textarea as MantineTextarea } from '@mantine/core'
-import { useDebouncedValue } from '@mantine/hooks'
-import { FC, useEffect, useState } from 'react'
+import { FC } from 'react'
 import { FeedbackFromUser } from 'src/api/generatedTypes'
 import { useFeedbackStore } from 'src/stores'
 
@@ -14,13 +13,8 @@ interface Props {
 }
 
 export const Textarea: FC<Props> = ({ name, label, placeholder }) => {
+	const storeValue = useFeedbackStore(state => state[name])
 	const update = useFeedbackStore(state => state.update)
-	const [value, setValue] = useState('')
-	const [debounced] = useDebouncedValue(value, 500)
-
-	useEffect(() => {
-		update({ [name]: debounced })
-	}, [debounced])
 
 	return (
 		<MantineTextarea
@@ -29,8 +23,8 @@ export const Textarea: FC<Props> = ({ name, label, placeholder }) => {
 			autosize={true}
 			minRows={3}
 			maxRows={8}
-			value={value}
-			onChange={event => setValue(event.currentTarget.value)}
+			value={storeValue || ''}
+			onChange={event => update({ [name]: event.currentTarget.value })}
 		/>
 	)
 }
