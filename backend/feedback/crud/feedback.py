@@ -18,7 +18,7 @@ class CRUDFeedback(
         obj_in: schemas.FeedbackFromUser,
         sender_id: int,
         receiver_id: int,
-        event_id: int
+        event_id: int,
     ) -> models.Feedback:
         user_rating = [
             obj_in.task_completion,
@@ -33,7 +33,7 @@ class CRUDFeedback(
             completed=True,
             sender_id=sender_id,
             receiver_id=receiver_id,
-            event_id=event_id
+            event_id=event_id,
         )
         db.add(db_obj)
         db.commit()
@@ -67,18 +67,20 @@ class CRUDFeedback(
         db.commit()
         return number_of_deleted_rows
 
-    def get_by_event_id_and_user_id(
-        self, db: Session, event_id: int, user_id: int
+    def get_by_event_sender_and_receiver(
+        self, db: Session, event_id: int, sender_id: int, receiver_id: int
     ) -> models.Feedback | None:
-        feedback = (
-            db.query(models.Feedback)
-            .filter(
-                models.Feedback.event_id == event_id,
-                models.Feedback.sender_id == user_id,
-            )
-            .first()
+        feedback = db.query(models.Feedback).filter(
+            models.Feedback.event_id == event_id,
+            models.Feedback.sender_id == sender_id,
+            models.Feedback.receiver_id == receiver_id,
         )
-        return feedback
+        from logging import getLogger
+
+        logger = getLogger(__name__)
+        logger.debug(f"[ CRUD Feedback ] q all = {feedback.all()}")
+        logger.debug(f"[ CRUD Feedback ] q first = {feedback.first()}")
+        return feedback.first()
 
 
 feedback = CRUDFeedback(models.Feedback)

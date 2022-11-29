@@ -89,20 +89,24 @@ async def send_feedback(
     # мы проверяем что если этот фидбэк создан для него то просто обновляем значения
     # а если не для него то создаем новый фидбэк
     if allow == "privilege":
-        _feedback = crud.feedback.get_by_event_id_and_user_id(
-            db, feedback.event_id, curr_user.id
+        _feedback = crud.feedback.get_by_event_sender_and_receiver(
+            db, feedback.event_id, curr_user.id, feedback.receiver_id
         )
-        if not _feedback:
-            return crud.feedback.create(
-                db,
-                obj_in=feedback_upd,
-                sender_id=curr_user.id,
-                receiver_id=feedback.receiver_id,
-                event_id=feedback.event_id,
+        if _feedback:
+            return crud.feedback.update_user_feedback(
+                db=db, db_obj=_feedback, obj_in=feedback_upd
             )
 
-        return crud.feedback.update_user_feedback(
-            db=db, db_obj=_feedback, obj_in=feedback_upd
+        if feedback.receiver_id == curr_user.id:
+            raise HTTPException(
+                status_code=400, detail="You can not send feedback to yourself"
+            )
+        return crud.feedback.create(
+            db,
+            obj_in=feedback_upd,
+            sender_id=curr_user.id,
+            receiver_id=feedback.receiver_id,
+            event_id=feedback.event_id,
         )
 
     if not allow:
@@ -160,7 +164,7 @@ async def show_current_user_feedback_list(
     )
 
     feedbacks = feedbacks_q.filter(models.Feedback.sender_id == curr_user.id).all()
-
+    logger.debug(f"final feedbacks filter={feedbacks}")
     return parse_obj_as(list[schemas.Feedback], feedbacks)
 
 

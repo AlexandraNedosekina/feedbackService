@@ -26,6 +26,9 @@ class Event(Base):
     date_stop = Column(MyDateTime, nullable=False)
     status = Column(String)  # waiting, active, archive
 
+    def __repr__(self):
+        return f"<Event id={self.id} status={self.status}>"
+
 
 class Feedback(Base):
     __tablename__ = "feedback"
@@ -47,3 +50,6 @@ class Feedback(Base):
     wishes = Column(String)
     remarks = Column(String)
     comment = Column(String)
+
+    def __repr__(self):
+        return f"<Feedback id={self.id} event_id={self.event_id} sender_id={self.sender_id} receiver_id={self.receiver_id}>"
