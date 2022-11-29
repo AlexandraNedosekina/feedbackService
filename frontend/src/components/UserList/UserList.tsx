@@ -79,7 +79,7 @@ interface Props {}
 
 const UserList: FC<Props> = () => {
 	const {
-		query: { userId },
+		query: { feedbackId },
 	} = useRouter()
 
 	const { data: feedbackList, isLoading } = useQuery({
@@ -104,14 +104,14 @@ const UserList: FC<Props> = () => {
 				})}
 			>
 				{feedbackList &&
-					feedbackList.map(user => (
+					feedbackList.map(feedback => (
 						<UserButton
-							key={user.id}
-							image={user.image}
-							name={user.name}
-							post={user.email}
-							userId={user.id}
-							isActive={+(userId as string) === user.id}
+							key={feedback.id}
+							image={feedback.image}
+							name={feedback.name}
+							post={feedback.email}
+							userId={feedback.id}
+							isActive={+(feedbackId as string) === feedback.id}
 						/>
 					))}
 			</ScrollArea>
