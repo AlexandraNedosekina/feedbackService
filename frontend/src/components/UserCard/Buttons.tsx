@@ -1,12 +1,16 @@
 import { Button, Group } from '@mantine/core'
 import { useMutation } from '@tanstack/react-query'
-import router from 'next/router'
+import router, { useRouter } from 'next/router'
 import { useMemo } from 'react'
 import { createFeedback } from 'src/api'
 import { FeedbackFromUser } from 'src/api/generatedTypes'
 import { useFeedbackStore } from 'src/stores'
 
 export const Buttons = () => {
+	const {
+		query: { feedbackId },
+	} = useRouter()
+
 	const { update, ...feedbackStore } = useFeedbackStore()
 
 	const requiredFields: Pick<
@@ -36,12 +40,17 @@ export const Buttons = () => {
 	}
 
 	const { mutate, isLoading } = useMutation({
-		mutationFn: (data: FeedbackFromUser) => createFeedback(1, data),
+		mutationFn: (data: FeedbackFromUser) =>
+			createFeedback(+(feedbackId as string), data),
 	})
 
 	return (
 		<Group>
-			<Button disabled={isDisabled} loading={isLoading}>
+			<Button
+				disabled={isDisabled}
+				loading={isLoading}
+				onClick={() => mutate(feedbackStore)}
+			>
 				Сохранить
 			</Button>
 			<Button
