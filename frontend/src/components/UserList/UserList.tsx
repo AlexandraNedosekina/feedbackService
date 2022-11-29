@@ -1,8 +1,10 @@
 import Search from '@components/SearchBar'
 import UserButton from '@components/UserButton'
 import { Flex, ScrollArea } from '@mantine/core'
+import { useQuery } from '@tanstack/react-query'
 import { useRouter } from 'next/router'
 import { FC } from 'react'
+import { getFeedbackList, QueryKeys } from 'src/api'
 
 const users = [
 	{
@@ -80,26 +82,38 @@ const UserList: FC<Props> = () => {
 		query: { userId },
 	} = useRouter()
 
+	const { data: feedbackList, isLoading } = useQuery({
+		queryKey: [QueryKeys.FEEDBACK_LIST],
+		queryFn: getFeedbackList,
+	})
+
+	if (isLoading) {
+		// TODO loading skeleton
+		return <p>Загрузка...</p>
+	}
+
 	return (
 		<Flex direction={'column'} h={'100%'}>
 			<Search />
 			<ScrollArea
 				mt="md"
 				bg="white"
+				h={'100%'}
 				sx={() => ({
 					borderRadius: '4px',
 				})}
 			>
-				{users.map(user => (
-					<UserButton
-						key={user.id}
-						image={user.image}
-						name={user.name}
-						post={user.email}
-						userId={user.id}
-						isActive={+(userId as string) === user.id}
-					/>
-				))}
+				{feedbackList &&
+					feedbackList.map(user => (
+						<UserButton
+							key={user.id}
+							image={user.image}
+							name={user.name}
+							post={user.email}
+							userId={user.id}
+							isActive={+(userId as string) === user.id}
+						/>
+					))}
 			</ScrollArea>
 		</Flex>
 	)
