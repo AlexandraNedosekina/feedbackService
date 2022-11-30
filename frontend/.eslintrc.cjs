@@ -2,6 +2,8 @@ module.exports = {
 	extends: [
 		'eslint:recommended',
 		'plugin:@typescript-eslint/recommended',
+		'plugin:react/recommended',
+		'plugin:react-hooks/recommended',
 		'prettier',
 	],
 	rules: {
@@ -14,9 +16,15 @@ module.exports = {
 				},
 			},
 		],
+		'react/react-in-jsx-scope': 'off',
 	},
 	parser: '@typescript-eslint/parser',
 	plugins: ['@typescript-eslint'],
 	root: true,
-	ignorePatterns: ['next.config.js', '__tests__/**/*', '.eslintrc.cjs'],
+	ignorePatterns: [
+		'next.config.js',
+		'__tests__/**/*',
+		'.eslintrc.cjs',
+		'src/api/generatedTypes.ts',
+	],
 }
