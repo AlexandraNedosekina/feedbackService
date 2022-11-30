@@ -13,6 +13,7 @@ import { useMutation } from '@tanstack/react-query'
 import { useRouter } from 'next/router'
 import { FC, useEffect, useState } from 'react'
 import { signOut } from 'src/api'
+import { useBaseLayoutContext } from 'src/utils/useBaseLayoutContext'
 import NavItem from './NavItem'
 
 const navItems: { icon: Icons; href: string; text: string }[] = [
@@ -45,6 +46,7 @@ interface Props {
 
 const Navbar: FC<Props> = ({ isOpen, closeMenu }) => {
 	const router = useRouter()
+	const { isEdit } = useBaseLayoutContext()
 
 	const [isFull, setIsFull] = useState<boolean>(false)
 
@@ -120,6 +122,16 @@ const Navbar: FC<Props> = ({ isOpen, closeMenu }) => {
 							closeMenu={closeMenu}
 						/>
 					</Box>
+					{isEdit && (
+						<NavItem
+							icon={'home'}
+							href={'/events'}
+							text={'Мероприятия'}
+							isFull={isMobile ? true : isFull}
+							active={router.pathname.split('/')[1] === 'events'}
+							closeMenu={closeMenu}
+						/>
+					)}
 					{navItems.map((item, i) => (
 						<NavItem
 							key={i}
