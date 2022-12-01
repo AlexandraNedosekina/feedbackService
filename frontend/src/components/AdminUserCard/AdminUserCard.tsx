@@ -1,3 +1,4 @@
+import UserRating from '@components/UserRating'
 import {
 	Avatar,
 	Button,
@@ -19,9 +20,12 @@ const AdminUserCard: FC = () => {
 					<Group>
 						<Avatar src={null} size={64} radius={100} />
 						<Stack spacing={5}>
-							<Title order={2} color="brand.5">
-								Admin
-							</Title>
+							<Group spacing={'sm'}>
+								<Title order={2} color="brand.5">
+									Admin
+								</Title>
+								<UserRating rating={4.5} />
+							</Group>
 							<Text color="brand.5">Admin</Text>
 						</Stack>
 					</Group>
@@ -37,19 +41,19 @@ const AdminUserCard: FC = () => {
 					<Text size={14}>Средние значения</Text>
 					<Group position="apart">
 						<div>Выполнение задач</div>
-						<Rating size="md" value={1} />
+						<Rating size="md" value={1} readOnly />
 					</Group>
 					<Group position="apart">
 						<div>Вовлеченность</div>
-						<Rating size="md" value={2} />
+						<Rating size="md" value={2} readOnly />
 					</Group>
 					<Group position="apart">
 						<div>Мотивация</div>
-						<Rating size="md" value={3} />
+						<Rating size="md" value={3} readOnly />
 					</Group>
 					<Group position="apart">
 						<div>Взаимодействие с командой</div>
-						<Rating size="md" value={4} />
+						<Rating size="md" value={4} readOnly />
 					</Group>
 				</Stack>
 
