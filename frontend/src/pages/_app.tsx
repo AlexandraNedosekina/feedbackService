@@ -59,7 +59,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 					{getLayout(<Component {...pageProps} />)}
 				</NotificationsProvider>
 			</MantineProvider>
-			<ReactQueryDevtools initialIsOpen={false} />
+			{/* <ReactQueryDevtools initialIsOpen={false} /> */}
 		</QueryClientProvider>
 	)
 }
