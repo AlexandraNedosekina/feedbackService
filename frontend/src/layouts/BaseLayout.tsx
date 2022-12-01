@@ -10,6 +10,7 @@ import {
 	useEffect,
 	useState,
 } from 'react'
+import { useUser } from 'src/utils/useUser'
 
 interface IBaseLayoutContext {
 	isEdit: boolean
@@ -23,6 +24,7 @@ const BaseLayout = ({ children }: { children: ReactNode }) => {
 	const cookie = getCookie('refresh-token')
 	const [isLoading, setIsLoading] = useState(true)
 	const [isEdit, setIsEdit] = useState<boolean | null>(null)
+	const { isLoading: isUserLoading } = useUser()
 
 	useEffect(() => {
 		if (!cookie) {
@@ -43,7 +45,7 @@ const BaseLayout = ({ children }: { children: ReactNode }) => {
 		}
 	}, [])
 
-	if (isLoading || !cookie || isEdit === null) {
+	if (isLoading || !cookie || isEdit === null || isUserLoading) {
 		return (
 			<div style={{ position: 'relative', width: '100vw', height: '100vh' }}>
 				<LoadingOverlay visible={true} />

@@ -4,7 +4,6 @@ import { FC } from 'react'
 import styles from '../styles/feedback.module.sass'
 
 interface Props {
-	// eslint-disable-next-line no-undef
 	children: JSX.Element | JSX.Element[]
 }
 
