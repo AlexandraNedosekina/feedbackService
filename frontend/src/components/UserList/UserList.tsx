@@ -1,3 +1,4 @@
+import BottomGradientList from '@components/BottomGradientList'
 import Search from '@components/SearchBar'
 import UserButton from '@components/UserButton'
 import { Flex, ScrollArea } from '@mantine/core'
@@ -101,6 +102,7 @@ const UserList: FC<Props> = () => {
 				h={'100%'}
 				sx={() => ({
 					borderRadius: '4px',
+					position: 'relative',
 				})}
 			>
 				{feedbackList &&
@@ -114,6 +116,8 @@ const UserList: FC<Props> = () => {
 							isActive={+(feedbackId as string) === feedback.id}
 						/>
 					))}
+
+				<BottomGradientList />
 			</ScrollArea>
 		</Flex>
 	)
