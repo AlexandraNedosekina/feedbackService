@@ -166,7 +166,7 @@ const Navbar: FC<Props> = ({ isOpen, closeMenu }) => {
 						/>
 					))}
 					<MediaQuery largerThan="sm" styles={{ display: 'none' }}>
-						<>
+						<Box>
 							{user?.roles.includes(ERoles.admin) ? (
 								isEdit ? (
 									<Text onClick={deactiveEdit} ml="sm" color="white">
@@ -191,7 +191,7 @@ const Navbar: FC<Props> = ({ isOpen, closeMenu }) => {
 							>
 								Выйти
 							</UnstyledButton>
-						</>
+						</Box>
 					</MediaQuery>
 				</Stack>
 
