@@ -110,7 +110,7 @@ const UserList: FC<Props> = () => {
 							image={feedback.image}
 							name={feedback.name}
 							post={feedback.email}
-							userId={feedback.id}
+							href={String(feedback.id)}
 							isActive={+(feedbackId as string) === feedback.id}
 						/>
 					))}
