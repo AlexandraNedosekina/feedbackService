@@ -82,5 +82,10 @@ class CRUDFeedback(
         logger.debug(f"[ CRUD Feedback ] q first = {feedback.first()}")
         return feedback.first()
 
+    def get_by_event_id(self, db: Session, event_id: int) -> list[models.Feedback]:
+        return (
+            db.query(models.Feedback).filter(models.Feedback.event_id == event_id).all()
+        )
+
 
 feedback = CRUDFeedback(models.Feedback)

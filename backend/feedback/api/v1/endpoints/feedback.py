@@ -291,6 +291,19 @@ async def test_method_delete_all_feedback(db: Session = Depends(get_db)):
 from feedback.db.session import engine
 
 
+@router.get("/event/{event_id}", response_model=list[schemas.Feedback])
+async def get_feedback_by_envent_id(
+    event_id: int,
+    db: Session = Depends(get_db),
+    _: models.User = Depends(get_admin_boss_manager_hr),
+):
+    event = crud.event.get(db=db, id=event_id)
+    if not event:
+        raise HTTPException(status_code=404, detail="Event does not exist")
+    feedbacks = crud.feedback.get_by_event_id(db=db, event_id=event_id)
+    return parse_obj_as(list[schemas.Feedback], feedbacks)
+
+
 @router.on_event("startup")
 @repeat_every(seconds=3600)
 async def sheduled_update_event_status():
