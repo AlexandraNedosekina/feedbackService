@@ -109,7 +109,7 @@ const UserList: FC<Props> = () => {
 					feedbackList.map(feedback => (
 						<UserButton
 							key={feedback.id}
-							image={feedback.image}
+							userId={String(feedback.receiver_id)}
 							name={feedback.name}
 							post={feedback.email}
 							href={String(feedback.id)}

@@ -17,13 +17,9 @@ import { Rating } from './Rating'
 import { Textarea } from './Textarea'
 import { useStyles } from './useStyles'
 
-interface Props {
-	image: string
-	name: string
-	post: string
-}
+interface Props {}
 
-const UserCard: FC<Props> = ({ image, name, post }) => {
+const UserCard: FC<Props> = () => {
 	const { classes } = useStyles()
 	const update = useFeedbackStore(state => state.update)
 
@@ -55,12 +51,20 @@ const UserCard: FC<Props> = ({ image, name, post }) => {
 		<Flex direction={'column'} className={classes.root} gap="md">
 			<ScrollArea>
 				<Group>
-					<Avatar src={image} size={64} radius={100} />
+					<Avatar
+						src={
+							feedbackId
+								? `${process.env.NEXT_PUBLIC_BACKEND_URL}/user/${feedbackId}/avatar`
+								: null
+						}
+						size={64}
+						radius={100}
+					/>
 					<Stack spacing={5}>
 						<Title order={2} color="brand.5">
-							{name}
+							Имя Фамилия
 						</Title>
-						<Text color="brand.5">{post}</Text>
+						<Text color="brand.5">Пост</Text>
 					</Stack>
 				</Group>
 

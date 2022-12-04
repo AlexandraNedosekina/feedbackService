@@ -5,8 +5,7 @@ import { Flex, ScrollArea } from '@mantine/core'
 import { useQuery } from '@tanstack/react-query'
 import { useRouter } from 'next/router'
 import { FC } from 'react'
-import { QueryKeys } from 'src/api'
-import getFeedbackByEventId from 'src/api/feedback/getFeedbackByEventId'
+import { getFeedbackByEventId, QueryKeys } from 'src/api'
 
 const users = [
 	{
@@ -110,7 +109,7 @@ const UserList: FC<Props> = () => {
 					data.map(feedback => (
 						<UserButton
 							key={feedback.id}
-							image={feedback.image}
+							userId={feedback.image}
 							name={feedback.name}
 							post={feedback.email}
 							href={String(feedback.id)}

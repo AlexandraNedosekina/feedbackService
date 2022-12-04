@@ -4,7 +4,7 @@ import Link from 'next/link'
 import styles from './UserButton.module.sass'
 
 interface UserButtonProps {
-	image: string
+	userId: string
 	name: string
 	post: string
 	href: string
@@ -12,7 +12,7 @@ interface UserButtonProps {
 }
 
 export default function UserButton({
-	image,
+	userId,
 	name,
 	post,
 	href,
@@ -25,7 +25,15 @@ export default function UserButton({
 			})}
 			href={`/feedback/${href}`}
 		>
-			<Avatar src={image} radius="xl" size={'lg'} />
+			<Avatar
+				src={
+					userId
+						? `${process.env.NEXT_PUBLIC_BACKEND_URL}/user/${userId}/avatar`
+						: null
+				}
+				radius="xl"
+				size={'lg'}
+			/>
 			<div style={{ flex: 1 }}>
 				<Title order={4} color="brand.6">
 					{name}

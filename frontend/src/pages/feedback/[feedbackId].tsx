@@ -30,11 +30,7 @@ const FeedbackUserPage: NextPageWithLayout = () => {
 			</Head>
 
 			<FeedbackLayout>
-				<UserCard
-					image="https://avatars.githubusercontent.com/u/25126241?v=4"
-					name="Александр"
-					post="Руководитель отдела"
-				/>
+				<UserCard />
 			</FeedbackLayout>
 		</>
 	)
