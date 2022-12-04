@@ -1,4 +1,5 @@
 import { Button, Group } from '@mantine/core'
+import { showNotification } from '@mantine/notifications'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useRouter } from 'next/router'
 import { useMemo } from 'react'
@@ -46,6 +47,12 @@ export const Buttons = () => {
 			createFeedback(+(feedbackId as string), data),
 		onSuccess: data => {
 			queryClient.invalidateQueries([QueryKeys.FEEDBACK, data.id])
+
+			showNotification({
+				title: 'Успешно',
+				message: 'Обратная связь отправлена',
+				color: 'green',
+			})
 		},
 	})
 
