@@ -20,6 +20,7 @@ export type Icons =
 	| 'file_upload'
 	| 'delete'
 	| 'sort'
+	| 'remove'
 type IconType = 'outlined' | 'rounded' | 'sharp'
 
 export interface IconProps {
