@@ -27,7 +27,7 @@ const UserCard: FC<Props> = () => {
 		query: { feedbackId },
 	} = useRouter()
 
-	const { isLoading } = useQuery({
+	const { data, isLoading } = useQuery({
 		queryKey: [QueryKeys.FEEDBACK, +(feedbackId as string)],
 		queryFn: () => getFeedback(+(feedbackId as string)),
 		enabled: !!feedbackId,
@@ -45,7 +45,12 @@ const UserCard: FC<Props> = () => {
 		},
 	})
 
-	if (isLoading) return <p>Загузка...</p>
+	if (isLoading)
+		return (
+			<div className={classes.root}>
+				<p>Загрузка...</p>
+			</div>
+		)
 
 	return (
 		<Flex direction={'column'} className={classes.root} gap="md">
