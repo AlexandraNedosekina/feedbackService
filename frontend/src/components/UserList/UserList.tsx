@@ -1,7 +1,7 @@
 import BottomGradientList from '@components/BottomGradientList'
 import Search from '@components/SearchBar'
 import UserButton from '@components/UserButton'
-import { Flex, ScrollArea } from '@mantine/core'
+import { Flex, ScrollArea, Text } from '@mantine/core'
 import { useQuery } from '@tanstack/react-query'
 import { useRouter } from 'next/router'
 import { FC } from 'react'
@@ -105,7 +105,7 @@ const UserList: FC<Props> = () => {
 					position: 'relative',
 				})}
 			>
-				{feedbackList &&
+				{feedbackList && feedbackList.length > 0 ? (
 					feedbackList.map(feedback => (
 						<UserButton
 							key={feedback.id}
@@ -115,7 +115,10 @@ const UserList: FC<Props> = () => {
 							href={String(feedback.id)}
 							isActive={+(feedbackId as string) === feedback.id}
 						/>
-					))}
+					))
+				) : (
+					<Text p="sm">Нет сотрудников для оценки</Text>
+				)}
 
 				<BottomGradientList />
 			</ScrollArea>
