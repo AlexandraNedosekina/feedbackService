@@ -1,7 +1,7 @@
 import { Badge, Container, Text, Title } from '@mantine/core'
 import Head from 'next/head'
 import { BaseLayout } from 'src/layouts'
-import styles from 'src/styles/career.module.scss'
+import styles from 'src/styles/career.module.sass'
 import { NextPageWithLayout } from './_app'
 
 const CareerPage: NextPageWithLayout = () => {
