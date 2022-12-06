@@ -1,4 +1,5 @@
 import api from '..'
+import { errorHandler } from '../errorHandler'
 import { Colleagues } from '../generatedTypes'
 
 async function getUsersColleagues(userId: number) {
@@ -7,7 +8,7 @@ async function getUsersColleagues(userId: number) {
 
 		return res.data
 	} catch (error: any) {
-		throw new Error(error)
+		throw new Error(errorHandler(error))
 	}
 }
 

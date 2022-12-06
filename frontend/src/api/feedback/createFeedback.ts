@@ -1,4 +1,5 @@
 import api from '..'
+import { errorHandler } from '../errorHandler'
 import { Feedback, FeedbackFromUser } from '../generatedTypes'
 
 async function createFeedback(
@@ -14,7 +15,7 @@ async function createFeedback(
 
 		return res.data
 	} catch (error: any) {
-		throw new Error(error)
+		throw new Error(errorHandler(error))
 	}
 }
 
