@@ -70,8 +70,7 @@ export interface BodyCreateAvaterUserUserIdAvatarPost {
 export interface Colleagues {
 	/** Id */
 	id: number
-	/** Colleague Id */
-	colleague_id: number
+	colleague: UserDetails
 	/** Owner Id */
 	owner_id: number
 }
@@ -154,10 +153,8 @@ export interface Feedback {
 	id: number
 	/** Event Id */
 	event_id: number
-	/** Sender Id */
-	sender_id: number
-	/** Receiver Id */
-	receiver_id: number
+	sender: UserDetails
+	receiver: UserDetails
 	/** Completed */
 	completed: boolean
 	/** Avg Rating */
@@ -292,6 +289,17 @@ export interface UserCreate {
 	email: string
 	/** Full Name */
 	full_name: string
+}
+
+/** UserDetails */
+export interface UserDetails {
+	/** Id */
+	id: number
+	/** Full Name */
+	full_name: string
+	/** Job Title */
+	job_title?: string
+	avatar?: Avatar
 }
 
 /** UserUpdate */
