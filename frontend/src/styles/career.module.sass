@@ -1,6 +1,7 @@
 $border-width: 1px
 
 .timeline
+   container-type: inline-size
    &_item
       display: grid
       grid-template-columns: 1fr 1fr
@@ -55,4 +56,21 @@ $border-width: 1px
       &[data-active]
          background-color: var(--mantine-color-brand-6)
 
+@container (max-width: 500px)
+   .timeline
+      &_item
+         grid-template-columns: 1fr
+         &:nth-child(odd)
+            text-align: left
+         .timeline_item_content
+            padding-left: var(--mantine-spacing-sm)
+            padding-right: 0
+         ::before
+            left: -$border-width
+            right: auto
+      &_bullet
+         right: auto
+         left: -8px
+      ul
+         padding-left: var(--mantine-spacing-sm)
       
