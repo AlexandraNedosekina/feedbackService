@@ -109,9 +109,9 @@ const UserList: FC<Props> = () => {
 					data.map(feedback => (
 						<UserButton
 							key={feedback.id}
-							userId={feedback.image}
-							name={feedback.name}
-							post={feedback.email}
+							userId={String(feedback.receiver_id)}
+							name={String(feedback.receiver_id)}
+							post={'Post'}
 							href={String(feedback.id)}
 							isActive={+(feedbackId as string) === feedback.id}
 						/>
