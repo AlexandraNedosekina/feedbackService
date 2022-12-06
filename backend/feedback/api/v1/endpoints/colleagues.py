@@ -8,10 +8,10 @@ from feedback.api.deps import get_current_user, get_db
 router = APIRouter()
 
 
-@router.get("/")
+@router.get("/", response_model=list[schemas.Colleagues])
 async def get_all_colleagues(db: Session = Depends(get_db)):
     colleagues = db.query(models.Colleagues).all()
-    return colleagues
+    return parse_obj_as(list[schemas.Colleagues], colleagues)
 
 
 @router.get("/{user_id}", response_model=list[schemas.Colleagues])
@@ -26,7 +26,7 @@ async def get_colleagues_by_user(
     return parse_obj_as(list[schemas.Colleagues], user.colleagues)
 
 
-@router.post("/{user_id}")  # response_model=schemas.UserShowColleagues)
+@router.post("/{user_id}", response_model=list[schemas.Colleagues])
 async def add_user_colleagues(
     user_id: int,
     colleagues_ids: schemas.ColleaguesIdList,
@@ -66,10 +66,10 @@ async def add_user_colleagues(
     db.add_all(upd_colls_list)
     db.commit()
     db.refresh(user)
-    return user
+    return parse_obj_as(list[schemas.Colleagues], user.colleagues)
 
 
-@router.delete("/user_id")
+@router.delete("/user_id", response_model=list[schemas.Colleagues])
 async def delete_user_colleagues(
     user_id: int,
     colleagues_ids: schemas.ColleaguesIdList,
@@ -92,13 +92,13 @@ async def delete_user_colleagues(
         colleague = crud.user.get(db, coll_id)
         if not colleague:
             raise HTTPException(
-                status_code=404, detail=f"No user with such id - {colleague}"
+                status_code=404, detail=f"No user with such id - {coll_id}"
             )
 
         if coll_id not in user_colleagues_ids:
             raise HTTPException(
                 status_code=404,
-                detail=f"User has no colleague with id {colleague} to be deleted",
+                detail=f"User has no colleague with id {coll_id} to be deleted",
             )
 
         delete_user_relation = (
@@ -123,4 +123,4 @@ async def delete_user_colleagues(
 
     db.commit()
     db.refresh(user)
-    return user
+    return parse_obj_as(list[schemas.Colleagues], user.colleagues)

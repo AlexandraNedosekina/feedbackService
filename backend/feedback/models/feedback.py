@@ -35,8 +35,12 @@ class Feedback(Base):
 
     id = Column(Integer, primary_key=True)
     event_id = Column(Integer, ForeignKey("event.id"))
+
     sender_id = Column(Integer, ForeignKey("user.id"))
+    sender = relationship("User", foreign_keys=[sender_id])
+
     receiver_id = Column(Integer, ForeignKey("user.id"))
+    receiver = relationship("User", foreign_keys=[receiver_id])
 
     completed = Column(Boolean)
     avg_rating = Column(Numeric)

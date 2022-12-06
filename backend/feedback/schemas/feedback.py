@@ -1,5 +1,6 @@
 from datetime import datetime, timezone
 from enum import Enum
+from feedback.schemas.user import UserDetails
 
 from pydantic import BaseModel, validator
 
@@ -15,7 +16,7 @@ class ColleaguesIdList(Base):
 
 class Colleagues(Base):
     id: int
-    colleague_id: int
+    colleague: UserDetails
     owner_id: int
 
 
@@ -100,8 +101,8 @@ class FeedbackCreateEmpty(Base):
 class FeedbackInDB(Base):
     id: int
     event_id: int
-    sender_id: int
-    receiver_id: int
+    sender: UserDetails
+    receiver: UserDetails
 
     completed: bool
     avg_rating: float | None

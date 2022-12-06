@@ -7,4 +7,4 @@ from feedback.schemas.feedback import (Colleagues, ColleaguesIdList, Event,
 from feedback.schemas.oauth import OAuthToken, OAuthTokenData, OAuthUserInfo
 from feedback.schemas.user import (AddSkillPromts, ShowSkillPromts, User,
                                    UserCreate, UserUpdate, UserUpdateOther,
-                                   UserUpdateSelf)
+                                   UserUpdateSelf, UserDetails)

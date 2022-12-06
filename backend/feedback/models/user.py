@@ -52,6 +52,7 @@ class User(Base):
         backref="user",
         cascade="all, delete, delete-orphan",
         lazy="joined",
+        foreign_keys="Colleagues.owner_id",
     )
 
 
@@ -100,8 +101,9 @@ class Roles(Base):
 class Colleagues(Base):
     __tablename__ = "colleagues"
     id = Column(Integer, primary_key=True, index=True)
-    colleague_id = Column(Integer, index=True)
     owner_id = Column(Integer, ForeignKey("user.id"))
+    colleague_id = Column(Integer, ForeignKey("user.id"), index=True)
+    colleague = relationship("User", foreign_keys=[colleague_id])
 
 
 class SkillPromts(Base):

@@ -219,6 +219,7 @@ async def is_allowed_to_send_feedback(
 
 @router.get(
     "/table/{user_id}",
+    response_model=list[schemas.Feedback],
     description="Admin method to show him table of feedbacks about user",
 )
 async def show_receiver_active_feedback_list_by_user_id(
@@ -232,7 +233,7 @@ async def show_receiver_active_feedback_list_by_user_id(
 
     events_ids = set()
     for val in (
-        db.query(models.Event)
+        db.query(models.Event.id)
         .filter(models.Event.status == schemas.EventStatus.active)
         .distinct()
     ):
@@ -246,11 +247,12 @@ async def show_receiver_active_feedback_list_by_user_id(
         )
         .all()
     )
-    return feedbacks
+    return parse_obj_as(list[schemas.Feedback], feedbacks)
 
 
 @router.get(
     "/archive/{user_id}",
+    response_model=list[schemas.Feedback],
     description="Admin method to show him archived feedbacks about user",
 )
 async def show_receiver_archive_feedback_list_by_user_id(
@@ -278,7 +280,7 @@ async def show_receiver_archive_feedback_list_by_user_id(
         )
         .all()
     )
-    return feedbacks
+    return parse_obj_as(list[schemas.Feedback], feedbacks)
 
 
 @router.delete("/")
