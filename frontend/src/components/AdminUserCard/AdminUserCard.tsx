@@ -20,6 +20,7 @@ import {
 import { useRouter } from 'next/router'
 import { FC, useMemo } from 'react'
 import { getFeedback, getUsersColleagues, QueryKeys } from 'src/api'
+import { Colleagues } from 'src/api/generatedTypes'
 import tableStyles from 'src/styles/table.module.sass'
 import styles from './AdminUserCard.module.sass'
 import {
@@ -28,34 +29,21 @@ import {
 } from './AdminUserCardContext'
 import { ColleaguesTitle } from './components'
 
-const columnHelper = createColumnHelper<{ name: string; age: number }>()
+const columnHelper = createColumnHelper<Colleagues>()
 
 const columns = [
-	columnHelper.accessor('name', {
-		cell: name => name.getValue(),
-		header: 'Name',
+	columnHelper.accessor('id', {
+		cell: data => data.getValue(),
 	}),
-	columnHelper.accessor('age', {
-		cell: age => age.getValue(),
-		header: 'Age',
+	columnHelper.accessor('colleague_id', {
+		cell: data => data.getValue(),
 	}),
-]
-
-const data = [
-	{ name: 'John', age: 20 },
-	{ name: 'Jane', age: 21 },
-	{ name: 'Jack', age: 22 },
-	{ name: 'Jill', age: 23 },
-	{ name: 'Jen', age: 24 },
-	{ name: 'Jenny', age: 25 },
+	columnHelper.accessor('owner_id', {
+		cell: data => data.getValue(),
+	}),
 ]
 
 const AdminUserCard: FC = () => {
-	const table = useReactTable({
-		data,
-		columns,
-		getCoreRowModel: getCoreRowModel(),
-	})
 	const {
 		query: { feedbackId },
 	} = useRouter()
@@ -69,6 +57,12 @@ const AdminUserCard: FC = () => {
 		queryKey: [QueryKeys.COLLEAGUES, feedbackData?.receiver_id],
 		queryFn: () => getUsersColleagues(feedbackData?.receiver_id as number),
 		enabled: !!feedbackData?.receiver_id,
+	})
+
+	const table = useReactTable({
+		data: colleagues || [],
+		columns,
+		getCoreRowModel: getCoreRowModel(),
 	})
 
 	const contextValue: IAdminUserCardContext = useMemo(
