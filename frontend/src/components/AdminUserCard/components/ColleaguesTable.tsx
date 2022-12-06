@@ -15,14 +15,11 @@ import { useAdminUserCardContext } from 'src/utils/useAdminUserCardContext'
 const columnHelper = createColumnHelper<Colleagues>()
 
 const columns = [
-	columnHelper.accessor('id', {
-		cell: data => data.getValue(),
+	columnHelper.accessor('colleague.full_name', {
+		header: 'Сотрудник',
 	}),
-	columnHelper.accessor('colleague_id', {
-		cell: data => data.getValue(),
-	}),
-	columnHelper.accessor('owner_id', {
-		cell: data => data.getValue(),
+	columnHelper.accessor('colleague.job_title', {
+		header: 'Должность',
 	}),
 	columnHelper.display({
 		id: 'add',

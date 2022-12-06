@@ -32,14 +32,11 @@ import { ColleaguesTitle } from './components'
 const columnHelper = createColumnHelper<Colleagues>()
 
 const columns = [
-	columnHelper.accessor('id', {
-		cell: data => data.getValue(),
+	columnHelper.accessor('colleague.full_name', {
+		header: 'Сотрудник',
 	}),
-	columnHelper.accessor('colleague_id', {
-		cell: data => data.getValue(),
-	}),
-	columnHelper.accessor('owner_id', {
-		cell: data => data.getValue(),
+	columnHelper.accessor('colleague.job_title', {
+		header: 'Должность',
 	}),
 ]
 
@@ -54,9 +51,9 @@ const AdminUserCard: FC = () => {
 		enabled: !!feedbackId,
 	})
 	const { data: colleagues, isLoading: isColleaguesLoading } = useQuery({
-		queryKey: [QueryKeys.COLLEAGUES, feedbackData?.receiver_id],
-		queryFn: () => getUsersColleagues(feedbackData?.receiver_id as number),
-		enabled: !!feedbackData?.receiver_id,
+		queryKey: [QueryKeys.COLLEAGUES, feedbackData?.receiver.id],
+		queryFn: () => getUsersColleagues(feedbackData?.receiver.id as number),
+		enabled: !!feedbackData?.receiver.id,
 	})
 
 	const table = useReactTable({
@@ -89,13 +86,15 @@ const AdminUserCard: FC = () => {
 							<Stack spacing={5}>
 								<Group spacing={'sm'}>
 									<Title order={2} color="brand.5">
-										Admin
+										{feedbackData?.receiver.full_name}
 									</Title>
 									{feedbackData?.avg_rating && (
 										<UserRating rating={feedbackData.avg_rating} />
 									)}
 								</Group>
-								<Text color="brand.5">Admin</Text>
+								<Text color="brand.5">
+									{feedbackData?.receiver.job_title}
+								</Text>
 							</Stack>
 						</Group>
 						<Button variant="outline">Архив</Button>

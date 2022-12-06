@@ -26,8 +26,9 @@ const UserCard: FC<Props> = () => {
 	const {
 		query: { feedbackId },
 	} = useRouter()
+	const router = useRouter()
 
-	const { data, isLoading } = useQuery({
+	const { data, isLoading, isError } = useQuery({
 		queryKey: [QueryKeys.FEEDBACK, +(feedbackId as string)],
 		queryFn: () => getFeedback(+(feedbackId as string)),
 		enabled: !!feedbackId,
@@ -43,9 +44,12 @@ const UserCard: FC<Props> = () => {
 				comment: data.comment,
 			})
 		},
+		onError() {
+			router.push('/feedback')
+		},
 	})
 
-	if (isLoading)
+	if (isLoading || isError)
 		return (
 			<div className={classes.root}>
 				<p>Загрузка...</p>
@@ -67,9 +71,9 @@ const UserCard: FC<Props> = () => {
 					/>
 					<Stack spacing={5}>
 						<Title order={2} color="brand.5">
-							Имя Фамилия
+							{data.receiver.full_name}
 						</Title>
-						<Text color="brand.5">Пост</Text>
+						<Text color="brand.5">{data.receiver.job_title}</Text>
 					</Stack>
 				</Group>
 

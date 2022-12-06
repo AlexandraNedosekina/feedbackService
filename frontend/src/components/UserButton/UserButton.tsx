@@ -4,7 +4,7 @@ import Link from 'next/link'
 import styles from './UserButton.module.sass'
 
 interface UserButtonProps {
-	userId: string
+	recieverId: number
 	name: string
 	post: string
 	href: string
@@ -12,7 +12,7 @@ interface UserButtonProps {
 }
 
 export default function UserButton({
-	userId,
+	recieverId,
 	name,
 	post,
 	href,
@@ -27,8 +27,8 @@ export default function UserButton({
 		>
 			<Avatar
 				src={
-					userId
-						? `${process.env.NEXT_PUBLIC_BACKEND_URL}/user/${userId}/avatar`
+					recieverId
+						? `${process.env.NEXT_PUBLIC_BACKEND_URL}/user/${recieverId}/avatar`
 						: null
 				}
 				radius="xl"
