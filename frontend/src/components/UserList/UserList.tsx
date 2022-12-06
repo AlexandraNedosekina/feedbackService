@@ -110,8 +110,8 @@ const UserList: FC<Props> = () => {
 						<UserButton
 							key={feedback.id}
 							userId={String(feedback.receiver_id)}
-							name={feedback.name}
-							post={feedback.email}
+							name={String(feedback.receiver_id)}
+							post={'Post'}
 							href={String(feedback.id)}
 							isActive={+(feedbackId as string) === feedback.id}
 						/>
