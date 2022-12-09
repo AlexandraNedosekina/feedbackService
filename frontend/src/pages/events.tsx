@@ -1,3 +1,4 @@
+import { AdminEvents } from '@components/AdminEvents'
 import { Container, Title } from '@mantine/core'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
@@ -27,13 +28,17 @@ const EventsPage: NextPageWithLayout = () => {
 	}, [router, user?.roles, isEdit])
 
 	return (
-		<Container>
+		<>
 			<Head>
-				<title>Events</title>
+				<title>Создание сбора обратной связи</title>
 			</Head>
 
-			<Title>Events</Title>
-		</Container>
+			<Container mt="lg">
+				<Title order={2}>Сбор обратной связи</Title>
+
+				<AdminEvents />
+			</Container>
+		</>
 	)
 }
 
