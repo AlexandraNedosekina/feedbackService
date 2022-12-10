@@ -11,8 +11,7 @@ const CreateEventModal: FC<Props> = ({ onClose }) => {
 	return (
 		<>
 			<SelectType />
-			<TimePicker title="Начало" value="start" />
-			<TimePicker title="Окончание" value="end" />
+			<TimePicker />
 			<Buttons onClose={onClose} />
 		</>
 	)

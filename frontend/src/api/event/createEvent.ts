@@ -17,17 +17,11 @@ async function createEvent(data: {
 
 	if (data.type === 'one') {
 		if (!data.userId) throw new Error('Missing userId')
-		if (!data.isTwoWay) throw new Error('Missing isTwoWay')
+		if (data.isTwoWay === undefined || data.isTwoWay === null)
+			throw new Error('Missing isTwoWay')
 
 		eventTypeUrl = data.isTwoWay ? 'create_twoway' : 'create_oneway'
 		eventUrl = `event/${eventTypeUrl}/${data.userId}`
-	}
-
-	if (data.type === 'all') {
-		if (data.userId)
-			throw new Error('Unexpected, userId is not needed for all events')
-		if (data.isTwoWay)
-			throw new Error('Unexpected, isTwoWay is not needed for all events')
 	}
 
 	try {

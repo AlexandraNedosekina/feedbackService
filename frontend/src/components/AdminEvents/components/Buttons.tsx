@@ -1,8 +1,8 @@
 import { Button, Flex } from '@mantine/core'
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import dayjs from 'dayjs'
 import { FC } from 'react'
-import { createEvent } from 'src/api'
+import { createEvent, QueryKeys } from 'src/api'
 import { useCreateEventStore } from 'src/stores'
 
 interface Props {
@@ -10,10 +10,16 @@ interface Props {
 }
 
 const Buttons: FC<Props> = ({ onClose }) => {
-	const { startDate, endDate, endTime, isTwoWay, startTime, type } =
-		useCreateEventStore()
-
-	const isDisabled = !startDate || !endDate || !startTime || !endTime
+	const {
+		startDate,
+		endDate,
+		endTime,
+		isTwoWay,
+		startTime,
+		type,
+		getIsDisabled,
+	} = useCreateEventStore()
+	const queryClient = useQueryClient()
 
 	const { mutate, isLoading } = useMutation({
 		mutationFn: (data: {
@@ -23,6 +29,10 @@ const Buttons: FC<Props> = ({ onClose }) => {
 			isTwoWay?: boolean
 			userId?: string
 		}) => createEvent(data),
+		onSuccess: () => {
+			queryClient.invalidateQueries([QueryKeys.EVENTS])
+			onClose()
+		},
 	})
 
 	function handleCreate() {
@@ -49,7 +59,7 @@ const Buttons: FC<Props> = ({ onClose }) => {
 			<Button
 				onClick={handleCreate}
 				loading={isLoading}
-				disabled={isDisabled}
+				disabled={getIsDisabled()}
 			>
 				Создать
 			</Button>
