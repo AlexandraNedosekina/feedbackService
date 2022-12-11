@@ -18,6 +18,7 @@ const ActionMenuTable: FC<Props> = ({ eventId }) => {
 		mutationFn: (eventId: string) => deleteEvent(eventId),
 		onSuccess: () => {
 			queryClient.invalidateQueries([QueryKeys.EVENTS])
+			setIsDeleteModalOpen(false)
 		},
 	})
 
