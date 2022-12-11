@@ -13,7 +13,7 @@ class MyDateTime(TypeDecorator):
     def process_bind_param(self, value, dialect):
         if type(value) is str:
             value = value.split(".")[0]
-            return datetime.strptime(value, "%Y-%m-%dT%H:%M:%S")
+            return datetime.fromisoformat(value)
         return value
 
 
