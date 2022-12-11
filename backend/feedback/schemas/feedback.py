@@ -1,8 +1,9 @@
 from datetime import datetime, timezone
 from enum import Enum
-from feedback.schemas.user import UserDetails
 
-from pydantic import BaseModel, validator
+from pydantic import BaseModel, Field, validator
+
+from feedback.schemas.user import UserDetails
 
 
 class Base(BaseModel):
@@ -21,8 +22,8 @@ class Colleagues(Base):
 
 
 class EventCreate(Base):
-    date_start: datetime
-    date_stop: datetime
+    date_start: datetime = Field(..., description="Event start date in utc")
+    date_stop: datetime = Field(..., description="Event end date in utc")
 
     @validator("date_start", "date_stop")
     def validate_dates(cls, v):
