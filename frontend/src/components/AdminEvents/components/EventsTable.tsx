@@ -17,10 +17,14 @@ const columnHelper = createColumnHelper<Event>()
 const columns = [
 	columnHelper.accessor(
 		row => {
-			const parsedStartDate = dayjs(row.date_start).format(
+			// .OOOZ hack for correct date parsing for user's timezone, because
+			// dates from backend are in UTC+0
+			const parsedStartDate = dayjs(`${row.date_start}.000Z`).format(
 				'DD.MM.YYYY HH:mm'
 			)
-			const parsedEndDate = dayjs(row.date_stop).format('DD.MM.YYYY HH:mm')
+			const parsedEndDate = dayjs(`${row.date_stop}.000Z`).format(
+				'DD.MM.YYYY HH:mm'
+			)
 
 			return `${parsedStartDate} - ${parsedEndDate}`
 		},
