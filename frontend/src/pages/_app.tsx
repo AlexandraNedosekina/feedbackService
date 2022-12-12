@@ -6,6 +6,9 @@ import type { AppProps } from 'next/app'
 import { ReactElement, ReactNode } from 'react'
 import '../styles/global.css'
 import { mantineTheme } from '../styles/mantineTheme'
+import '@fullcalendar/common/main.css'
+import '@fullcalendar/daygrid/main.css'
+import '@fullcalendar/timegrid/main.css'
 
 function displayErrorNotification(error: Error) {
 	showNotification({
@@ -35,6 +38,7 @@ const queryClient = new QueryClient({
 	},
 })
 
+// eslint-disable-next-line @typescript-eslint/ban-types
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
 	getLayout?: (page: ReactElement) => ReactNode
 }

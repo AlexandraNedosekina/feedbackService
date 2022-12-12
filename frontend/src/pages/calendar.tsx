@@ -2,6 +2,11 @@ import { Container, Title } from '@mantine/core'
 import Head from 'next/head'
 import { BaseLayout } from 'src/layouts'
 import { NextPageWithLayout } from './_app'
+import dynamic from 'next/dynamic'
+
+const FullCalendar = dynamic(() => import('../components/FullCalendar'), {
+	ssr: false,
+})
 
 const CommunicationPage: NextPageWithLayout = () => {
 	return (
@@ -11,6 +16,7 @@ const CommunicationPage: NextPageWithLayout = () => {
 			</Head>
 
 			<Title>Календарь</Title>
+			<FullCalendar />
 		</Container>
 	)
 }
