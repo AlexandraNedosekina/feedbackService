@@ -5,20 +5,21 @@ import {
 	MediaQuery,
 	Navbar as NavbarMantine,
 	Stack,
+	Text,
 	UnstyledButton,
 	useMantineTheme,
 } from '@mantine/core'
 import { useMediaQuery } from '@mantine/hooks'
+import { useMutation } from '@tanstack/react-query'
 import { useRouter } from 'next/router'
 import { FC, useEffect, useState } from 'react'
+import { signOut } from 'src/api'
+import { ERoles } from 'src/types/roles'
+import { useBaseLayoutContext } from 'src/utils/useBaseLayoutContext'
+import { useUser } from 'src/utils/useUser'
 import NavItem from './NavItem'
 
 const navItems: { icon: Icons; href: string; text: string }[] = [
-	// {
-	// 	icon: 'home',
-	// 	href: '/',
-	// 	text: 'Главная',
-	// },
 	{
 		icon: 'star',
 		href: '/feedback',
@@ -43,7 +44,8 @@ interface Props {
 
 const Navbar: FC<Props> = ({ isOpen, closeMenu }) => {
 	const router = useRouter()
-
+	const { isEdit, setIsEdit } = useBaseLayoutContext()
+	const { user } = useUser()
 	const [isFull, setIsFull] = useState<boolean>(false)
 
 	const theme = useMantineTheme()
@@ -54,6 +56,24 @@ const Navbar: FC<Props> = ({ isOpen, closeMenu }) => {
 
 		if (typeof window !== 'undefined') {
 			window.localStorage.setItem('isFull', JSON.stringify(!isFull))
+		}
+	}
+
+	const { mutate: signOutMutate } = useMutation({
+		mutationFn: signOut,
+	})
+
+	function activateEdit() {
+		if (typeof window !== 'undefined') {
+			window.localStorage.setItem('edit', 'true')
+			setIsEdit(true)
+		}
+	}
+
+	function deactiveEdit() {
+		if (typeof window !== 'undefined') {
+			window.localStorage.setItem('edit', 'false')
+			setIsEdit(false)
 		}
 	}
 
@@ -114,6 +134,16 @@ const Navbar: FC<Props> = ({ isOpen, closeMenu }) => {
 							closeMenu={closeMenu}
 						/>
 					</Box>
+					{isEdit && user?.roles.includes(ERoles.admin) && (
+						<NavItem
+							icon={'home'}
+							href={'/events'}
+							text={'Events'}
+							isFull={isMobile ? true : isFull}
+							active={router.pathname.split('/')[1] === 'events'}
+							closeMenu={closeMenu}
+						/>
+					)}
 					{navItems.map((item, i) => (
 						<NavItem
 							key={i}
@@ -136,18 +166,32 @@ const Navbar: FC<Props> = ({ isOpen, closeMenu }) => {
 						/>
 					))}
 					<MediaQuery largerThan="sm" styles={{ display: 'none' }}>
-						<UnstyledButton
-							sx={theme => ({
-								color: 'white',
-								fontSize: theme.fontSizes.sm,
-							})}
-							ml="sm"
-							onClick={() => {
-								router.push('/login')
-							}}
-						>
-							Выйти
-						</UnstyledButton>
+						<Box>
+							{user?.roles.includes(ERoles.admin) ? (
+								isEdit ? (
+									<Text onClick={deactiveEdit} ml="sm" color="white">
+										Выйти из режима управления
+									</Text>
+								) : (
+									<Text onClick={activateEdit} ml="sm" color="white">
+										Управление
+									</Text>
+								)
+							) : null}
+							<UnstyledButton
+								sx={theme => ({
+									color: 'white',
+									fontSize: theme.fontSizes.sm,
+								})}
+								ml="sm"
+								onClick={() => {
+									signOutMutate()
+									router.push('/')
+								}}
+							>
+								Выйти
+							</UnstyledButton>
+						</Box>
 					</MediaQuery>
 				</Stack>
 

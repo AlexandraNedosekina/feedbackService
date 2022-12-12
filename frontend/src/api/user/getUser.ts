@@ -1,4 +1,5 @@
 import api, { getUserAdapter } from '..'
+import { errorHandler } from '../errorHandler'
 import { User } from '../generatedTypes'
 
 async function getUser() {
@@ -7,7 +8,7 @@ async function getUser() {
 
 		return getUserAdapter(res.data)
 	} catch (error: any) {
-		throw new Error(error)
+		throw new Error(errorHandler(error))
 	}
 }
 

@@ -1,4 +1,5 @@
 import { IProfileBadge } from 'src/types/profile'
+import { ERoles } from 'src/types/roles'
 import { Fact, JobExpectation, Skill, User } from '../generatedTypes'
 
 export type TProfileBadges = Record<
@@ -12,18 +13,20 @@ export type TUserAdapter = Omit<
 	| 'job_expectations'
 	| 'work_hours_start'
 	| 'work_hours_end'
+	| 'roles'
 > &
 	TProfileBadges & {
 		work_hours_start: Date | null
 		work_hours_end: Date | null
-	}
+	} & { roles: (keyof typeof ERoles)[] }
 
 export default function getUserAdapter(user: User): TUserAdapter {
-	const facts = user.facts!.map(getBadge)
-	const skills = user.skills!.map(getBadge)
-	const job_expectations = user.job_expectations!.map(getBadge)
+	const facts = user.facts?.map(getBadge) ?? []
+	const skills = user.skills?.map(getBadge) ?? []
+	const job_expectations = user.job_expectations?.map(getBadge) ?? []
 	const work_hours_start = getDateFromTime(user.work_hours_start)
 	const work_hours_end = getDateFromTime(user.work_hours_end)
+	const roles = user.roles?.map(role => role.description) ?? []
 
 	return {
 		...user,
@@ -32,12 +35,13 @@ export default function getUserAdapter(user: User): TUserAdapter {
 		job_expectations,
 		work_hours_start,
 		work_hours_end,
+		roles,
 	}
 }
 
 function getBadge(item: Fact | Skill | JobExpectation): IProfileBadge {
 	return {
-		id: item.id!,
+		id: item?.id ?? Math.random(),
 		label: item.description,
 	}
 }

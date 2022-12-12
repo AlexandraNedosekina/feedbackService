@@ -5,6 +5,7 @@ import {
 	ButtonProps,
 	ButtonStylesParams,
 	MantineThemeOverride,
+	ScrollAreaProps,
 	SelectProps,
 } from '@mantine/core'
 
@@ -15,6 +16,10 @@ const BadgeDefaultProps: Partial<BadgeProps> = {
 }
 const SelectDefaultProps: Partial<SelectProps> = {
 	rightSection: <Icon icon="expand_more" />,
+}
+const ScrollAreaDefaultProps: Partial<ScrollAreaProps> = {
+	scrollbarSize: 9,
+	type: 'scroll',
 }
 
 export const mantineTheme: MantineThemeOverride = {
@@ -132,6 +137,9 @@ export const mantineTheme: MantineThemeOverride = {
 					fontWeight: 700,
 				},
 			}),
+		},
+		ScrollArea: {
+			defaultProps: ScrollAreaDefaultProps,
 		},
 	},
 }

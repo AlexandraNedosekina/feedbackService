@@ -10,7 +10,7 @@ const CareerPage: NextPageWithLayout = () => {
 			<Head>
 				<title>Карьерный рост</title>
 			</Head>
-			<Container>
+			<Container pt="lg">
 				<Title order={2}>Карьерный рост</Title>
 
 				<Title order={4} color="brand" mt="md">

@@ -1,4 +1,5 @@
 import api from '..'
+import { errorHandler } from '../errorHandler'
 
 async function signinGitlab() {
 	try {
@@ -10,7 +11,7 @@ async function signinGitlab() {
 	} catch (error: any) {
 		console.error(error)
 
-		throw new Error(error)
+		throw new Error(errorHandler(error))
 	}
 }
 

@@ -1,4 +1,5 @@
 import api from '..'
+import { errorHandler } from '../errorHandler'
 
 async function getAvatarThumbnail(userId: number): Promise<string | null> {
 	try {
@@ -15,8 +16,7 @@ async function getAvatarThumbnail(userId: number): Promise<string | null> {
 
 		return URL.createObjectURL(res.data)
 	} catch (error: any) {
-		console.log({ error })
-		throw new Error(error)
+		throw new Error(errorHandler(error))
 	}
 }
 

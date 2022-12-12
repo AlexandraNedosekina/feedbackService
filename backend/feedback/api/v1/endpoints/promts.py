@@ -42,7 +42,7 @@ async def add_skills_promts(
     skills_promts: schemas.AddSkillPromts,
     _: models.User = Depends(get_admin),
     db: Session = Depends(get_db),
-) -> HTMLResponse():
+) -> HTMLResponse:
     try:
         skills = jsonable_encoder(skills_promts)
         for skill in skills.get("name"):
@@ -65,7 +65,7 @@ async def add_skills_promts(
 @router.delete("/skills/all")
 async def delete_all_skill_promts(
     _: models.User = Depends(get_admin), db: Session = Depends(get_db)
-) -> HTMLResponse():
+) -> HTMLResponse:
     db.query(models.SkillPromts).delete()
     db.commit()
     return HTMLResponse("All rows from table 'SkillPromts' were deleted")

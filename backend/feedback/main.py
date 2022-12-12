@@ -1,3 +1,5 @@
+import logging
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.sessions import SessionMiddleware
@@ -7,6 +9,7 @@ from feedback.api.v1.api import api_router
 from feedback.core.config import settings
 from feedback.db.session import engine
 
+logging.basicConfig(level=logging.DEBUG, format="%(asctime)s;%(levelname)s;%(message)s")
 app = FastAPI()
 
 app.include_router(api_router)

@@ -1,6 +1,7 @@
 import { MantineProvider } from '@mantine/core'
 import { NotificationsProvider, showNotification } from '@mantine/notifications'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import 'dayjs/locale/ru'
 import { NextPage } from 'next'
 import type { AppProps } from 'next/app'
 import { ReactElement, ReactNode } from 'react'

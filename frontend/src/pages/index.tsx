@@ -1,5 +1,6 @@
 import {
 	Button,
+	Center,
 	Container,
 	Group,
 	SimpleGrid,
@@ -104,7 +105,7 @@ const Home: NextPageWithLayout = () => {
 				</div>
 			</div>
 
-			<Container className={styles.content} py={60}>
+			<Container className={styles.content} pt={60} pb="md">
 				<SimpleGrid cols={2} breakpoints={[{ maxWidth: 'sm', cols: 1 }]}>
 					<div className={styles.content_description}>
 						<Title>Оценивай коллег</Title>
@@ -116,10 +117,12 @@ const Home: NextPageWithLayout = () => {
 					<div className={styles.content_image}>
 						<Image src={'/rat1.svg'} layout="fill" alt="" />
 					</div>
-					<div className={styles.content_line}>
-						<Image src={'/line1.svg'} layout="fill" alt="" />
-					</div>
 				</SimpleGrid>
+
+				<Center>
+					<Image src={'/line.svg'} width={260} height={120} alt="" />
+				</Center>
+
 				<SimpleGrid cols={2} breakpoints={[{ maxWidth: 'sm', cols: 1 }]}>
 					<div className={styles.content_image}>
 						<Image src={'/career-grown.svg'} layout="fill" alt="" />
@@ -131,10 +134,12 @@ const Home: NextPageWithLayout = () => {
 							повышения уровня заработной платы
 						</Text>
 					</div>
-					<div className={styles.content_line_t}>
-						<Image src={'/line2.svg'} layout="fill" alt="" />
-					</div>
 				</SimpleGrid>
+
+				<Center>
+					<Image src={'/line2.svg'} width={210} height={140} alt="" />
+				</Center>
+
 				<SimpleGrid cols={2} breakpoints={[{ maxWidth: 'sm', cols: 1 }]}>
 					<div className={styles.content_description}>
 						<Title>Назначай личные встречи</Title>
