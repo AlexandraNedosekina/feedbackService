@@ -1,7 +1,9 @@
-import { Checkbox, SegmentedControl, Text } from '@mantine/core'
+import { UserSearchSelect } from '@components/UserSearchSelect'
+import { Box, SegmentedControl } from '@mantine/core'
 import { FC } from 'react'
 import { useCreateEventStore } from 'src/stores'
 import shallow from 'zustand/shallow'
+import Checkbox from './Checkbox'
 
 const data: { label: string; value: 'one' | 'all' }[] = [
 	{ label: 'Общий', value: 'all' },
@@ -9,14 +11,13 @@ const data: { label: string; value: 'one' | 'all' }[] = [
 ]
 
 const SelectType: FC = () => {
-	const { isTwoWay, type } = useCreateEventStore(
+	const { type, update } = useCreateEventStore(
 		state => ({
 			type: state.type,
-			isTwoWay: state.isTwoWay,
+			update: state.update,
 		}),
 		shallow
 	)
-	const update = useCreateEventStore(state => state.update)
 
 	return (
 		<>
@@ -29,13 +30,14 @@ const SelectType: FC = () => {
 			/>
 			{type === 'one' && (
 				<>
-					<Checkbox
-						checked={isTwoWay}
-						onChange={() => update({ isTwoWay: !isTwoWay })}
-						mt="md"
-						label="Коллеги сотрудника смогут оценивать друг друга"
-					/>
-					<Text my="xl">Выбор сотрудника</Text>
+					<Checkbox />
+					<Box my="lg">
+						<UserSearchSelect
+							onChange={value => {
+								update({ userId: value })
+							}}
+						/>
+					</Box>
 				</>
 			)}
 		</>

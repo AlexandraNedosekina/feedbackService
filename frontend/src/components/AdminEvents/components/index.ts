@@ -1,5 +1,6 @@
 export { default as ActionMenuTable } from './ActionMenuTable'
 export { default as Buttons } from './Buttons'
+export { default as Checkbox } from './Checkbox'
 export { default as CreateEventModal } from './CreateEventModal'
 export { default as EventsTable } from './EventsTable'
 export { default as SelectType } from './SelectType'

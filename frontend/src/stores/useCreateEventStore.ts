@@ -10,6 +10,7 @@ type State = {
 	endTime: Date
 	type: 'all' | 'one'
 	isTwoWay: boolean
+	userId: string
 }
 
 type Actions = {
@@ -23,17 +24,23 @@ type Actions = {
 	getIsStartDateAfterNow: () => boolean
 	getIsStartDateSame: () => boolean
 	getIsDisabled: () => boolean
+	restore: () => void
+}
+
+const initialState: State = {
+	startDate: dayjs().toDate(),
+	startTime: dayjs().add(1, 'hour').minute(0).toDate(),
+	endDate: dayjs().add(1, 'month').toDate(),
+	endTime: dayjs().startOf('day').toDate(),
+	type: 'all',
+	isTwoWay: false,
+	userId: '',
 }
 
 export const useCreateEventStore = create(
 	devtools(
 		immer<State & Actions>((set, get) => ({
-			startDate: dayjs().toDate(),
-			startTime: dayjs().add(1, 'hour').minute(0).toDate(),
-			endDate: dayjs().add(1, 'month').toDate(),
-			endTime: dayjs().startOf('day').toDate(),
-			type: 'all',
-			isTwoWay: false,
+			...initialState,
 			getIsEndDateAfter: () => {
 				const { startDate, endDate } = get()
 				return dayjs(startDate).isBefore(endDate)
@@ -64,6 +71,8 @@ export const useCreateEventStore = create(
 					endDate,
 					startTime,
 					endTime,
+					type,
+					userId,
 					getIsEndDateAfter,
 					getIsEndTimeAfter,
 					getIsSameDates,
@@ -76,6 +85,7 @@ export const useCreateEventStore = create(
 					!endDate ||
 					!startTime ||
 					!endTime ||
+					(type === 'one' && !userId) ||
 					(!getIsEndDateAfter() && !getIsSameDates()) ||
 					(!getIsEndTimeAfter() && getIsSameDates()) ||
 					(!getIsStartTimeAfterNow() && getIsStartDateSame()) ||
@@ -84,6 +94,9 @@ export const useCreateEventStore = create(
 			},
 			update(value) {
 				set(() => value)
+			},
+			restore() {
+				set(() => initialState)
 			},
 		}))
 	)

@@ -20,10 +20,10 @@ const columns = [
 			// .OOOZ hack for correct date parsing for user's timezone, because
 			// dates from backend are in UTC+0
 			const parsedStartDate = dayjs(`${row.date_start}.000Z`).format(
-				'DD.MM.YYYY HH:mm'
+				'HH:mm DD.MM.YYYY'
 			)
 			const parsedEndDate = dayjs(`${row.date_stop}.000Z`).format(
-				'DD.MM.YYYY HH:mm'
+				'HH:mm DD.MM.YYYY'
 			)
 
 			return `${parsedStartDate} - ${parsedEndDate}`

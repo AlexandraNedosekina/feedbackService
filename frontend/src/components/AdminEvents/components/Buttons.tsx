@@ -17,7 +17,9 @@ const Buttons: FC<Props> = ({ onClose }) => {
 		isTwoWay,
 		startTime,
 		type,
+		userId,
 		getIsDisabled,
+		restore,
 	} = useCreateEventStore()
 	const queryClient = useQueryClient()
 
@@ -32,6 +34,7 @@ const Buttons: FC<Props> = ({ onClose }) => {
 		onSuccess: () => {
 			queryClient.invalidateQueries([QueryKeys.EVENTS])
 			onClose()
+			restore()
 		},
 	})
 
@@ -50,7 +53,7 @@ const Buttons: FC<Props> = ({ onClose }) => {
 			endDate: end,
 			type,
 			isTwoWay,
-			userId: '1',
+			userId,
 		})
 	}
 
