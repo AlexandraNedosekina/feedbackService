@@ -1,3 +1,5 @@
+export * from './getAllEventsAdapter'
+export { default as getAllEventsAdapter } from './getAllEventsAdapter'
 export * from './getUserAdapter'
 export { default as getUserAdapter } from './getUserAdapter'
 export * from './searchUserByFullnameAdapter'
