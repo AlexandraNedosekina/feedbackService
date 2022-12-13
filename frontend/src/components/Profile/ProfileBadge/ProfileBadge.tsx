@@ -6,9 +6,7 @@ import { useStyles } from './useStyles'
 
 interface IProps {
 	badge: IProfileBadge
-	// eslint-disable-next-line no-unused-vars
 	onDelete: (id: number) => void
-	// eslint-disable-next-line no-unused-vars
 	onUpdate: (id: number, label: string) => void
 }
 

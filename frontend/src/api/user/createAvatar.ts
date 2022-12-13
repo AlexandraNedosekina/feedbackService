@@ -1,4 +1,5 @@
 import api from '..'
+import { errorHandler } from '../errorHandler'
 import { BodyCreateAvaterUserUserIdAvatarPost } from '../generatedTypes'
 
 async function createAvatar(
@@ -24,7 +25,7 @@ async function createAvatar(
 
 		return res.data
 	} catch (error: any) {
-		throw new Error(error)
+		throw new Error(errorHandler(error))
 	}
 }
 

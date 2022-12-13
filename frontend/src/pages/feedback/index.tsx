@@ -1,37 +1,48 @@
-import UserList from '@components/UserList'
-import { Box, SimpleGrid, Text, Title } from '@mantine/core'
+import AdminView from '@components/AdminView'
+import { Box, Text } from '@mantine/core'
 import Head from 'next/head'
-import { BaseLayout } from 'src/layouts'
-import styles from 'src/styles/main.module.scss'
+import { BaseLayout, FeedbackLayout } from 'src/layouts'
+import { EPages } from 'src/types/pages'
+import { ERoles } from 'src/types/roles'
+import { useBaseLayoutContext } from 'src/utils/useBaseLayoutContext'
+import { useUser } from 'src/utils/useUser'
 import { NextPageWithLayout } from '../_app'
 
 const FeedbackPage: NextPageWithLayout = () => {
+	const { user } = useUser()
+	const { isEdit } = useBaseLayoutContext()
+
+	if (isEdit && user?.roles.includes(ERoles.admin)) {
+		return (
+			<>
+				<Head>
+					<title>Обратная связь</title>
+				</Head>
+				<AdminView page={EPages.Feedback} />
+			</>
+		)
+	}
+
 	return (
 		<>
 			<Head>
 				<title>Обратная связь</title>
 			</Head>
 
-			<Title order={2}>Оценка сотрудников</Title>
-			<SimpleGrid
-				className={styles.card}
-				cols={2}
-				breakpoints={[{ maxWidth: 'sm', cols: 1 }]}
-				mt="md"
-			>
-				<UserList />
+			<FeedbackLayout>
 				<Box
 					sx={theme => ({
-						backgroundColor: theme.colors.brand[0],
+						backgroundColor: 'white',
 						borderRadius: '4px',
 						padding: theme.spacing.xl,
+						height: '100%',
 					})}
 				>
-					<Text className={styles.info_text} weight={600}>
+					<Text color="brand" weight={600} size={19}>
 						Выберите сотрудника для оценки
 					</Text>
 				</Box>
-			</SimpleGrid>
+			</FeedbackLayout>
 		</>
 	)
 }

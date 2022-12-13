@@ -10,7 +10,6 @@ const MAX_ZOOM_SIZE = 9
 interface Props {
 	open: boolean
 	onClose: () => void
-	// eslint-disable-next-line no-unused-vars
 	onSave: (data: Omit<BodyCreateAvaterUserUserIdAvatarPost, 'file'>) => void
 	isSaveButtonLoading: boolean
 	src?: string

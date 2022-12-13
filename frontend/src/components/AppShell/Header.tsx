@@ -3,13 +3,18 @@ import {
 	ActionIcon,
 	createStyles,
 	Header as HeaderMantine,
-	Menu,
 	MediaQuery,
+	Menu,
 } from '@mantine/core'
+import { useMutation } from '@tanstack/react-query'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { FC } from 'react'
+import { signOut } from 'src/api'
+import { ERoles } from 'src/types/roles'
+import { useBaseLayoutContext } from 'src/utils/useBaseLayoutContext'
+import { useUser } from 'src/utils/useUser'
 
 const useStyles = createStyles(theme => ({
 	header: {
@@ -33,8 +38,26 @@ interface Props {
 
 const Header: FC<Props> = ({ openMenu, isOpen }) => {
 	const { classes } = useStyles()
-
+	const { user } = useUser()
 	const router = useRouter()
+	const { mutate: signOutMutate } = useMutation({
+		mutationFn: signOut,
+	})
+	const { isEdit, setIsEdit } = useBaseLayoutContext()
+
+	function activateEdit() {
+		if (typeof window !== 'undefined') {
+			window.localStorage.setItem('edit', 'true')
+			setIsEdit(true)
+		}
+	}
+
+	function deactiveEdit() {
+		if (typeof window !== 'undefined') {
+			window.localStorage.setItem('edit', 'false')
+			setIsEdit(false)
+		}
+	}
 
 	return (
 		<HeaderMantine
@@ -92,9 +115,19 @@ const Header: FC<Props> = ({ openMenu, isOpen }) => {
 						<Menu.Item component={Link} href="/profile">
 							Профиль
 						</Menu.Item>
+						{user?.roles.includes(ERoles.admin) ? (
+							isEdit ? (
+								<Menu.Item onClick={deactiveEdit}>
+									Выйти из режима управления
+								</Menu.Item>
+							) : (
+								<Menu.Item onClick={activateEdit}>Управление</Menu.Item>
+							)
+						) : null}
 						<Menu.Item
 							onClick={() => {
-								router.push('/login')
+								signOutMutate()
+								router.push('/')
 							}}
 						>
 							Выйти

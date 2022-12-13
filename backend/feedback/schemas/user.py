@@ -17,10 +17,6 @@ class BaseRel(Base):
     owner_id: int | None
 
 
-#    class Config:
-#        fields = {'id': {'exclude': True}, 'owner_id' : {'exclude': True}}
-
-
 class Fact(BaseRel):
     pass
 
@@ -91,3 +87,10 @@ class AddSkillPromts(Base):
 class ShowSkillPromts(Base):
     id: int
     name: str
+
+
+class UserDetails(Base):
+    id: int
+    full_name: str
+    job_title: str | None
+    avatar: schemas.Avatar | None

@@ -67,11 +67,7 @@ async def create_avater(
         raise HTTPException(status_code=400, detail="Bad params for thumbnail")
 
     crud.avatar.create(
-        db,
-        user=user,
-        op=original_path,
-        tp=thumbnail_path,
-        obj_in=avatar_create,
+        db, user=user, op=original_path, tp=thumbnail_path, obj_in=avatar_create
     )
     return Response(status_code=201)
 

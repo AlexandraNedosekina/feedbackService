@@ -24,6 +24,7 @@ const AppShell: FC<Props> = ({ children }) => {
 					openMenu={() => setIsMenuOpen(state => !state)}
 				/>
 			}
+			padding={0}
 		>
 			{children}
 		</AppShellMantine>

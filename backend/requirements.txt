@@ -29,4 +29,4 @@ sqlalchemy==1.4.42
 python-multipart==0.0.5
 aiofiles==22.1.0
 Pillow==9.3.0
-
+fastapi-utils==0.2.1
