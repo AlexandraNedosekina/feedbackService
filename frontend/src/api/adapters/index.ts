@@ -1,3 +1,4 @@
+export { default as getMyCareerAdapter } from './getMyCareerAdapter'
 export * from './getUserAdapter'
 export { default as getUserAdapter } from './getUserAdapter'
 export * from './searchUserByFullnameAdapter'
