@@ -2,9 +2,9 @@ import Calendar, { CalendarOptions } from '@fullcalendar/react'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import timeGridPlugin from '@fullcalendar/timegrid'
 import interactionPlugin from '@fullcalendar/interaction'
-// import styles from './Fullcalendar.module.scss';
+import styles from './Fullcalendar.module.scss';
 
-export default function FullCalendar(props: CalendarOptions) {
+export default function HeadCalendar(props: CalendarOptions) {
 	return (
 		<Calendar
 			{...props}
