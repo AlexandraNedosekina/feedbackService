@@ -17,7 +17,7 @@ export const useAdminFeedbackStore = create(
 	devtools(
 		immer<State & Actions>(set => ({
 			userId: '',
-			eventId: '',
+			eventId: 'all',
 			update(value) {
 				set(() => value)
 			},
