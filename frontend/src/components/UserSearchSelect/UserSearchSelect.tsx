@@ -19,12 +19,17 @@ const SelectItem = forwardRef<HTMLDivElement, ItemProps>(
 SelectItem.displayName = 'AutoCompleteItem'
 
 interface Props {
+	value?: string
 	onChange?: (value: string) => void
 	placeholder?: string | null
 }
 
-const UserSearchSelect: FC<Props> = ({ onChange, placeholder }) => {
-	const [value, setValue] = useState<string | null>(null)
+const UserSearchSelect: FC<Props> = ({
+	onChange,
+	placeholder,
+	value: controlledValue,
+}) => {
+	const [value, setValue] = useState<string | null>(controlledValue || null)
 	const [searchValue, onSearchChange] = useState('')
 	const [debounced] = useDebouncedValue(searchValue, 300)
 
