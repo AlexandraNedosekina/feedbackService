@@ -1,9 +1,13 @@
+import AdminView from '@components/AdminView'
 import { Badge, Container, Text, Title } from '@mantine/core'
 import { useQuery } from '@tanstack/react-query'
 import Head from 'next/head'
 import { getMyCareer, QueryKeys } from 'src/api'
 import { BaseLayout } from 'src/layouts'
 import styles from 'src/styles/career.module.sass'
+import { EPages } from 'src/types/pages'
+import { ERoles } from 'src/types/roles'
+import { useBaseLayoutContext } from 'src/utils/useBaseLayoutContext'
 import { useUser } from 'src/utils/useUser'
 import { NextPageWithLayout } from './_app'
 
@@ -13,6 +17,18 @@ const CareerPage: NextPageWithLayout = () => {
 		queryFn: getMyCareer,
 	})
 	const { user } = useUser()
+	const { isEdit } = useBaseLayoutContext()
+
+	if (isEdit && user?.roles.includes(ERoles.admin)) {
+		return (
+			<>
+				<Head>
+					<title>Карьерный рост</title>
+				</Head>
+				<AdminView page={EPages.Career} />
+			</>
+		)
+	}
 
 	return (
 		<>
@@ -54,7 +70,7 @@ const CareerPage: NextPageWithLayout = () => {
 										{item.is_current && ', текущий уровень'}
 									</Title>
 
-									{/* <Badge mt="sm">120 т.р.</Badge> */}
+									<Badge mt="sm">TODO</Badge>
 
 									{!item.is_current && (
 										<>
