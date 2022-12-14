@@ -1,10 +1,11 @@
+import AdminCareer from '@components/AdminCareer'
 import AdminFeedback from '@components/AdminFeedback'
 import { FC } from 'react'
 import { EPages } from 'src/types/pages'
 
 const Components: { [key in EPages]: FC } = {
 	[EPages.Feedback]: AdminFeedback,
-	[EPages.Career]: () => <div>Career</div>,
+	[EPages.Career]: AdminCareer,
 }
 
 interface Props {

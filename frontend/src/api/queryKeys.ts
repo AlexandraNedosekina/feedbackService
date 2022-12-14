@@ -9,4 +9,6 @@ export enum QueryKeys {
 	FEEDBACK = 'FEEDBACK',
 	EVENTS = 'EVENTS',
 	SEARCH_USERS = 'SEARCH_USERS',
+	CAREER = 'CAREER',
+	USERS = 'USERS',
 }

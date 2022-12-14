@@ -2,9 +2,9 @@ import { Select, SelectItem, Text } from '@mantine/core'
 import { useDebouncedValue } from '@mantine/hooks'
 import { useQuery } from '@tanstack/react-query'
 import { FC, forwardRef, useEffect, useState } from 'react'
-import { QueryKeys, SearchUser, searchUserByFullname } from 'src/api'
+import { QueryKeys, TSearchUserAdapter, searchUserByFullname } from 'src/api'
 
-type ItemProps = React.ComponentPropsWithoutRef<'div'> & SearchUser
+type ItemProps = React.ComponentPropsWithoutRef<'div'> & TSearchUserAdapter
 
 const SelectItem = forwardRef<HTMLDivElement, ItemProps>(
 	({ email, full_name, job_title, ...others }: ItemProps, ref) => (
@@ -61,7 +61,7 @@ const UserSearchSelect: FC<Props> = ({
 			searchValue={searchValue}
 			data={data || []}
 			itemComponent={SelectItem}
-			filter={(value, item: SelectItem & SearchUser) =>
+			filter={(value, item: SelectItem & TSearchUserAdapter) =>
 				item.label.toLowerCase().includes(value.toLowerCase().trim())
 			}
 			nothingFound={

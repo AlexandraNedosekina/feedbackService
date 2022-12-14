@@ -66,6 +66,78 @@ export interface BodyCreateAvaterUserUserIdAvatarPost {
 	y: number
 }
 
+/** CareerParam */
+export interface CareerParam {
+	/** Id */
+	id: number
+	/** Career Id */
+	career_id: number
+	/** Description */
+	description: string
+	/** Type */
+	type: 'to_complete' | 'to_learn'
+	/** Is Completed */
+	is_completed: boolean
+}
+
+/** CareerParamCreate */
+export interface CareerParamCreate {
+	/** Description */
+	description: string
+	/** Type */
+	type: 'to_complete' | 'to_learn'
+}
+
+/** CareerParamUpdate */
+export interface CareerParamUpdate {
+	/** Id */
+	id: number
+	/** Description */
+	description?: string
+	/** Type */
+	type?: 'to_complete' | 'to_learn'
+	/** Is Completed */
+	is_completed?: boolean
+}
+
+/** CareerTrack */
+export interface CareerTrack {
+	/** Id */
+	id: number
+	/** Name */
+	name: string
+	/** User Id */
+	user_id: number
+	/** Is Completed */
+	is_completed: boolean
+	/** Is Current */
+	is_current: boolean
+	/** Params */
+	params?: CareerParam[]
+}
+
+/** CareerTrackCreate */
+export interface CareerTrackCreate {
+	/** Name */
+	name: string
+	/** User Id */
+	user_id: number
+	/** Params */
+	params?: CareerParamCreate[]
+}
+
+/** CareerTrackUpdate */
+export interface CareerTrackUpdate {
+	/** Name */
+	name?: string
+	/** Is Completed */
+	is_completed?: boolean
+	/** Is Current */
+	is_current?: boolean
+	/** Params */
+	params?: CareerParamUpdate[]
+}
+
 /** Colleagues */
 export interface Colleagues {
 	/** Id */
@@ -103,11 +175,13 @@ export interface Event {
 export interface EventCreate {
 	/**
 	 * Date Start
+	 * Event start date in utc
 	 * @format date-time
 	 */
 	date_start: string
 	/**
 	 * Date Stop
+	 * Event end date in utc
 	 * @format date-time
 	 */
 	date_stop: string
