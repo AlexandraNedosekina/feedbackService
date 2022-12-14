@@ -2,7 +2,9 @@ import UserRating from '@components/UserRating'
 import {
 	Avatar,
 	Button,
+	Flex,
 	Group,
+	LoadingOverlay,
 	Rating,
 	ScrollArea,
 	Stack,
@@ -21,7 +23,9 @@ import { useRouter } from 'next/router'
 import { FC, useMemo } from 'react'
 import { getFeedback, getUsersColleagues, QueryKeys } from 'src/api'
 import { Colleagues } from 'src/api/generatedTypes'
+import { useAdminFeedbackStore } from 'src/stores'
 import tableStyles from 'src/styles/table.module.sass'
+import shallow from 'zustand/shallow'
 import styles from './AdminUserCard.module.sass'
 import {
 	AdminUserCardContext,
@@ -29,56 +33,34 @@ import {
 } from './AdminUserCardContext'
 import { ColleaguesTitle } from './components'
 
-const columnHelper = createColumnHelper<Colleagues>()
-
-const columns = [
-	columnHelper.accessor('colleague.full_name', {
-		header: 'Сотрудник',
-	}),
-	columnHelper.accessor('colleague.job_title', {
-		header: 'Должность',
-	}),
-]
-
-const AdminUserCard: FC = () => {
-	const {
-		query: { feedbackId },
-	} = useRouter()
-
-	const { data: feedbackData, isLoading } = useQuery({
-		queryKey: [QueryKeys.FEEDBACK, +(feedbackId as string)],
-		queryFn: () => getFeedback(+(feedbackId as string)),
-		enabled: !!feedbackId,
-	})
-	const { data: colleagues, isLoading: isColleaguesLoading } = useQuery({
-		queryKey: [QueryKeys.COLLEAGUES, feedbackData?.receiver.id],
-		queryFn: () => getUsersColleagues(feedbackData?.receiver.id as number),
-		enabled: !!feedbackData?.receiver.id,
-	})
-
-	const table = useReactTable({
-		data: colleagues || [],
-		columns,
-		getCoreRowModel: getCoreRowModel(),
-	})
-
-	const contextValue: IAdminUserCardContext = useMemo(
-		() => ({
-			colleagues: colleagues || [],
+const AdminUserCard = () => {
+	const { eventId, userId } = useAdminFeedbackStore(
+		state => ({
+			eventId: state.eventId,
+			userId: state.userId,
 		}),
-		[colleagues]
+		shallow
 	)
 
-	if (isLoading)
-		return (
-			<div className={styles.root}>
-				<p>Загрузка...</p>
-			</div>
-		)
+	// const { data: feedbackData, isLoading } = useQuery({
+	// 	queryKey: [QueryKeys.FEEDBACK, +(feedbackId as string)],
+	// 	queryFn: () => getFeedback(+(feedbackId as string)),
+	// 	enabled: !!feedbackId,
+	// })
 
 	return (
-		<AdminUserCardContext.Provider value={contextValue}>
-			<div className={styles.root}>
+		<div className={styles.root}>
+			<LoadingOverlay visible={false} />
+
+			{!userId && (
+				<Flex align="center" justify="center" h="100%">
+					<Text color="brand" weight={600} size={19}>
+						Выберите сотрудника для просмотра его оценок
+					</Text>
+				</Flex>
+			)}
+
+			{userId && (
 				<ScrollArea>
 					<Group position="apart" align="flex-start">
 						<Group>
@@ -86,15 +68,11 @@ const AdminUserCard: FC = () => {
 							<Stack spacing={5}>
 								<Group spacing={'sm'}>
 									<Title order={2} color="brand.5">
-										{feedbackData?.receiver.full_name}
+										Имя Фамилия
 									</Title>
-									{feedbackData?.avg_rating && (
-										<UserRating rating={feedbackData.avg_rating} />
-									)}
+									<UserRating rating={4.75} />
 								</Group>
-								<Text color="brand.5">
-									{feedbackData?.receiver.job_title}
-								</Text>
+								<Text color="brand.5">Должность</Text>
 							</Stack>
 						</Group>
 						<Button variant="outline">Архив</Button>
@@ -106,44 +84,28 @@ const AdminUserCard: FC = () => {
 						})}
 						my={40}
 					>
-						<Text size={14}>Средние значения</Text>
+						{eventId === 'all' && <Text size={14}>Средние значения</Text>}
 						<Group position="apart">
 							<div>Выполнение задач</div>
-							<Rating
-								size="md"
-								value={feedbackData?.task_completion}
-								readOnly
-							/>
+							<Rating size="md" value={5} readOnly />
 						</Group>
 						<Group position="apart">
 							<div>Вовлеченность</div>
-							<Rating
-								size="md"
-								value={feedbackData?.involvement}
-								readOnly
-							/>
+							<Rating size="md" value={4} readOnly />
 						</Group>
 						<Group position="apart">
 							<div>Мотивация</div>
-							<Rating
-								size="md"
-								value={feedbackData?.motivation}
-								readOnly
-							/>
+							<Rating size="md" value={5} readOnly />
 						</Group>
 						<Group position="apart">
 							<div>Взаимодействие с командой</div>
-							<Rating
-								size="md"
-								value={feedbackData?.interaction}
-								readOnly
-							/>
+							<Rating size="md" value={5} readOnly />
 						</Group>
 					</Stack>
 
 					<ColleaguesTitle />
 
-					{isColleaguesLoading ? (
+					{/* {isColleaguesLoading ? (
 						<p>Загрузка...</p>
 					) : (
 						<Table className={tableStyles.table}>
@@ -178,10 +140,10 @@ const AdminUserCard: FC = () => {
 								))}
 							</tbody>
 						</Table>
-					)}
+					)} */}
 				</ScrollArea>
-			</div>
-		</AdminUserCardContext.Provider>
+			)}
+		</div>
 	)
 }
 
