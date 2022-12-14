@@ -1,20 +1,42 @@
+import { WorkHours } from '@components/Profile';
 import { Button, Grid, Stack } from '@mantine/core';
-import { DatePicker } from '@mantine/dates';
+import { DatePicker, TimeInput, TimeRangeInput } from '@mantine/dates';
 import 'dayjs/locale/ru';
-import { useState } from 'react';
+import { FC, useState } from 'react';
 
-function DateInput() {
+const DateInput: FC = () => {
   const [value, setValue] = useState(null);
+  
+  function onChange(value: [Date, Date]) {
+		setValue(value)
+	}
+
   return (
     <>
       <Stack spacing="md">
         <DatePicker
-          placeholder="Дата и время"
-          label="Выберете время"
+          placeholder="Дата"
+          label="Выберете дату"
           value={value}
           onChange={setValue}
           locale="ru"
 
+        />
+        <TimeRangeInput
+          clearable
+          label="Выберете время"
+          sx={() => ({
+            alignSelf: 'flex-start',
+          })}
+          value={value}
+          onChange={onChange}
+          styles={{
+            input: {
+              ['.mantine-Input-input']: {
+                border: 'none',
+              },
+            },
+          }}
         />
         <Button>
           Записаться
@@ -23,4 +45,5 @@ function DateInput() {
     </>
   )
 }
+
 export default DateInput;
