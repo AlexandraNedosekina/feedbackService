@@ -1,6 +1,6 @@
 import { Checkbox } from '@mantine/core'
 import { FC, useState } from 'react'
-import ColleaguesTable from './ColleaguesTable'
+import ColleaguesTable from './ColleaguesTableModal'
 
 const AddColleaguesModalView: FC = () => {
 	const [isOnlySelected, setIsOnlySelected] = useState(false)

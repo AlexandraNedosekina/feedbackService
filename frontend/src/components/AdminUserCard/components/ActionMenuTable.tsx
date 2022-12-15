@@ -1,29 +1,27 @@
-import Icon from '@components/Icon'
-import { ActionMenu } from '@components/Table'
-import { Button, Flex, Modal, Title } from '@mantine/core'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { FC, useState } from 'react'
-import { deleteEvent, QueryKeys } from 'src/api'
+import { ActionMenu } from '@components/Table'
+import Icon from '@components/Icon'
+import { Button, Flex, Modal, Title } from '@mantine/core'
 
 interface Props {
-	eventId: string
+	colleagueId: string
 }
 
-const ActionMenuTable: FC<Props> = ({ eventId }) => {
+const ActionMenuTable: FC<Props> = ({ colleagueId }) => {
 	const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
 
-	const queryClient = useQueryClient()
+	// const queryClient = useQueryClient()
 
-	const { mutate, isLoading } = useMutation({
-		mutationFn: (eventId: string) => deleteEvent(eventId),
-		onSuccess: () => {
-			queryClient.invalidateQueries([QueryKeys.EVENTS])
-			setIsDeleteModalOpen(false)
-		},
-	})
+	// const { mutate, isLoading } = useMutation({
+	// 	mutationFn: (eventId: string) => deleteEvent(eventId),
+	// 	onSuccess: () => {
+	// 		queryClient.invalidateQueries([QueryKeys.EVENTS])
+	// 		setIsDeleteModalOpen(false)
+	// 	},
+	// })
 
 	function handleDelete() {
-		mutate(eventId)
+		// mutate(eventId)
 	}
 
 	return (
@@ -38,16 +36,18 @@ const ActionMenuTable: FC<Props> = ({ eventId }) => {
 				</ActionMenu.Item>
 			</ActionMenu>
 			<Modal
-				title={<Title order={4}>Удаление сбора обратной связи</Title>}
+				title={<Title order={4}>Удаление</Title>}
 				opened={isDeleteModalOpen}
 				onClose={() => setIsDeleteModalOpen(false)}
 			>
-				<div>Вы дейстительно хотите удалить этот сбор обратной связи?</div>
+				<div>
+					Вы дейстительно хотите удалить этого сотрудника из коллег?
+				</div>
 
 				<Flex justify={'flex-end'}>
 					<Button
 						onClick={handleDelete}
-						loading={isLoading}
+						// loading={isLoading}
 						color="red"
 						variant="outline"
 						mt="md"
