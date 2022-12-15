@@ -32,11 +32,13 @@ const UserSearchSelect: FC<Props> = ({
 	const [value, setValue] = useState<string | null>(controlledValue || null)
 	const [searchValue, onSearchChange] = useState('')
 	const [debounced] = useDebouncedValue(searchValue, 300)
+	const [isLoading, setIsLoading] = useState(false)
 
-	const { data, refetch, isFetching, isSuccess } = useQuery({
+	const { data, refetch, isFetching } = useQuery({
 		queryKey: [QueryKeys.SEARCH_USERS],
 		queryFn: () => searchUserByFullname(debounced),
 		enabled: Boolean(debounced),
+		keepPreviousData: true,
 	})
 
 	function handleSelectChange(value: string | null) {
@@ -53,6 +55,20 @@ const UserSearchSelect: FC<Props> = ({
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [debounced])
 
+	useEffect(() => {
+		if (searchValue) {
+			setIsLoading(true)
+		}
+
+		const timeout = setTimeout(() => {
+			setIsLoading(false)
+		}, 400)
+
+		return () => {
+			clearTimeout(timeout)
+		}
+	}, [searchValue])
+
 	return (
 		<Select
 			value={value}
@@ -65,9 +81,9 @@ const UserSearchSelect: FC<Props> = ({
 				item.label.toLowerCase().includes(value.toLowerCase().trim())
 			}
 			nothingFound={
-				isSuccess && !data?.length && !isFetching ? (
+				data?.length === 0 && !isLoading ? (
 					<Text size="sm">Ничего не найдено</Text>
-				) : isFetching ? (
+				) : isLoading || isFetching ? (
 					'Загрузка...'
 				) : (
 					'Начните вводить имя сотрудника'
