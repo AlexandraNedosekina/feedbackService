@@ -4,7 +4,7 @@ import timeGridPlugin from '@fullcalendar/timegrid'
 import interactionPlugin from '@fullcalendar/interaction'
 import styles from './Fullcalendar.module.scss';
 
-export default function HeadCalendar(props: CalendarOptions) {
+export default function FullCalendar(props: CalendarOptions) {
 	return (
 		<Calendar
 			{...props}
