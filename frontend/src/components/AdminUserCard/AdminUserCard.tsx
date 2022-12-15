@@ -8,30 +8,13 @@ import {
 	Rating,
 	ScrollArea,
 	Stack,
-	Table,
 	Text,
 	Title,
 } from '@mantine/core'
-import { useQuery } from '@tanstack/react-query'
-import {
-	createColumnHelper,
-	flexRender,
-	getCoreRowModel,
-	useReactTable,
-} from '@tanstack/react-table'
-import { useRouter } from 'next/router'
-import { FC, useMemo } from 'react'
-import { getFeedback, getUsersColleagues, QueryKeys } from 'src/api'
-import { Colleagues } from 'src/api/generatedTypes'
 import { useAdminFeedbackStore } from 'src/stores'
-import tableStyles from 'src/styles/table.module.sass'
 import shallow from 'zustand/shallow'
 import styles from './AdminUserCard.module.sass'
-import {
-	AdminUserCardContext,
-	IAdminUserCardContext,
-} from './AdminUserCardContext'
-import { ColleaguesTitle } from './components'
+import { ColleaguesTable, ColleaguesTitle } from './components'
 
 const AdminUserCard = () => {
 	const { eventId, userId } = useAdminFeedbackStore(
@@ -104,43 +87,7 @@ const AdminUserCard = () => {
 					</Stack>
 
 					<ColleaguesTitle />
-
-					{/* {isColleaguesLoading ? (
-						<p>Загрузка...</p>
-					) : (
-						<Table className={tableStyles.table}>
-							<thead>
-								{table.getHeaderGroups().map(headerGroup => (
-									<tr key={headerGroup.id}>
-										{headerGroup.headers.map(header => (
-											<th key={header.id}>
-												{header.isPlaceholder
-													? null
-													: flexRender(
-															header.column.columnDef.header,
-															header.getContext()
-													  )}
-											</th>
-										))}
-									</tr>
-								))}
-							</thead>
-							<tbody>
-								{table.getRowModel().rows.map(row => (
-									<tr key={row.id}>
-										{row.getVisibleCells().map(cell => (
-											<td key={cell.id}>
-												{flexRender(
-													cell.column.columnDef.cell,
-													cell.getContext()
-												)}
-											</td>
-										))}
-									</tr>
-								))}
-							</tbody>
-						</Table>
-					)} */}
+					<ColleaguesTable />
 				</ScrollArea>
 			)}
 		</div>
