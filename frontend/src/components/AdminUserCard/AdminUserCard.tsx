@@ -11,10 +11,20 @@ import {
 	Text,
 	Title,
 } from '@mantine/core'
+import { useQuery } from '@tanstack/react-query'
+import { useEffect } from 'react'
 import { useAdminFeedbackStore } from 'src/stores'
 import shallow from 'zustand/shallow'
 import styles from './AdminUserCard.module.sass'
 import { ColleaguesTable, ColleaguesTitle } from './components'
+
+function simulateFetch(userId: string, eventId: string): Promise<string> {
+	return new Promise(resolve => {
+		setTimeout(() => {
+			resolve(`${userId} - ${eventId}`)
+		}, 400)
+	})
+}
 
 const AdminUserCard = () => {
 	const { eventId, userId } = useAdminFeedbackStore(
@@ -25,17 +35,22 @@ const AdminUserCard = () => {
 		shallow
 	)
 
-	// const { data: feedbackData, isLoading } = useQuery({
-	// 	queryKey: [QueryKeys.FEEDBACK, +(feedbackId as string)],
-	// 	queryFn: () => getFeedback(+(feedbackId as string)),
-	// 	enabled: !!feedbackId,
-	// })
+	const { data, isFetching, refetch } = useQuery({
+		queryFn: () => simulateFetch(userId, eventId),
+		enabled: !!userId,
+		keepPreviousData: true,
+	})
+
+	useEffect(() => {
+		if (userId) refetch()
+	}, [userId, eventId, refetch])
 
 	return (
 		<div className={styles.root}>
-			<LoadingOverlay visible={false} />
+			<LoadingOverlay visible={isFetching} />
+			<h1>{data}</h1>
 
-			{!userId && (
+			{!userId && !data && (
 				<Flex align="center" justify="center" h="100%">
 					<Text color="brand" weight={600} size={19}>
 						Выберите сотрудника для просмотра его оценок
@@ -43,7 +58,7 @@ const AdminUserCard = () => {
 				</Flex>
 			)}
 
-			{userId && (
+			{(userId || data) && (
 				<ScrollArea>
 					<Group position="apart" align="flex-start">
 						<Group>
