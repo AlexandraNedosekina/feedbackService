@@ -1,5 +1,4 @@
-import Icon from '@components/Icon'
-import Table, { ActionMenu } from '@components/Table'
+import Table from '@components/Table'
 import UserRating from '@components/UserRating'
 import { Flex } from '@mantine/core'
 import {
@@ -9,6 +8,7 @@ import {
 } from '@tanstack/react-table'
 import { FC } from 'react'
 import { Colleagues } from 'src/api/generatedTypes'
+import ActionMenuTable from './ActionMenuTable'
 
 const columnHelper = createColumnHelper<Colleagues>()
 
@@ -63,14 +63,12 @@ const columns = [
 	}),
 	columnHelper.display({
 		id: 'actions',
-		cell: () => {
-			return (
-				<ActionMenu>
-					<ActionMenu.Item icon={<Icon icon="delete" />} color="red">
-						Удалить
-					</ActionMenu.Item>
-				</ActionMenu>
-			)
+		cell: ({
+			row: {
+				original: { id },
+			},
+		}) => {
+			return <ActionMenuTable colleagueId={String(id)} />
 		},
 	}),
 ]

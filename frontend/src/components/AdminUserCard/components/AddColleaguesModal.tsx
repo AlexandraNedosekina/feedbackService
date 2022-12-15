@@ -15,7 +15,7 @@ const AddColleaguesModal: FC<Props> = ({ opened, onClose }) => {
 			onClose={onClose}
 			size="lg"
 		>
-			<AddColleaguesModalView />
+			{/* <AddColleaguesModalView /> */}
 			<Button>Сохранить</Button>
 		</Modal>
 	)
