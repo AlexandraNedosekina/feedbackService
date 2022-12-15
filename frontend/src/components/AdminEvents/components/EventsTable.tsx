@@ -8,7 +8,7 @@ import {
 import 'dayjs/locale/ru'
 import { FC } from 'react'
 import { TEventAdapter } from 'src/api'
-import { Event, EventStatus } from 'src/api/generatedTypes'
+import { EventStatus } from 'src/api/generatedTypes'
 import tableStyles from 'src/styles/table.module.sass'
 import ActionMenuTable from './ActionMenuTable'
 
