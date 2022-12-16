@@ -1,7 +1,7 @@
 import datetime
 from typing import Literal
 
-from pydantic import BaseModel
+from pydantic import BaseModel, validator
 
 from feedback import schemas
 
@@ -48,6 +48,13 @@ class UserUpdateSelf(Base):
     work_hours_start: datetime.time | None
     work_hours_end: datetime.time | None
     meeting_readiness: bool | None
+    date_of_birth: datetime.date | None
+
+    @validator("date_of_birth")
+    def check_real_bdate(cls, val):
+        if datetime.date.today() <= val:
+            raise ValueError("Date of birth cannot be in the future")
+        return val
 
 
 class UserUpdateOther(Base):
@@ -74,6 +81,7 @@ class UserInDB(UserUpdate):
     job_expectations: list[JobExpectation] | None
     roles: list[Role] | None
     avatar: schemas.Avatar | None
+    date_of_birth: datetime.date | None
 
 
 class User(UserInDB):
