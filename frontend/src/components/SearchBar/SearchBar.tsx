@@ -13,7 +13,12 @@ import {
 import { useStyles } from './useStyles'
 import { useState } from 'react'
 
-function Search() {
+interface Props {
+	value: string
+	onChange: (value: string) => void
+}
+
+function SearchBar({ value, onChange }: Props) {
 	const { classes } = useStyles()
 
 	const [isSortAsc, setIsSortAsc] = useState(true)
@@ -22,6 +27,8 @@ function Search() {
 		<Group position="apart" spacing={'xs'}>
 			<TextInput
 				placeholder="Поиск"
+				value={value}
+				onChange={e => onChange(e.currentTarget.value)}
 				icon={<Icon icon="search" />}
 				sx={() => ({
 					flex: '1',
@@ -81,4 +88,4 @@ function Search() {
 		</Group>
 	)
 }
-export default Search
+export default SearchBar
