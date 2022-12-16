@@ -20,6 +20,7 @@ import { useEffect, useState, useMemo } from 'react'
 import { getAllUsers, QueryKeys, searchUserByFullname } from 'src/api'
 import { User } from 'src/api/generatedTypes'
 import tableStyles from 'src/styles/table.module.sass'
+import { GotoEditButton } from './components'
 
 const columnHelper = createColumnHelper<User>()
 
@@ -35,13 +36,7 @@ const columns = [
 	}),
 	columnHelper.display({
 		id: 'edit',
-		cell: ({ row }) => (
-			<Flex justify={'end'}>
-				<ActionIcon color="brand">
-					<Icon icon="edit" />
-				</ActionIcon>
-			</Flex>
-		),
+		cell: ({ row }) => <GotoEditButton id={row.original.id} />,
 	}),
 ]
 
