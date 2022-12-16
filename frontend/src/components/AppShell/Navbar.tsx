@@ -138,7 +138,7 @@ const Navbar: FC<Props> = ({ isOpen, closeMenu }) => {
 						<NavItem
 							icon={'home'}
 							href={'/events'}
-							text={'Events'}
+							text={'Сбор обратной связи'}
 							isFull={isMobile ? true : isFull}
 							active={router.pathname.split('/')[1] === 'events'}
 							closeMenu={closeMenu}
