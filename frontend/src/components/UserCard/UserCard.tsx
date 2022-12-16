@@ -62,8 +62,8 @@ const UserCard: FC<Props> = () => {
 				<Group>
 					<Avatar
 						src={
-							feedbackId
-								? `${process.env.NEXT_PUBLIC_BACKEND_URL}/user/${feedbackId}/avatar`
+							data
+								? `${process.env.NEXT_PUBLIC_BACKEND_URL}/user/${data.receiver.id}/avatar`
 								: null
 						}
 						size={64}
