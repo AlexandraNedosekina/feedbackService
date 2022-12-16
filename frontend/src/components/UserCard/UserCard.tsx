@@ -32,6 +32,7 @@ const UserCard: FC<Props> = () => {
 		queryKey: [QueryKeys.FEEDBACK, +(feedbackId as string)],
 		queryFn: () => getFeedback(+(feedbackId as string)),
 		enabled: !!feedbackId,
+		keepPreviousData: true,
 		onSuccess: data => {
 			update({
 				task_completion: data.task_completion,

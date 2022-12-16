@@ -48,8 +48,6 @@ const AdminUserCard = () => {
 	return (
 		<div className={styles.root}>
 			<LoadingOverlay visible={isFetching} />
-			<h1>{data}</h1>
-
 			{!userId && !data && (
 				<Flex align="center" justify="center" h="100%">
 					<Text color="brand" weight={600} size={19}>
