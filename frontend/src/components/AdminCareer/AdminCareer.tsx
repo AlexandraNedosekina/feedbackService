@@ -1,13 +1,5 @@
 import Icon from '@components/Icon'
-import {
-	ActionIcon,
-	Box,
-	Container,
-	Flex,
-	Input,
-	Table,
-	Title,
-} from '@mantine/core'
+import { Box, Container, Input, Table, Title } from '@mantine/core'
 import { useDebouncedValue } from '@mantine/hooks'
 import { useQuery } from '@tanstack/react-query'
 import {
@@ -16,7 +8,7 @@ import {
 	getCoreRowModel,
 	useReactTable,
 } from '@tanstack/react-table'
-import { useEffect, useState, useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { getAllUsers, QueryKeys, searchUserByFullname } from 'src/api'
 import { User } from 'src/api/generatedTypes'
 import tableStyles from 'src/styles/table.module.sass'

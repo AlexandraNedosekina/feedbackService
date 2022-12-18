@@ -27,7 +27,7 @@ const EditCareer = () => {
 		queryFn: () => getUserById(id as string),
 		enabled: !!id,
 	})
-	const { isLoading, isFetching } = useQuery({
+	const { data, isLoading, isFetching } = useQuery({
 		queryKey: [QueryKeys.CAREER_BY_USER_ID, id],
 		queryFn: () => getCareerByUserId(id as string),
 		enabled: !!id,
@@ -87,7 +87,13 @@ const EditCareer = () => {
 			) : (
 				<>
 					<CareerChips />
-					<GradeCard />
+					{data && data.length > 0 ? (
+						<GradeCard />
+					) : (
+						<Title order={4} mt="sm">
+							Создайте первый карьерный план
+						</Title>
+					)}
 				</>
 			)}
 		</Container>
