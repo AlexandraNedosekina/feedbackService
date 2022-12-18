@@ -52,6 +52,8 @@ class UserUpdateSelf(Base):
 
     @validator("date_of_birth")
     def check_real_bdate(cls, val):
+        if not val:
+            return val
         if datetime.date.today() <= val:
             raise ValueError("Date of birth cannot be in the future")
         return val
