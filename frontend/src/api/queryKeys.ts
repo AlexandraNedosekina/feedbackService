@@ -11,4 +11,5 @@ export enum QueryKeys {
 	SEARCH_USERS = 'SEARCH_USERS',
 	CAREER = 'CAREER',
 	USERS = 'USERS',
+	CAREER_BY_USER_ID = 'CAREER_BY_USER_ID',
 }
