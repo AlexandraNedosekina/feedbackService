@@ -1,12 +1,12 @@
 import { CareerParam, CareerTrack } from '../generatedTypes'
 
-type TCareer = CareerTrack & {
+export type TCareerAdapter = CareerTrack & {
 	toLearn: CareerParam[]
 	toComplete: CareerParam[]
 }
 export default function getMyCareerAdapter(
 	careerTracks: CareerTrack[]
-): TCareer[] {
+): TCareerAdapter[] {
 	return careerTracks.map(careerTrack => {
 		const toLearn =
 			careerTrack.params?.filter(param => param.type === 'to_learn') ?? []
