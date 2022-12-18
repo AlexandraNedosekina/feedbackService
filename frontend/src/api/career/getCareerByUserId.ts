@@ -6,7 +6,7 @@ async function getCareerByUserId(userId: string, skip = 0, limit = 100) {
 	try {
 		const res = await api.get<CareerTrack[]>('career', {
 			params: {
-				userId,
+				['user_id']: userId,
 				skip,
 				limit,
 			},
