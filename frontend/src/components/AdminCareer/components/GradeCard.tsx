@@ -1,5 +1,7 @@
-import { Box, Title } from '@mantine/core'
+import Icon from '@components/Icon'
+import { ActionIcon, Box, Flex, Group, Menu, Title } from '@mantine/core'
 import { useQueryClient } from '@tanstack/react-query'
+import Image from 'next/image'
 import { useRouter } from 'next/router'
 import { QueryKeys, TCareerAdapter } from 'src/api'
 import { useEditCareerStore } from 'src/stores'
@@ -27,7 +29,28 @@ const GradeCard = () => {
 				maxWidth: '600px',
 			})}
 		>
-			<Title order={3}>{grade}</Title>
+			<Group position="apart">
+				<Title order={3}>{grade}</Title>
+				<Menu position="bottom-end">
+					<Menu.Target>
+						<Flex justify={'flex-end'}>
+							<ActionIcon>
+								<Image
+									src={'/menu.svg'}
+									width={24}
+									height={24}
+									alt=""
+								/>
+							</ActionIcon>
+						</Flex>
+					</Menu.Target>
+					<Menu.Dropdown>
+						<Menu.Item icon={<Icon icon="delete" />} color="red">
+							Удалить
+						</Menu.Item>
+					</Menu.Dropdown>
+				</Menu>
+			</Group>
 		</Box>
 	)
 }
