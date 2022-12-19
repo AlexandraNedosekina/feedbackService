@@ -1,6 +1,6 @@
 from typing import Literal
 
-from pydantic import BaseModel, validator, root_validator
+from pydantic import BaseModel, root_validator, validator
 
 ParamType = Literal["to_complete", "to_learn"]
 
@@ -51,8 +51,8 @@ class CareerTrackUpdate(BaseModel):
     is_completed: bool | None
     is_current: bool | None
     params: list[CareerParamUpdate] | None
-    
-    
+
+
 class CareerTrackInDB(BaseModel):
     id: int
     name: str | None

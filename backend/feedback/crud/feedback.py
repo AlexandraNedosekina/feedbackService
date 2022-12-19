@@ -1,3 +1,4 @@
+from sqlalchemy import func
 from sqlalchemy.orm import Session
 
 from feedback import models, schemas
@@ -75,17 +76,21 @@ class CRUDFeedback(
             models.Feedback.sender_id == sender_id,
             models.Feedback.receiver_id == receiver_id,
         )
-        from logging import getLogger
-
-        logger = getLogger(__name__)
-        logger.debug(f"[ CRUD Feedback ] q all = {feedback.all()}")
-        logger.debug(f"[ CRUD Feedback ] q first = {feedback.first()}")
         return feedback.first()
 
     def get_by_event_id(self, db: Session, event_id: int) -> list[models.Feedback]:
         return (
             db.query(models.Feedback).filter(models.Feedback.event_id == event_id).all()
         )
+
+    def get_user_rating(
+        self, db: Session, user_id: int, event_id: int | None = None
+    ) -> float:
+        q = db.query(models.Feedback).filter(models.Feedback.receiver_id == user_id)
+        if event_id:
+            q = q.filter(models.Feedback.event_id == event_id)
+        avg = q.with_entities(func.avg(models.Feedback.avg_rating)).scalar()
+        return avg
 
 
 feedback = CRUDFeedback(models.Feedback)
