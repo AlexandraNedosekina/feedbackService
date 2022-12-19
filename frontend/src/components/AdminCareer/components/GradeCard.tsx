@@ -1,21 +1,18 @@
-import Icon from '@components/Icon'
 import {
-	ActionIcon,
 	Badge,
 	Box,
 	Button,
 	Checkbox,
 	Flex,
 	Group,
-	Menu,
 	Text,
 	Title,
 } from '@mantine/core'
 import { useQueryClient } from '@tanstack/react-query'
-import Image from 'next/image'
 import { useRouter } from 'next/router'
 import { QueryKeys, TCareerAdapter } from 'src/api'
 import { useEditCareerStore } from 'src/stores'
+import GradeCardMenu from './GradeCardMenu'
 
 const GradeCard = () => {
 	const {
@@ -30,6 +27,8 @@ const GradeCard = () => {
 
 	const grade = data?.find(i => i.id === +selectedGradeId)
 
+	if (!grade) return null
+
 	return (
 		<Box
 			sx={theme => ({
@@ -41,32 +40,11 @@ const GradeCard = () => {
 			})}
 		>
 			<Group position="apart">
-				<Title order={3}>{grade?.name}</Title>
-				<Menu position="bottom-end">
-					<Menu.Target>
-						<Flex justify={'flex-end'}>
-							<ActionIcon>
-								<Image
-									src={'/menu.svg'}
-									width={24}
-									height={24}
-									alt=""
-								/>
-							</ActionIcon>
-						</Flex>
-					</Menu.Target>
-					<Menu.Dropdown>
-						<Menu.Item icon={<Icon icon="edit" />} color="brand">
-							Редактировать
-						</Menu.Item>
-						<Menu.Item icon={<Icon icon="delete" />} color="red">
-							Удалить
-						</Menu.Item>
-					</Menu.Dropdown>
-				</Menu>
+				<Title order={3}>{grade.name}</Title>
+				<GradeCardMenu careerId={grade.id} />
 			</Group>
 
-			{grade?.salary ? (
+			{grade.salary ? (
 				<Text>
 					Зарпалата:{' '}
 					<Badge variant="outline" ml="md">
@@ -76,7 +54,7 @@ const GradeCard = () => {
 			) : null}
 
 			<Text mt="sm">Что нужно изучить:</Text>
-			{grade?.toLearn.map(item => (
+			{grade.toLearn.map(item => (
 				<Checkbox
 					key={item.id}
 					label={item.description}
@@ -86,7 +64,7 @@ const GradeCard = () => {
 				/>
 			))}
 			<Text mt="sm">Что нужно сделать:</Text>
-			{grade?.toComplete.map(item => (
+			{grade.toComplete.map(item => (
 				<Checkbox
 					key={item.id}
 					label={item.description}
@@ -98,7 +76,7 @@ const GradeCard = () => {
 
 			<Flex justify={'flex-end'}>
 				<Button variant="outline" bg={'white'}>
-					{!grade?.is_current
+					{!grade.is_current
 						? 'Сделать текущим'
 						: !grade.is_completed
 						? 'Завершить'

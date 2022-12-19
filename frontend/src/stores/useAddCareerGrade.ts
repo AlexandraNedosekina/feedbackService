@@ -14,6 +14,7 @@ type Actions = {
 		[key in keyof State]?: State[key]
 	}) => void
 	restore: () => void
+	getIsDisabled: () => boolean
 }
 
 const initialState: State = {
@@ -32,6 +33,10 @@ export const useAddCareerGrade = create(
 			},
 			restore() {
 				set(() => initialState)
+			},
+			getIsDisabled() {
+				const { title, toLearn, toComplete } = this
+				return !title || !toLearn.length || !toComplete.length
 			},
 		}))
 	)

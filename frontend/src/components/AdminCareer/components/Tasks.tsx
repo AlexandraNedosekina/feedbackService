@@ -41,7 +41,7 @@ const Tasks: FC<Props> = ({ title, type }) => {
 
 	return (
 		<div>
-			<Group>
+			<Group h={40}>
 				<Title size={14} fw={700}>
 					{title}
 				</Title>
