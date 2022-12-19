@@ -35,7 +35,7 @@ const EditCareer = () => {
 			const defaultGradeId = data.find(i => i.is_current)?.id
 
 			const grades = data.map(item => ({
-				label: item.name,
+				label: item.name || '',
 				value: item.id,
 				isCompleted: item.is_completed,
 				isCurrent: item.is_current,

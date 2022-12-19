@@ -1,7 +1,9 @@
 import Icon from '@components/Icon'
 import { ActionIcon, Chip, createStyles } from '@mantine/core'
-import { useEditCareerStore } from 'src/stores'
+import { useState } from 'react'
+import { useAddCareerGrade, useEditCareerStore } from 'src/stores'
 import shallow from 'zustand/shallow'
+import AddGradeModal from './AddGradeModal'
 
 const useStyles = createStyles((theme, _params, getRef) => ({
 	input: {
@@ -50,37 +52,52 @@ const CareerChips = () => {
 		}),
 		shallow
 	)
+	const restore = useAddCareerGrade(state => state.restore)
+	const [isOpen, setIsOpen] = useState(false)
+
+	function handleCloseModal() {
+		setIsOpen(false)
+		restore()
+	}
 
 	return (
-		<Chip.Group
-			defaultValue={grades
-				.filter(({ isDefault }) => isDefault)
-				.map(({ value }) => value)
-				.toString()}
-			onChange={value => {
-				if (!Array.isArray(value)) {
-					update({ selectedGradeId: value })
-				}
-			}}
-			mt="xl"
-			spacing="md"
-		>
-			{grades.map(({ label, value, isCompleted, isCurrent }) => (
-				<Chip
-					key={value}
-					classNames={classes}
-					data-current={isCurrent}
-					data-completed={isCompleted}
-					value={String(value)}
+		<>
+			<Chip.Group
+				defaultValue={grades
+					.filter(({ isDefault }) => isDefault)
+					.map(({ value }) => value)
+					.toString()}
+				onChange={value => {
+					if (!Array.isArray(value)) {
+						update({ selectedGradeId: value })
+					}
+				}}
+				mt="xl"
+				spacing="md"
+			>
+				{grades.map(({ label, value, isCompleted, isCurrent }) => (
+					<Chip
+						key={value}
+						classNames={classes}
+						data-current={isCurrent}
+						data-completed={isCompleted}
+						value={String(value)}
+						size="lg"
+					>
+						{label}
+					</Chip>
+				))}
+				<ActionIcon
+					variant="light"
+					color="brand.6"
 					size="lg"
+					onClick={() => setIsOpen(true)}
 				>
-					{label}
-				</Chip>
-			))}
-			<ActionIcon variant="light" color="brand.6" size="lg">
-				<Icon icon="add" size={22} />
-			</ActionIcon>
-		</Chip.Group>
+					<Icon icon="add" size={22} />
+				</ActionIcon>
+			</Chip.Group>
+			<AddGradeModal isOpen={isOpen} onClose={handleCloseModal} />
+		</>
 	)
 }
 

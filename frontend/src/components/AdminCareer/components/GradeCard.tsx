@@ -1,5 +1,16 @@
 import Icon from '@components/Icon'
-import { ActionIcon, Box, Flex, Group, Menu, Title } from '@mantine/core'
+import {
+	ActionIcon,
+	Badge,
+	Box,
+	Button,
+	Checkbox,
+	Flex,
+	Group,
+	Menu,
+	Text,
+	Title,
+} from '@mantine/core'
 import { useQueryClient } from '@tanstack/react-query'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
@@ -17,7 +28,7 @@ const GradeCard = () => {
 		id as string,
 	])
 
-	const grade = data?.find(i => i.id === +selectedGradeId)?.name
+	const grade = data?.find(i => i.id === +selectedGradeId)
 
 	return (
 		<Box
@@ -30,7 +41,7 @@ const GradeCard = () => {
 			})}
 		>
 			<Group position="apart">
-				<Title order={3}>{grade}</Title>
+				<Title order={3}>{grade?.name}</Title>
 				<Menu position="bottom-end">
 					<Menu.Target>
 						<Flex justify={'flex-end'}>
@@ -45,12 +56,55 @@ const GradeCard = () => {
 						</Flex>
 					</Menu.Target>
 					<Menu.Dropdown>
+						<Menu.Item icon={<Icon icon="edit" />} color="brand">
+							Редактировать
+						</Menu.Item>
 						<Menu.Item icon={<Icon icon="delete" />} color="red">
 							Удалить
 						</Menu.Item>
 					</Menu.Dropdown>
 				</Menu>
 			</Group>
+
+			{grade?.salary ? (
+				<Text>
+					Зарпалата:{' '}
+					<Badge variant="outline" ml="md">
+						{grade.salary}
+					</Badge>
+				</Text>
+			) : null}
+
+			<Text mt="sm">Что нужно изучить:</Text>
+			{grade?.toLearn.map(item => (
+				<Checkbox
+					key={item.id}
+					label={item.description}
+					defaultChecked={item.is_completed}
+					mt="xs"
+					ml="sm"
+				/>
+			))}
+			<Text mt="sm">Что нужно сделать:</Text>
+			{grade?.toComplete.map(item => (
+				<Checkbox
+					key={item.id}
+					label={item.description}
+					defaultChecked={item.is_completed}
+					mt="xs"
+					ml="sm"
+				/>
+			))}
+
+			<Flex justify={'flex-end'}>
+				<Button variant="outline" bg={'white'}>
+					{!grade?.is_current
+						? 'Сделать текущим'
+						: !grade.is_completed
+						? 'Завершить'
+						: 'Завершить'}
+				</Button>
+			</Flex>
 		</Box>
 	)
 }
