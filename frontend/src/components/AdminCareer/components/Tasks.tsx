@@ -1,7 +1,9 @@
 import Icon from '@components/Icon'
-import { ActionIcon, createStyles, Group, Title } from '@mantine/core'
-import { FC, useEffect, useState } from 'react'
+import { ActionIcon, createStyles, Group, Input, Title } from '@mantine/core'
+import { useClickOutside, useFocusTrap } from '@mantine/hooks'
+import { FC, useState } from 'react'
 import { useAddCareerGrade } from 'src/stores'
+import shallow from 'zustand/shallow'
 import AddItem from './AddItem'
 
 const useStyles = createStyles((_theme, _params, getRef) => ({
@@ -25,19 +27,41 @@ interface Props {
 }
 
 const Tasks: FC<Props> = ({ title, type }) => {
-	const [items, setItems] = useState<string[]>([])
-	const { classes } = useStyles()
-	const update = useAddCareerGrade(state => state.update)
+	const { addParam, deleteParam, items, updateParam } = useAddCareerGrade(
+		state => ({
+			items: state[type],
+			addParam: state.addParam,
+			deleteParam: state.deleteParam,
+			updateParam: state.updateParam,
+		}),
+		shallow
+	)
 
-	function handleDelete(index: number) {
-		const newItems = [...items]
-		newItems.splice(index, 1)
-		setItems(newItems)
+	const [isEdit, setIsEdit] = useState(false)
+	const [editIndex, setEditIndex] = useState<number>(0)
+	const [updatedValue, setUpdatedValue] = useState<string>('')
+	const editInputRef = useClickOutside(() => setIsEdit(false))
+	const focusTrapRef = useFocusTrap()
+	const { classes } = useStyles()
+
+	function handleAdd(value: string) {
+		addParam(type, value)
 	}
 
-	useEffect(() => {
-		update({ [type]: items })
-	}, [items, type, update])
+	function handleDelete(id: string) {
+		deleteParam(type, id)
+	}
+
+	function handleUpdate(id: string, value: string) {
+		updateParam(type, id, value)
+		setIsEdit(false)
+	}
+
+	function handleEdit(index: number) {
+		setUpdatedValue(items[index].text)
+		setIsEdit(true)
+		setEditIndex(index)
+	}
 
 	return (
 		<div>
@@ -45,21 +69,63 @@ const Tasks: FC<Props> = ({ title, type }) => {
 				<Title size={14} fw={700}>
 					{title}
 				</Title>
-				<AddItem onAdd={value => setItems([...items, value])} />
+				<AddItem onAdd={handleAdd} />
 			</Group>
 
 			<ul>
-				{items.map((item, index) => (
-					<Group key={index} spacing="lg" className={classes.root}>
-						<li>{item}</li>
-						<ActionIcon
-							onClick={() => handleDelete(index)}
-							className={classes.actionIcon}
-						>
-							<Icon icon="delete" />
-						</ActionIcon>
-					</Group>
-				))}
+				{items.map((item, index) => {
+					if (item.isDeleted) return
+
+					return (
+						<Group key={index} position="apart" className={classes.root}>
+							<li>
+								{isEdit && index === editIndex ? (
+									<div ref={editInputRef}>
+										<Input
+											value={updatedValue}
+											onChange={e =>
+												setUpdatedValue(e.currentTarget.value)
+											}
+											onKeyUp={e => {
+												if (e.key === 'Enter') {
+													handleUpdate(item.id, updatedValue)
+												}
+											}}
+											rightSection={
+												<ActionIcon
+													onClick={() =>
+														handleUpdate(item.id, updatedValue)
+													}
+												>
+													<Icon icon="done" />
+												</ActionIcon>
+											}
+											size="xs"
+											ref={focusTrapRef}
+										/>
+									</div>
+								) : (
+									item.text
+								)}
+							</li>
+							<Group spacing={0}>
+								<ActionIcon
+									onClick={() => handleEdit(index)}
+									className={classes.actionIcon}
+									ml={'lg'}
+								>
+									<Icon icon="edit" />
+								</ActionIcon>
+								<ActionIcon
+									onClick={() => handleDelete(item.id)}
+									className={classes.actionIcon}
+								>
+									<Icon icon="delete" />
+								</ActionIcon>
+							</Group>
+						</Group>
+					)
+				})}
 			</ul>
 		</div>
 	)

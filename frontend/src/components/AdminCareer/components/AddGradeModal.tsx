@@ -1,5 +1,6 @@
 import { Modal, Stack, Title } from '@mantine/core'
 import { FC } from 'react'
+import { useAddCareerGrade } from 'src/stores'
 import SalaryInput from './SalaryInput'
 import SubmitButton from './SubmitButton'
 import Tasks from './Tasks'
@@ -11,11 +12,17 @@ interface Props {
 }
 
 const AddGradeModal: FC<Props> = ({ isOpen, onClose }) => {
+	const isEdit = useAddCareerGrade(state => state.isEdit)
+
 	return (
 		<Modal
 			opened={isOpen}
 			onClose={onClose}
-			title={<Title order={4}>Создание этапа</Title>}
+			title={
+				<Title order={4}>
+					{isEdit ? 'Редактирование этапа' : 'Создание этапа'}
+				</Title>
+			}
 			size="lg"
 		>
 			<Stack>

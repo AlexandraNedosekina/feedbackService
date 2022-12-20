@@ -12,26 +12,55 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
 import { FC, useState } from 'react'
-import { deleteCareerTrack, QueryKeys } from 'src/api'
+import { deleteCareerTrack, QueryKeys, TCareerAdapter } from 'src/api'
+import { useAddCareerGrade } from 'src/stores'
+import AddGradeModal from './AddGradeModal'
 
 interface Props {
-	careerId: number
+	grade: TCareerAdapter
 }
 
-const GradeCardMenu: FC<Props> = ({ careerId }) => {
+const GradeCardMenu: FC<Props> = ({ grade }) => {
 	const {
 		query: { id },
 	} = useRouter()
 	const queryClient = useQueryClient()
 	const { mutate: deleteGrade, isLoading: isDeleteGradeLoading } = useMutation(
 		{
-			mutationFn: () => deleteCareerTrack(String(careerId)),
+			mutationFn: () => deleteCareerTrack(String(grade.id)),
 			onSuccess: () => {
 				queryClient.invalidateQueries([QueryKeys.CAREER_BY_USER_ID, id])
 			},
 		}
 	)
 	const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
+	const [isEditModalOpen, setIsEditModalOpen] = useState(false)
+	const update = useAddCareerGrade(state => state.update)
+	const restore = useAddCareerGrade(state => state.restore)
+
+	function handleEdit() {
+		update({
+			title: grade.name,
+			salary: grade.salary,
+			toLearn: grade.toLearn.map(i => ({
+				id: String(i.id),
+				text: i.description,
+				isCreated: false,
+				isDeleted: false,
+				isEdited: false,
+			})),
+			toComplete: grade.toComplete.map(i => ({
+				id: String(i.id),
+				text: i.description,
+				isCreated: false,
+				isDeleted: false,
+				isEdited: false,
+			})),
+			careerId: String(grade.id),
+			isEdit: true,
+		})
+		setIsEditModalOpen(true)
+	}
 
 	function handleDelete() {
 		deleteGrade()
@@ -48,7 +77,11 @@ const GradeCardMenu: FC<Props> = ({ careerId }) => {
 					</Flex>
 				</Menu.Target>
 				<Menu.Dropdown>
-					<Menu.Item icon={<Icon icon="edit" />} color="brand">
+					<Menu.Item
+						onClick={handleEdit}
+						icon={<Icon icon="edit" />}
+						color="brand"
+					>
 						Редактировать
 					</Menu.Item>
 					<Menu.Item
@@ -80,6 +113,13 @@ const GradeCardMenu: FC<Props> = ({ careerId }) => {
 					</Button>
 				</Group>
 			</Modal>
+			<AddGradeModal
+				isOpen={isEditModalOpen}
+				onClose={() => {
+					setIsEditModalOpen(false)
+					restore()
+				}}
+			/>
 		</>
 	)
 }

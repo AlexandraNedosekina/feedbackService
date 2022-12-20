@@ -41,7 +41,7 @@ const GradeCard = () => {
 		>
 			<Group position="apart">
 				<Title order={3}>{grade.name}</Title>
-				<GradeCardMenu careerId={grade.id} />
+				<GradeCardMenu grade={grade} />
 			</Group>
 
 			{grade.salary ? (
