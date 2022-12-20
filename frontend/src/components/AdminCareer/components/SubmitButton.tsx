@@ -9,6 +9,10 @@ import {
 	CareerTrackUpdate,
 } from 'src/api/generatedTypes'
 import { ICareerGradeParam, useAddCareerGrade } from 'src/stores'
+import {
+	IUpdateCareerTrackAllParams,
+	updateCareerTrackAll,
+} from '../utils/updateCareerTrackAll'
 
 const SubmitButton = () => {
 	const store = useAddCareerGrade()
@@ -24,10 +28,8 @@ const SubmitButton = () => {
 		},
 	})
 	const { mutate: update, isLoading: isUpdateLoading } = useMutation({
-		mutationFn: (data: CareerTrackUpdate) => {
-			if (!store.careerId) throw new Error('No career id')
-			return updateCareerTrack(store.careerId, data)
-		},
+		mutationFn: (data: IUpdateCareerTrackAllParams) =>
+			updateCareerTrackAll(data),
 		onSuccess: () => {
 			queryClient.invalidateQueries([QueryKeys.CAREER_BY_USER_ID, id])
 			store.restore()
@@ -35,7 +37,7 @@ const SubmitButton = () => {
 	})
 
 	function handleSubmit() {
-		if (store.isEdit) {
+		if (store.isEdit && store.careerId) {
 			const {
 				created: toLearnCreated,
 				deleted: toLearnDeleted,
@@ -47,17 +49,13 @@ const SubmitButton = () => {
 				edited: toCompleteEdited,
 			} = reduceParams(store.toComplete, 'to_complete')
 
-			if (toLearnEdited.length > 0 || toCompleteEdited.length > 0) {
-				update({
-					name: store.title,
-					salary: store.salary ?? 0,
-					params: [...toLearnEdited, ...toCompleteEdited],
-				})
-			}
-
 			update({
+				careerId: store.careerId,
 				name: store.title,
 				salary: store.salary ?? 0,
+				paramsToAdd: [...toLearnCreated, ...toCompleteCreated],
+				paramsToDelete: [...toLearnDeleted, ...toCompleteDeleted],
+				paramsToUpdate: [...toLearnEdited, ...toCompleteEdited],
 			})
 			return
 		}
@@ -102,22 +100,27 @@ function reduceParams(
 	return params.reduce<{
 		created: CareerParamCreate[]
 		edited: CareerParamUpdate[]
-		deleted: number[]
+		deleted: string[]
 	}>(
 		(prev, curr) => {
 			if (curr.isDeleted) {
-				prev.deleted.push(+curr.id)
-			} else if (curr.isCreated) {
-				prev.created.push({
-					description: curr.text,
-					type,
-				})
-			} else if (curr.isEdited) {
-				prev.edited.push({
-					id: +curr.id,
-					description: curr.text,
-					type,
-				})
+				// From api
+				if (!curr.isCreated) {
+					prev.deleted.push(curr.id)
+				}
+			} else {
+				if (curr.isCreated) {
+					prev.created.push({
+						description: curr.text,
+						type,
+					})
+				} else if (curr.isEdited) {
+					prev.edited.push({
+						id: +curr.id,
+						description: curr.text,
+						type,
+					})
+				}
 			}
 
 			return prev
