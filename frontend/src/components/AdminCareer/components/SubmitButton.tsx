@@ -1,14 +1,10 @@
 import { Button } from '@mantine/core'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useRouter } from 'next/router'
-import { createCareerTrack, QueryKeys, updateCareerTrack } from 'src/api'
-import {
-	CareerParamCreate,
-	CareerParamUpdate,
-	CareerTrackCreate,
-	CareerTrackUpdate,
-} from 'src/api/generatedTypes'
-import { ICareerGradeParam, useAddCareerGrade } from 'src/stores'
+import { createCareerTrack, QueryKeys } from 'src/api'
+import { CareerParamCreate, CareerTrackCreate } from 'src/api/generatedTypes'
+import { useAddCareerGrade } from 'src/stores'
+import { reduceParams } from '../utils/recuceParams'
 import {
 	IUpdateCareerTrackAllParams,
 	updateCareerTrackAll,
@@ -90,46 +86,6 @@ const SubmitButton = () => {
 		>
 			Добавить
 		</Button>
-	)
-}
-
-function reduceParams(
-	params: ICareerGradeParam[],
-	type: 'to_learn' | 'to_complete'
-) {
-	return params.reduce<{
-		created: CareerParamCreate[]
-		edited: CareerParamUpdate[]
-		deleted: string[]
-	}>(
-		(prev, curr) => {
-			if (curr.isDeleted) {
-				// From api
-				if (!curr.isCreated) {
-					prev.deleted.push(curr.id)
-				}
-			} else {
-				if (curr.isCreated) {
-					prev.created.push({
-						description: curr.text,
-						type,
-					})
-				} else if (curr.isEdited) {
-					prev.edited.push({
-						id: +curr.id,
-						description: curr.text,
-						type,
-					})
-				}
-			}
-
-			return prev
-		},
-		{
-			created: [],
-			edited: [],
-			deleted: [],
-		}
 	)
 }
 
