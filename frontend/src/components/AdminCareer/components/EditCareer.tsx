@@ -27,11 +27,13 @@ const EditCareer = () => {
 		queryFn: () => getUserById(id as string),
 		enabled: !!id,
 	})
-	const { data, isLoading, isFetching } = useQuery({
+	const { data, isLoading } = useQuery({
 		queryKey: [QueryKeys.CAREER_BY_USER_ID, id],
 		queryFn: () => getCareerByUserId(id as string),
 		enabled: !!id,
 		onSuccess: data => {
+			if (useEditCareerStore.getState().selectedGradeId) return
+
 			const defaultGradeId = data.find(i => i.is_current)?.id
 
 			const grades = data.map(item => ({
@@ -81,7 +83,7 @@ const EditCareer = () => {
 				</Group>
 			)}
 
-			{isLoading || isFetching ? (
+			{isLoading ? (
 				// TODO: add skeleton
 				<div>Загрузка...</div>
 			) : (

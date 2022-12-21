@@ -1,18 +1,10 @@
-import {
-	Badge,
-	Box,
-	Button,
-	Checkbox,
-	Flex,
-	Group,
-	Text,
-	Title,
-} from '@mantine/core'
+import { Badge, Box, Button, Flex, Group, Text, Title } from '@mantine/core'
 import { useQueryClient } from '@tanstack/react-query'
 import { useRouter } from 'next/router'
 import { QueryKeys, TCareerAdapter } from 'src/api'
 import { useEditCareerStore } from 'src/stores'
 import GradeCardMenu from './GradeCardMenu'
+import ParamCheckbox from './ParamCheckbox'
 
 const GradeCard = () => {
 	const {
@@ -55,22 +47,24 @@ const GradeCard = () => {
 
 			<Text mt="sm">Что нужно изучить:</Text>
 			{grade.toLearn.map(item => (
-				<Checkbox
+				<ParamCheckbox
 					key={item.id}
 					label={item.description}
-					defaultChecked={item.is_completed}
-					mt="xs"
-					ml="sm"
+					id={item.id}
+					careerId={String(grade.id)}
+					type="toLearn"
+					isCompleted={item.is_completed}
 				/>
 			))}
 			<Text mt="sm">Что нужно сделать:</Text>
 			{grade.toComplete.map(item => (
-				<Checkbox
+				<ParamCheckbox
 					key={item.id}
 					label={item.description}
-					defaultChecked={item.is_completed}
-					mt="xs"
-					ml="sm"
+					id={item.id}
+					careerId={String(grade.id)}
+					type="toComplete"
+					isCompleted={item.is_completed}
 				/>
 			))}
 

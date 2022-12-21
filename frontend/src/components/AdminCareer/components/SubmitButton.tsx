@@ -4,7 +4,7 @@ import { useRouter } from 'next/router'
 import { createCareerTrack, QueryKeys } from 'src/api'
 import { CareerParamCreate, CareerTrackCreate } from 'src/api/generatedTypes'
 import { useAddCareerGrade } from 'src/stores'
-import { reduceParams } from '../utils/recuceParams'
+import { reduceParams } from '../utils/reduceParams'
 import {
 	IUpdateCareerTrackAllParams,
 	updateCareerTrackAll,
