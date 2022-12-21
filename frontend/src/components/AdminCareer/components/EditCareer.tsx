@@ -65,12 +65,7 @@ const EditCareer = () => {
 			) : (
 				<Group mt="xl">
 					<Avatar
-						src={
-							null
-							// data
-							// 	? `${process.env.NEXT_PUBLIC_BACKEND_URL}/user/${data.receiver.id}/avatar`
-							// 	: null
-						}
+						src={user?.avatar?.thumbnail_url}
 						size={64}
 						radius={100}
 					/>

@@ -53,7 +53,11 @@ const AdminUserCard = () => {
 				<ScrollArea>
 					<Group position="apart" align="flex-start">
 						<Group>
-							<Avatar src={null} size={64} radius={100} />
+							<Avatar
+								src={data?.user.avatar?.thumbnail_url}
+								size={64}
+								radius={100}
+							/>
 							<Stack spacing={5}>
 								<Group spacing={'sm'}>
 									<Title order={2} color="brand.5">

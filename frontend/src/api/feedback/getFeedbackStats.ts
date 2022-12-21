@@ -1,5 +1,6 @@
 import api from '..'
 import { errorHandler } from '../errorHandler'
+import { Avatar } from '../generatedTypes'
 
 async function getFeedbackStats(userId: string, eventId?: string) {
 	try {
@@ -8,7 +9,7 @@ async function getFeedbackStats(userId: string, eventId?: string) {
 				id: number
 				full_name: string
 				job_title: string | null
-				avatar: string | null
+				avatar: Avatar | null
 			}
 			avg_rating: number
 			task_completion_avg: number
