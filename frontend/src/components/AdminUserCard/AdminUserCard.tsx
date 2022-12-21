@@ -5,7 +5,6 @@ import {
 	Flex,
 	Group,
 	LoadingOverlay,
-	Rating,
 	ScrollArea,
 	Stack,
 	Text,
@@ -17,15 +16,7 @@ import { getFeedbackStats } from 'src/api'
 import { useAdminFeedbackStore } from 'src/stores'
 import shallow from 'zustand/shallow'
 import styles from './AdminUserCard.module.sass'
-import { ColleaguesTable, ColleaguesTitle } from './components'
-
-function simulateFetch(userId: string, eventId: string): Promise<string> {
-	return new Promise(resolve => {
-		setTimeout(() => {
-			resolve(`${userId} - ${eventId}`)
-		}, 400)
-	})
-}
+import { CategoryRating, ColleaguesTable, ColleaguesTitle } from './components'
 
 const AdminUserCard = () => {
 	const { eventId, userId } = useAdminFeedbackStore(
@@ -66,11 +57,15 @@ const AdminUserCard = () => {
 							<Stack spacing={5}>
 								<Group spacing={'sm'}>
 									<Title order={2} color="brand.5">
-										Имя Фамилия
+										{data?.user.full_name}
 									</Title>
-									{data && <UserRating rating={data} />}
+									{data?.avg_rating && (
+										<UserRating rating={data.avg_rating} />
+									)}
 								</Group>
-								<Text color="brand.5">Должность</Text>
+								{data?.user.job_title && (
+									<Text color="brand.5">{data.user.job_title}</Text>
+								)}
 							</Stack>
 						</Group>
 						<Button variant="outline">Архив</Button>
@@ -82,23 +77,23 @@ const AdminUserCard = () => {
 						})}
 						my={40}
 					>
-						{eventId === 'all' && <Text size={14}>Средние значения</Text>}
-						<Group position="apart">
-							<div>Выполнение задач</div>
-							<Rating size="md" value={5} readOnly />
-						</Group>
-						<Group position="apart">
-							<div>Вовлеченность</div>
-							<Rating size="md" value={4} readOnly />
-						</Group>
-						<Group position="apart">
-							<div>Мотивация</div>
-							<Rating size="md" value={5} readOnly />
-						</Group>
-						<Group position="apart">
-							<div>Взаимодействие с командой</div>
-							<Rating size="md" value={5} readOnly />
-						</Group>
+						<Text size={14}>Средние значения</Text>
+						<CategoryRating
+							category="Выполнение задач"
+							rating={data?.task_completion_avg || 0}
+						/>
+						<CategoryRating
+							category="Вовлеченность"
+							rating={data?.involvement_avg || 0}
+						/>
+						<CategoryRating
+							category="Мотивация"
+							rating={data?.motivation_avg || 0}
+						/>
+						<CategoryRating
+							category="Взаимодействие с командой"
+							rating={data?.interaction_avg || 0}
+						/>
 					</Stack>
 
 					<ColleaguesTitle />

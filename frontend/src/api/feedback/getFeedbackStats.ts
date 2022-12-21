@@ -3,7 +3,19 @@ import { errorHandler } from '../errorHandler'
 
 async function getFeedbackStats(userId: string, eventId?: string) {
 	try {
-		const res = await api.get<number>(`feedback/stats/${userId}`, {
+		const res = await api.get<{
+			user: {
+				id: number
+				full_name: string
+				job_title: string | null
+				avatar: string | null
+			}
+			avg_rating: number
+			task_completion_avg: number
+			involvement_avg: number
+			motivation_avg: number
+			interaction_avg: number
+		}>(`feedback/stats/${userId}`, {
 			params: {
 				event_id: eventId,
 			},
