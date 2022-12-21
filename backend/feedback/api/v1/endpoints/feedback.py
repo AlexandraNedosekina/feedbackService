@@ -285,7 +285,7 @@ async def get_user_rating(
     event_id: int | None = None,
     db: Session = Depends(get_db),
     _: models.User = Depends(get_admin_boss_manager_hr),
-) -> float:
+) -> schemas.FeedbackStat:
     user = crud.user.get(db, user_id)
     if not user:
         raise HTTPException(status_code=404, detail="User does not exist")
@@ -295,12 +295,12 @@ async def get_user_rating(
         if not event:
             raise HTTPException(status_code=404, detail="Event does not exist")
 
-    return crud.feedback.get_user_rating(db, user_id=user_id, event_id=event_id)
+    return crud.feedback.get_user_avg_ratings(db, user=user, event_id=event_id)
 
 
 @router.delete("/")
 async def test_method_delete_all_feedback(db: Session = Depends(get_db)):
-    obj = crud.feedback.remove_all(db=db)
+    _ = crud.feedback.remove_all(db=db)
     return Response(status_code=200)
 
 

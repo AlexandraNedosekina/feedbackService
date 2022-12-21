@@ -1,7 +1,7 @@
 from datetime import datetime, timezone
 from enum import Enum
 
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, Field, root_validator, validator
 
 from feedback.schemas.user import UserDetails
 
@@ -121,3 +121,20 @@ class FeedbackInDB(Base):
 
 class Feedback(FeedbackInDB):
     pass
+
+
+class FeedbackStat(Base):
+    user: UserDetails
+
+    avg_rating: float | None
+    task_completion_avg: float | None
+    involvement_avg: float | None
+    motivation_avg: float | None
+    interaction_avg: float | None
+    
+    @root_validator
+    def round_numbers(cls, values):
+        for key, val in values.items():
+            if key not in ("user") and val is not None:
+                values[key] = round(val, 2)
+        return values

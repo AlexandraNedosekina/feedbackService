@@ -83,14 +83,29 @@ class CRUDFeedback(
             db.query(models.Feedback).filter(models.Feedback.event_id == event_id).all()
         )
 
-    def get_user_rating(
-        self, db: Session, user_id: int, event_id: int | None = None
-    ) -> float:
-        q = db.query(models.Feedback).filter(models.Feedback.receiver_id == user_id)
+    def get_user_avg_ratings(
+        self, db: Session, user: models.User, event_id: int | None = None
+    ) -> schemas.FeedbackStat | None:
+        q = db.query(models.Feedback).filter(models.Feedback.receiver_id == user.id)
+
         if event_id:
             q = q.filter(models.Feedback.event_id == event_id)
-        avg = q.with_entities(func.avg(models.Feedback.avg_rating)).scalar()
-        return avg
+
+        avg_values = q.with_entities(
+            func.avg(models.Feedback.avg_rating),
+            func.avg(models.Feedback.task_completion),
+            func.avg(models.Feedback.involvement),
+            func.avg(models.Feedback.motivation),
+            func.avg(models.Feedback.interaction),
+        ).first()
+        return schemas.FeedbackStat(
+            user=schemas.UserDetails.from_orm(user),
+            avg_rating=avg_values[0],
+            task_completion_avg=avg_values[1],
+            involvement_avg=avg_values[2],
+            motivation_avg=avg_values[3],
+            interaction_avg=avg_values[4],
+        )
 
 
 feedback = CRUDFeedback(models.Feedback)
