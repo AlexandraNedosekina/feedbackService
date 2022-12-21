@@ -14,13 +14,11 @@ class CRUDCareer(
         for param in obj_in.params:
             career_param = models.CareerParam(**param.dict())
             career_params.append(career_param)
-        
+
         obj_in: dict = obj_in.dict()
         obj_in.pop("params")
 
-        db_obj = models.CareerTrack(
-            **obj_in, params=career_params
-        )
+        db_obj = models.CareerTrack(**obj_in, params=career_params)
         db.add(db_obj)
         db.commit()
         db.refresh(db_obj)
