@@ -32,8 +32,6 @@ const EditCareer = () => {
 		queryFn: () => getCareerByUserId(id as string),
 		enabled: !!id,
 		onSuccess: data => {
-			if (useEditCareerStore.getState().selectedGradeId) return
-
 			const defaultGradeId = data.find(i => i.is_current)?.id
 
 			const grades = data.map(item => ({
@@ -45,7 +43,9 @@ const EditCareer = () => {
 			}))
 
 			update({ grades })
-			update({ selectedGradeId: String(defaultGradeId) })
+			if (!useEditCareerStore.getState().selectedGradeId) {
+				update({ selectedGradeId: String(defaultGradeId) })
+			}
 		},
 	})
 

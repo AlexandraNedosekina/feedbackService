@@ -30,7 +30,7 @@ const AddGradeModal: FC<Props> = ({ isOpen, onClose }) => {
 				<SalaryInput />
 				<Tasks title="Что нужно изучить" type="toLearn" />
 				<Tasks title="Что нужно сделать" type="toComplete" />
-				<SubmitButton />
+				<SubmitButton onClose={onClose} />
 			</Stack>
 		</Modal>
 	)

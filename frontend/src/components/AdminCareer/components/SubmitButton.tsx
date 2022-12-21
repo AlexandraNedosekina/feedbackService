@@ -1,6 +1,7 @@
 import { Button } from '@mantine/core'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useRouter } from 'next/router'
+import { FC } from 'react'
 import { createCareerTrack, QueryKeys } from 'src/api'
 import { CareerParamCreate, CareerTrackCreate } from 'src/api/generatedTypes'
 import { useAddCareerGrade } from 'src/stores'
@@ -10,7 +11,11 @@ import {
 	updateCareerTrackAll,
 } from '../utils/updateCareerTrackAll'
 
-const SubmitButton = () => {
+interface Props {
+	onClose: () => void
+}
+
+const SubmitButton: FC<Props> = ({ onClose }) => {
 	const store = useAddCareerGrade()
 	const {
 		query: { id },
@@ -21,6 +26,7 @@ const SubmitButton = () => {
 		onSuccess: () => {
 			queryClient.invalidateQueries([QueryKeys.CAREER_BY_USER_ID, id])
 			store.restore()
+			onClose()
 		},
 	})
 	const { mutate: update, isLoading: isUpdateLoading } = useMutation({
@@ -29,6 +35,7 @@ const SubmitButton = () => {
 		onSuccess: () => {
 			queryClient.invalidateQueries([QueryKeys.CAREER_BY_USER_ID, id])
 			store.restore()
+			onClose()
 		},
 	})
 
@@ -84,7 +91,7 @@ const SubmitButton = () => {
 			loading={isCreateLoading || isUpdateLoading}
 			disabled={store.getIsDisabled()}
 		>
-			Добавить
+			{store.isEdit ? 'Сохранить' : 'Добавить'}
 		</Button>
 	)
 }
