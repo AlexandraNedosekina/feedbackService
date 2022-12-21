@@ -1,7 +1,8 @@
 import { Badge, Box, Button, Flex, Group, Text, Title } from '@mantine/core'
-import { useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useRouter } from 'next/router'
-import { QueryKeys, TCareerAdapter } from 'src/api'
+import { QueryKeys, TCareerAdapter, updateCareerTrack } from 'src/api'
+import { CareerTrackUpdate } from 'src/api/generatedTypes'
 import { useEditCareerStore } from 'src/stores'
 import GradeCardMenu from './GradeCardMenu'
 import ParamCheckbox from './ParamCheckbox'
@@ -10,14 +11,39 @@ const GradeCard = () => {
 	const {
 		query: { id },
 	} = useRouter()
-	const selectedGradeId = useEditCareerStore(state => state.selectedGradeId)
 	const queryClient = useQueryClient()
+	const selectedGradeId = useEditCareerStore(state => state.selectedGradeId)
+	const { mutate, isLoading } = useMutation({
+		mutationFn: (data: CareerTrackUpdate) =>
+			updateCareerTrack(selectedGradeId, data),
+		onSuccess: () => {
+			queryClient.invalidateQueries([QueryKeys.CAREER_BY_USER_ID, id])
+		},
+	})
 	const data = queryClient.getQueryData<TCareerAdapter[]>([
 		QueryKeys.CAREER_BY_USER_ID,
-		id as string,
+		id,
 	])
 
 	const grade = data?.find(i => i.id === +selectedGradeId)
+
+	function handleSubmit() {
+		if (!grade) return
+		const data: { is_completed?: boolean; is_current?: boolean } = {}
+
+		if (!grade.is_completed) {
+			if (grade.is_current) {
+				data.is_completed = true
+				data.is_current = false
+			} else {
+				data.is_current = true
+			}
+		} else {
+			data.is_completed = false
+		}
+
+		mutate(data)
+	}
 
 	if (!grade) return null
 
@@ -69,12 +95,17 @@ const GradeCard = () => {
 			))}
 
 			<Flex justify={'flex-end'}>
-				<Button variant="outline" bg={'white'}>
-					{!grade.is_current
-						? 'Сделать текущим'
-						: !grade.is_completed
-						? 'Завершить'
-						: 'Завершить'}
+				<Button
+					onClick={handleSubmit}
+					variant="outline"
+					bg={'white'}
+					loading={isLoading}
+				>
+					{!grade.is_completed
+						? grade.is_current
+							? 'Сделать завершенным'
+							: 'Сделать текущим'
+						: 'Сделать незавершенным'}
 				</Button>
 			</Flex>
 		</Box>
