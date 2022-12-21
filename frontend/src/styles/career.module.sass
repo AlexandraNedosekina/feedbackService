@@ -9,6 +9,8 @@ $border-width: 1px
 
       &_content
          position: relative
+         ul
+            margin-top: 0
          li
             list-style-position: inside
          &::before
@@ -19,7 +21,7 @@ $border-width: 1px
             bottom: calc(-1 * var(--mantine-spacing-xl) - 3px)
             border-right: $border-width dashed var(--mantine-color-brand-6)
 
-         &[data-line-active]
+         &[data-line-active=true]
             &::before
                border-right-style: solid
 
@@ -53,7 +55,7 @@ $border-width: 1px
       border-radius: 50%
       background-color: var(--mantine-color-brand-0)
       border: 2px solid var(--mantine-color-brand-6)
-      &[data-active]
+      &[data-active=true]
          background-color: var(--mantine-color-brand-6)
 
 @container (max-width: 500px)

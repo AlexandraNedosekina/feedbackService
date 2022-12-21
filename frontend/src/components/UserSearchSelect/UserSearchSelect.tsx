@@ -2,9 +2,9 @@ import { Select, SelectItem, Text } from '@mantine/core'
 import { useDebouncedValue } from '@mantine/hooks'
 import { useQuery } from '@tanstack/react-query'
 import { FC, forwardRef, useEffect, useState } from 'react'
-import { QueryKeys, SearchUser, searchUserByFullname } from 'src/api'
+import { QueryKeys, TSearchUserAdapter, searchUserByFullname } from 'src/api'
 
-type ItemProps = React.ComponentPropsWithoutRef<'div'> & SearchUser
+type ItemProps = React.ComponentPropsWithoutRef<'div'> & TSearchUserAdapter
 
 const SelectItem = forwardRef<HTMLDivElement, ItemProps>(
 	({ email, full_name, job_title, ...others }: ItemProps, ref) => (
@@ -19,11 +19,17 @@ const SelectItem = forwardRef<HTMLDivElement, ItemProps>(
 SelectItem.displayName = 'AutoCompleteItem'
 
 interface Props {
-	onChange: (value: string) => void
+	value?: string
+	onChange?: (value: string) => void
+	placeholder?: string | null
 }
 
-const UserSearchSelect: FC<Props> = ({ onChange }) => {
-	const [value, setValue] = useState<string | null>(null)
+const UserSearchSelect: FC<Props> = ({
+	onChange,
+	placeholder,
+	value: controlledValue,
+}) => {
+	const [value, setValue] = useState<string | null>(controlledValue || null)
 	const [searchValue, onSearchChange] = useState('')
 	const [debounced] = useDebouncedValue(searchValue, 300)
 
@@ -35,7 +41,9 @@ const UserSearchSelect: FC<Props> = ({ onChange }) => {
 
 	function handleSelectChange(value: string | null) {
 		setValue(value)
-		onChange(value || '')
+		if (onChange) {
+			onChange(value || '')
+		}
 	}
 
 	useEffect(() => {
@@ -53,7 +61,7 @@ const UserSearchSelect: FC<Props> = ({ onChange }) => {
 			searchValue={searchValue}
 			data={data || []}
 			itemComponent={SelectItem}
-			filter={(value, item: SelectItem & SearchUser) =>
+			filter={(value, item: SelectItem & TSearchUserAdapter) =>
 				item.label.toLowerCase().includes(value.toLowerCase().trim())
 			}
 			nothingFound={
@@ -67,7 +75,11 @@ const UserSearchSelect: FC<Props> = ({ onChange }) => {
 			}
 			rightSection={null}
 			rightSectionProps={{ style: { pointerEvents: 'all' } }}
-			placeholder="Поиск сотрудника по имени"
+			placeholder={
+				placeholder === null
+					? undefined
+					: placeholder || 'Введите имя сотрудника'
+			}
 			searchable
 			clearable
 		/>

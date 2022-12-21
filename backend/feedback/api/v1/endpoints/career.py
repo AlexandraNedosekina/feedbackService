@@ -108,5 +108,3 @@ async def remove_param(
 
     crud.career.remove_param(db, id=param_id)
     return Response(status_code=204)
-
-

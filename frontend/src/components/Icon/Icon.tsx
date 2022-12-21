@@ -21,6 +21,7 @@ export type Icons =
 	| 'delete'
 	| 'sort'
 	| 'remove'
+	| 'arrow_back_ios_new'
 type IconType = 'outlined' | 'rounded' | 'sharp'
 
 export interface IconProps {
