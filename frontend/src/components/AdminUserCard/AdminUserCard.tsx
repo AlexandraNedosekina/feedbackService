@@ -13,6 +13,7 @@ import {
 } from '@mantine/core'
 import { useQuery } from '@tanstack/react-query'
 import { useEffect } from 'react'
+import { getFeedbackStats } from 'src/api'
 import { useAdminFeedbackStore } from 'src/stores'
 import shallow from 'zustand/shallow'
 import styles from './AdminUserCard.module.sass'
@@ -36,7 +37,8 @@ const AdminUserCard = () => {
 	)
 
 	const { data, isFetching, refetch } = useQuery({
-		queryFn: () => simulateFetch(userId, eventId),
+		queryFn: () =>
+			getFeedbackStats(userId, eventId === 'all' ? undefined : eventId),
 		enabled: !!userId,
 		keepPreviousData: true,
 	})
@@ -66,7 +68,7 @@ const AdminUserCard = () => {
 									<Title order={2} color="brand.5">
 										Имя Фамилия
 									</Title>
-									<UserRating rating={4.75} />
+									{data && <UserRating rating={data} />}
 								</Group>
 								<Text color="brand.5">Должность</Text>
 							</Stack>
