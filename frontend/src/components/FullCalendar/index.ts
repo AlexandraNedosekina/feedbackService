@@ -1,1 +1,1 @@
-export { default } from './FullCalendar'
+export {default} from '../FullCalendar/FullCalendar'

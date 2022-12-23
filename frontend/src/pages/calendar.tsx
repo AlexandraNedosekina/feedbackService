@@ -4,8 +4,8 @@ import { BaseLayout } from 'src/layouts'
 import { NextPageWithLayout } from './_app'
 import dynamic from 'next/dynamic'
 import { ProfileBadgesGroup } from '@components/Profile'
-import SelectWorker from '@components/Calendar/SelectWorker'
-import DateInput from '@components/Calendar/DateInput'
+import SelectWorker from '@components/FullCalendar/components/SelectWorker'
+import DateInput from '@components/FullCalendar/components/DateInput'
 import styles from '../styles/calendar.module.sass'
 
 const FullCalendar = dynamic(() => import('../components/FullCalendar'), {
