@@ -32,7 +32,7 @@ const ActionMenuTable: FC<Props> = ({ colleagueId }) => {
 					icon={<Icon icon="delete" />}
 					color="red"
 				>
-					Удалить
+					Удалить коллегу
 				</ActionMenu.Item>
 			</ActionMenu>
 			<Modal

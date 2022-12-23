@@ -14,6 +14,12 @@
       tr
          &:nth-child(even)
             background-color: var(--mantine-color-brand-0)
+         &:hover
+            .active-hover
+               opacity: 1
          td
             border-top: none
             border-bottom: none
+         .active-hover
+            opacity: 0
+            transition: opacity 0.2s
