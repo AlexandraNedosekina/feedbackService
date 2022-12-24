@@ -17,18 +17,39 @@ const FullCalendar: FC = (props: CalendarOptions) => {
         {...props}
         plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
         headerToolbar={{
+          left: 'dayGridMonth,timeGridWeek,timeGridDay',
           center: 'addEventButton'
         }}
-        customButtons={{handleEventCreate}}
+        customButtons= {{
+          addEventButton: {
+            text: 'Создать событие',
+            click: function() {
+              var dateStr = prompt('Введите дату в формате ГГГГ-ММ-ДД');
+              var userName = prompt('Введите имя сотрудника')
+              var date = new Date(dateStr + userName + 'T00:00:00');
+    
+              if (!isNaN(date.valueOf())) { // valid?
+                FullCalendar.addEvent({
+                  title: 'dynamic event',
+                  start: date,
+                  allDay: true
+                });
+                alert('Great. Now, update your database...');
+              } else {
+                alert('Invalid date.');
+              }
+            }
+          }
+        }}
         initialView="timeGridWeek"
         selectable={true}
         scrollTime="08:00"
         locale="ru"
-        headerToolbar={{
-          left: 'prev,next today',
-          center: 'title',
-          right: 'dayGridMonth,timeGridWeek,timeGridDay',
-        }}
+        // headerToolbar={{
+        //   left: 'prev,next today',
+        //   center: 'title',
+        //   right: 'dayGridMonth,timeGridWeek,timeGridDay',
+        // }}
         nowIndicator={true}
         editable={true}
         initialEvents={INITIAL_EVENTS}
