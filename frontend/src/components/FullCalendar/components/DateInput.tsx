@@ -13,7 +13,7 @@ const DateInput: FC = () => {
   return (
     <>
       <Stack spacing="md">
-        <DatePicker
+        {/* <DatePicker
           placeholder="Дата"
           label="Выберете дату"
           value={value}
@@ -36,7 +36,7 @@ const DateInput: FC = () => {
               },
             },
           }}
-        />
+        /> */}
         <Button>
           Записаться
         </Button>
