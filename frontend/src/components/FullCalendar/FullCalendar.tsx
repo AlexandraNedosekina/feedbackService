@@ -31,7 +31,7 @@ const FullCalendar:FC=(props: CalendarOptions)=> {
 				initialEvents={INITIAL_EVENTS}
 				select={handleDateSelect}
 				eventContent={renderEventContent}
-				// eventClick={}
+				eventClick={handleEventClick}
 				// eventsSet={}
 				businessHours={{
 					daysOfWeek: [1, 2, 3, 4, 5],
@@ -72,6 +72,11 @@ function handleDateSelect (selectInfo: DateSelectArg) {
         end: selectInfo.endStr,
         allDay: selectInfo.allDay
       })
+    }
+  }
+  function handleEventClick (clickInfo: EventClickArg) {
+    if (confirm(`Are you sure you want to delete the event '${clickInfo.event.title}'`)) {
+      clickInfo.event.remove()
     }
   }
 
