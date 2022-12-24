@@ -67,7 +67,7 @@ const AdminCareer = () => {
 		<Container pt="lg">
 			<Title order={2}>Карьерный рост</Title>
 
-			<Box maw={400} mt="lg">
+			<Box maw={400} my="lg">
 				<Input
 					value={searchValue}
 					onChange={e => setSearchValue(e.target.value)}
