@@ -17,18 +17,19 @@ const FullCalendar: FC = (props: CalendarOptions) => {
         {...props}
         plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
         headerToolbar={{
-          left: 'dayGridMonth,timeGridWeek,timeGridDay',
-          center: 'addEventButton'
+          left: 'prev,next today myCustomButton',
+          center: 'title',
+          right: 'dayGridMonth,timeGridWeek,timeGridDay'
         }}
-        customButtons= {{
-          addEventButton: {
+        customButtons={{
+          myCustomButton: {
             text: 'Создать событие',
-            click: function() {
-              var dateStr = prompt('Введите дату в формате ГГГГ-ММ-ДД');
-              var userName = prompt('Введите имя сотрудника')
-              var date = new Date(dateStr + userName + 'T00:00:00');
-    
-              if (!isNaN(date.valueOf())) { // valid?
+            click: function () {
+              let dateStr = prompt('Введите дату в формате ГГГГ-ММ-ДД');
+              // var userName = prompt('Введите имя сотрудника')
+              let date = new Date(dateStr + 'T00:00:00');
+
+              if (!isNaN(date.valueOf())) { 
                 FullCalendar.addEvent({
                   title: 'dynamic event',
                   start: date,
@@ -102,20 +103,20 @@ const FullCalendar: FC = (props: CalendarOptions) => {
   }
 
   function handleEventCreate() {
-      const dateStr = prompt('Введите ваду в формате ГГГГ-ММ-ДД');
-      const date = new Date(dateStr + 'T00:00:00');
-      if (!isNaN(date.valueOf())) { 
-        FullCalendar.bind({
-          title: title,
-          start: date,
-          allDay: true
-        });
-        alert('Great. Now, update your database...');
-      } else {
-        alert('Invalid date.');
-      }
+    const dateStr = prompt('Введите ваду в формате ГГГГ-ММ-ДД');
+    const date = new Date(dateStr + 'T00:00:00');
+    if (!isNaN(date.valueOf())) {
+      FullCalendar.bind({
+        title: title,
+        start: date,
+        allDay: true
+      });
+      alert('Great. Now, update your database...');
+    } else {
+      alert('Invalid date.');
     }
   }
+}
 
 function handleEventClick(clickInfo: EventClickArg) {
   if (confirm(`Вы действительно хотите удалить это событие?'${clickInfo.event.title}'`)) {
