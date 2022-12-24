@@ -12,7 +12,7 @@ import {
 } from '@mantine/core'
 import { useQuery } from '@tanstack/react-query'
 import { useEffect } from 'react'
-import { getFeedbackStats } from 'src/api'
+import { getFeedbackStats, QueryKeys } from 'src/api'
 import { useAdminFeedbackStore } from 'src/stores'
 import shallow from 'zustand/shallow'
 import styles from './AdminUserCard.module.sass'
@@ -28,6 +28,7 @@ const AdminUserCard = () => {
 	)
 
 	const { data, isFetching, refetch } = useQuery({
+		queryKey: [QueryKeys.FEEDBACK_STATS, userId, eventId],
 		queryFn: () =>
 			getFeedbackStats(userId, eventId === 'all' ? undefined : eventId),
 		enabled: !!userId,
