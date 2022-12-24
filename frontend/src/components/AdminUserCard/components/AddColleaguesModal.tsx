@@ -1,4 +1,4 @@
-import { Button, Modal, Title } from '@mantine/core'
+import { Modal, Title } from '@mantine/core'
 import { FC } from 'react'
 import AddColleaguesModalView from './AddColleaguesModalView'
 
@@ -15,8 +15,7 @@ const AddColleaguesModal: FC<Props> = ({ opened, onClose }) => {
 			onClose={onClose}
 			size="lg"
 		>
-			{/* <AddColleaguesModalView /> */}
-			<Button>Сохранить</Button>
+			<AddColleaguesModalView onClose={onClose} />
 		</Modal>
 	)
 }
