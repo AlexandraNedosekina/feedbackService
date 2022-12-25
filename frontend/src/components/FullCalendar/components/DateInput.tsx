@@ -1,6 +1,5 @@
-import { WorkHours } from '@components/Profile';
-import { Button, Grid, Stack } from '@mantine/core';
-import { DatePicker, TimeInput, TimeRangeInput } from '@mantine/dates';
+import { Button, Stack } from '@mantine/core';
+import { DatePicker, TimeRangeInput } from '@mantine/dates';
 import 'dayjs/locale/ru';
 import { FC, useState } from 'react';
 
@@ -14,7 +13,7 @@ const DateInput: FC = () => {
   return (
     <>
       <Stack spacing="md">
-        <DatePicker
+        {/* <DatePicker
           placeholder="Дата"
           label="Выберете дату"
           value={value}
@@ -37,7 +36,7 @@ const DateInput: FC = () => {
               },
             },
           }}
-        />
+        /> */}
         <Button>
           Записаться
         </Button>
