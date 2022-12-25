@@ -8,7 +8,8 @@ class CareerTrack(Base):
     __tablename__ = "career_track"
 
     id = Column(Integer, primary_key=True, index=True)
-    name = Column(String, nullable=False)
+    name = Column(String, nullable=True)
+    salary = Column(Integer, nullable=True)
     user_id = Column(Integer, ForeignKey("user.id"), nullable=False)
     is_completed = Column(Boolean, nullable=False, server_default="0")
     is_current = Column(Boolean, nullable=False, server_default="0")

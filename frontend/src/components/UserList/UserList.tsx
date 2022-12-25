@@ -50,22 +50,28 @@ const UserList: FC<Props> = () => {
 					filteredFeedbackList.map(feedback => (
 						<UserButton
 							key={feedback.id}
-							recieverId={feedback.receiver.id}
+							avatarUrl={
+								feedback?.receiver?.avatar?.thumbnail_url || null
+							}
 							name={feedback.receiver.full_name}
 							post={feedback.receiver.job_title || ''}
 							href={String(feedback.id)}
 							isActive={+(feedbackId as string) === feedback.id}
+							isCompleted={feedback.completed}
 						/>
 					))
 				) : feedbackList && feedbackList.length > 0 ? (
 					feedbackList.map(feedback => (
 						<UserButton
 							key={feedback.id}
-							recieverId={feedback.receiver.id}
+							avatarUrl={
+								feedback?.receiver?.avatar?.thumbnail_url || null
+							}
 							name={feedback.receiver.full_name}
 							post={feedback.receiver.job_title || ''}
 							href={String(feedback.id)}
 							isActive={+(feedbackId as string) === feedback.id}
+							isCompleted={feedback.completed}
 						/>
 					))
 				) : (

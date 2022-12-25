@@ -1,5 +1,5 @@
-from sqlalchemy import (Boolean, Column, DateTime, ForeignKey, Integer, String,
-                        Time)
+from sqlalchemy import (Boolean, Column, Date, DateTime, ForeignKey, Integer,
+                        String, Time)
 from sqlalchemy.orm import relationship
 
 from feedback.db.session import Base
@@ -11,7 +11,7 @@ class User(Base):
     full_name = Column(String, index=True)
     email = Column(String, unique=True, index=True, nullable=False)
     job_title = Column(String)
-    date_of_birth = Column(DateTime)
+    date_of_birth = Column(Date)
     roles = relationship(
         "Roles", backref="user", cascade="all, delete, delete-orphan", lazy="joined"
     )

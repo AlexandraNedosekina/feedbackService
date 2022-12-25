@@ -6,7 +6,7 @@ from feedback.schemas.career import (CareerParam, CareerParamCreate,
 from feedback.schemas.feedback import (Colleagues, ColleaguesIdList, Event,
                                        EventCreate, EventStatus, EventUpdate,
                                        Feedback, FeedbackCreateEmpty,
-                                       FeedbackFromUser)
+                                       FeedbackFromUser, FeedbackStat)
 from feedback.schemas.oauth import OAuthToken, OAuthTokenData, OAuthUserInfo
 from feedback.schemas.user import (AddSkillPromts, ShowSkillPromts, User,
                                    UserCreate, UserDetails, UserUpdate,

@@ -47,6 +47,7 @@ export const Buttons = () => {
 			createFeedback(+(feedbackId as string), data),
 		onSuccess: data => {
 			queryClient.invalidateQueries([QueryKeys.FEEDBACK, data.id])
+			queryClient.invalidateQueries([QueryKeys.FEEDBACK_LIST])
 
 			showNotification({
 				title: 'Успешно',

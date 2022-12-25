@@ -1,22 +1,25 @@
+import Icon from '@components/Icon'
 import { Avatar, Text, Title } from '@mantine/core'
 import classNames from 'classnames'
 import Link from 'next/link'
 import styles from './UserButton.module.sass'
 
 interface UserButtonProps {
-	recieverId: number
+	avatarUrl: string | null
 	name: string
 	post: string
 	href: string
 	isActive: boolean
+	isCompleted: boolean
 }
 
 export default function UserButton({
-	recieverId,
+	avatarUrl,
 	name,
 	post,
 	href,
 	isActive,
+	isCompleted,
 }: UserButtonProps) {
 	return (
 		<Link
@@ -25,15 +28,7 @@ export default function UserButton({
 			})}
 			href={`/feedback/${href}`}
 		>
-			<Avatar
-				src={
-					recieverId
-						? `${process.env.NEXT_PUBLIC_BACKEND_URL}/user/${recieverId}/avatar`
-						: null
-				}
-				radius="xl"
-				size={'lg'}
-			/>
+			<Avatar src={avatarUrl} radius="xl" size={'lg'} />
 			<div style={{ flex: 1 }}>
 				<Title order={4} color="brand.6">
 					{name}
@@ -43,6 +38,12 @@ export default function UserButton({
 					{post}
 				</Text>
 			</div>
+
+			{isCompleted && (
+				<div className={styles.done}>
+					<Icon icon="done" size={22} />
+				</div>
+			)}
 		</Link>
 	)
 }

@@ -70,7 +70,9 @@ const CareerPage: NextPageWithLayout = () => {
 										{item.is_current && ', текущий уровень'}
 									</Title>
 
-									<Badge mt="sm">TODO</Badge>
+									{item.salary ? (
+										<Badge mt="sm">Зарплата {item.salary}</Badge>
+									) : null}
 
 									{!item.is_current && (
 										<>

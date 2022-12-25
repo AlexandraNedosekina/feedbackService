@@ -105,7 +105,9 @@ export interface CareerTrack {
 	/** Id */
 	id: number
 	/** Name */
-	name: string
+	name?: string
+	/** Salary */
+	salary?: number
 	/** User Id */
 	user_id: number
 	/** Is Completed */
@@ -119,7 +121,9 @@ export interface CareerTrack {
 /** CareerTrackCreate */
 export interface CareerTrackCreate {
 	/** Name */
-	name: string
+	name?: string
+	/** Salary */
+	salary?: number
 	/** User Id */
 	user_id: number
 	/** Params */
@@ -130,6 +134,8 @@ export interface CareerTrackCreate {
 export interface CareerTrackUpdate {
 	/** Name */
 	name?: string
+	/** Salary */
+	salary?: number
 	/** Is Completed */
 	is_completed?: boolean
 	/** Is Current */
@@ -348,6 +354,11 @@ export interface User {
 	work_hours_end?: string
 	/** Meeting Readiness */
 	meeting_readiness?: boolean
+	/**
+	 * Date Of Birth
+	 * @format date
+	 */
+	date_of_birth?: string
 	/** Email */
 	email?: string
 	/** Full Name */
@@ -410,6 +421,11 @@ export interface UserUpdate {
 	work_hours_end?: string
 	/** Meeting Readiness */
 	meeting_readiness?: boolean
+	/**
+	 * Date Of Birth
+	 * @format date
+	 */
+	date_of_birth?: string
 	/** Email */
 	email?: string
 	/** Full Name */

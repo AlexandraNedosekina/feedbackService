@@ -11,8 +11,8 @@ const GotoEditButton: FC<Props> = ({ id }) => {
 	return (
 		<Flex justify={'end'}>
 			<Link href={`/career/edit/${id}`} style={{ textDecoration: 'none' }}>
-				<ActionIcon color="brand">
-					<Icon icon="edit" />
+				<ActionIcon color="brand.3">
+					<Icon icon="edit" size={20} />
 				</ActionIcon>
 			</Link>
 		</Flex>
