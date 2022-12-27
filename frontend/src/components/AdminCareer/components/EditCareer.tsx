@@ -73,7 +73,9 @@ const EditCareer = () => {
 						<Title order={2} color="brand.5">
 							{user?.full_name}
 						</Title>
-						{user?.job_title && <Text color="brand.5">Fullstack</Text>}
+						{user?.job_title && (
+							<Text color="brand.5">{user.job_title}</Text>
+						)}
 					</Stack>
 				</Group>
 			)}
