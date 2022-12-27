@@ -69,8 +69,14 @@ const ParamCheckbox: FC<Props> = ({
 			}
 			setIsChecked(prev => !prev)
 		},
-		onSettled: () =>
-			queryClient.invalidateQueries([QueryKeys.CAREER_BY_USER_ID, userId]),
+		onSettled: () => {
+			queryClient.invalidateQueries([QueryKeys.CAREER_BY_USER_ID, userId])
+			showNotification({
+				title: 'Успешно',
+				message: 'Данные успешно обновлены',
+				color: 'green',
+			})
+		},
 	})
 
 	function handleChange(e: ChangeEvent<HTMLInputElement>) {

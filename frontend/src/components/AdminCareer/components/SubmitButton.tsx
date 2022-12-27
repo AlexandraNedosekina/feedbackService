@@ -1,4 +1,5 @@
 import { Button } from '@mantine/core'
+import { showNotification } from '@mantine/notifications'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useRouter } from 'next/router'
 import { FC } from 'react'
@@ -36,6 +37,11 @@ const SubmitButton: FC<Props> = ({ onClose }) => {
 			queryClient.invalidateQueries([QueryKeys.CAREER_BY_USER_ID, id])
 			store.restore()
 			onClose()
+			showNotification({
+				title: 'Успешно',
+				message: 'Данные успешно обновлены',
+				color: 'green',
+			})
 		},
 	})
 
