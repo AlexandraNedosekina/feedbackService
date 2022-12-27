@@ -1,99 +1,118 @@
-import Icon from '@components/Icon'
-import { ActionIcon, Flex, Table } from '@mantine/core'
+import Table from '@components/Table'
+import UserRating from '@components/UserRating'
+import { Flex } from '@mantine/core'
 import {
 	createColumnHelper,
-	flexRender,
 	getCoreRowModel,
-	getFilteredRowModel,
 	useReactTable,
 } from '@tanstack/react-table'
-import { FC, useState } from 'react'
+import { FC, useMemo, useState } from 'react'
 import { Colleagues } from 'src/api/generatedTypes'
-import tableStyles from 'src/styles/table.module.sass'
-import { useAdminUserCardContext } from 'src/utils/useAdminUserCardContext'
+import ActionMenuTable from './ActionMenuTable'
+import FeedbackModal from './FeedbackModal'
+import MoreButton from './MoreButton'
 
-const columnHelper = createColumnHelper<Colleagues>()
+const columnHelper = createColumnHelper<Colleagues & { feedbackId: number }>()
 
-const columns = [
-	columnHelper.accessor('colleague.full_name', {
-		header: 'Сотрудник',
-	}),
-	columnHelper.accessor('colleague.job_title', {
-		header: 'Должность',
-	}),
-	columnHelper.display({
-		id: 'add',
-		cell: ({ row: { getIsSelected, getToggleSelectedHandler } }) => {
-			return (
-				<Flex justify="flex-end">
-					<ActionIcon
-						variant="light"
-						color="brand.5"
-						bg="brand.2"
-						onClick={getToggleSelectedHandler()}
-					>
-						<Icon icon={getIsSelected() ? 'remove' : 'add'} />
-					</ActionIcon>
-				</Flex>
-			)
+const data: (Colleagues & { feedbackId: number })[] = [
+	{
+		id: 1,
+		owner_id: 1,
+		colleague: {
+			id: 1,
+			full_name: 'Иванов Иван Иванович',
+			job_title: 'Директор',
 		},
-	}),
+		feedbackId: 1,
+	},
+	{
+		id: 2,
+		owner_id: 2,
+		colleague: {
+			id: 2,
+			full_name: 'Test Test Test',
+			job_title: 'Аналитик',
+		},
+		feedbackId: 2,
+	},
+	{
+		id: 3,
+		owner_id: 3,
+		colleague: {
+			id: 3,
+			full_name: 'Test Test Test 2',
+			job_title: 'Тестировщик',
+		},
+		feedbackId: 3,
+	},
 ]
 
-interface Props {
-	isOnlySelectedColleagues: boolean
-}
+const ColleaguesTable: FC = () => {
+	const [feedbackId, setFeedbackId] = useState<number | null>(null)
+	const [isOpen, setIsOpen] = useState(false)
 
-const ColleaguesTable: FC<Props> = ({ isOnlySelectedColleagues }) => {
-	const { colleagues } = useAdminUserCardContext()
-	const [rowSelection, setRowSelection] = useState({})
+	function handleOpenFeedback(id: number) {
+		setFeedbackId(id)
+		setIsOpen(true)
+	}
+
+	const columns = useMemo(
+		() => [
+			columnHelper.accessor('colleague.full_name', {
+				header: 'Сотрудник',
+			}),
+			columnHelper.accessor('colleague.job_title', {
+				header: 'Должность',
+			}),
+			// accessor average rating
+			columnHelper.display({
+				id: 'average_rating',
+				header: 'Оценка',
+				cell: () => {
+					return (
+						<Flex>
+							<UserRating rating={4.8} withBorder />
+						</Flex>
+					)
+				},
+			}),
+			columnHelper.display({
+				id: 'more',
+				cell: ({
+					row: {
+						original: { feedbackId },
+					},
+				}) => <MoreButton onClick={() => handleOpenFeedback(feedbackId)} />,
+			}),
+			columnHelper.display({
+				id: 'actions',
+				cell: ({
+					row: {
+						original: { id },
+					},
+				}) => {
+					return <ActionMenuTable colleagueId={String(id)} />
+				},
+			}),
+		],
+		[]
+	)
 
 	const table = useReactTable({
-		data: colleagues,
+		data,
 		columns,
 		getCoreRowModel: getCoreRowModel(),
-		state: {
-			rowSelection,
-			globalFilter: isOnlySelectedColleagues,
-		},
-		onRowSelectionChange: setRowSelection,
-		globalFilterFn: row => row.getIsSelected(),
-		getFilteredRowModel: getFilteredRowModel(),
 	})
 
 	return (
-		<Table className={tableStyles.table}>
-			<thead>
-				{table.getHeaderGroups().map(headerGroup => (
-					<tr key={headerGroup.id}>
-						{headerGroup.headers.map(header => (
-							<th key={header.id}>
-								{header.isPlaceholder
-									? null
-									: flexRender(
-											header.column.columnDef.header,
-											header.getContext()
-									  )}
-							</th>
-						))}
-					</tr>
-				))}
-			</thead>
-			<tbody>
-				{table.getRowModel().rows.map(row => (
-					<tr key={row.id}>
-						{row.getVisibleCells().map(cell => (
-							<td key={cell.id}>
-								{flexRender(
-									cell.column.columnDef.cell,
-									cell.getContext()
-								)}
-							</td>
-						))}
-					</tr>
-				))}
-			</tbody>
-		</Table>
+		<>
+			<Table table={table} />
+			<FeedbackModal
+				isOpen={isOpen}
+				onClose={() => setIsOpen(false)}
+				feedbackId={feedbackId}
+			/>
+		</>
 	)
 }
 

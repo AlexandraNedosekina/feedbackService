@@ -5,28 +5,19 @@ import {
 	getCoreRowModel,
 	useReactTable,
 } from '@tanstack/react-table'
-import dayjs from 'dayjs'
 import 'dayjs/locale/ru'
 import { FC } from 'react'
-import { Event, EventStatus } from 'src/api/generatedTypes'
+import { TEventAdapter } from 'src/api'
+import { EventStatus } from 'src/api/generatedTypes'
 import tableStyles from 'src/styles/table.module.sass'
 import ActionMenuTable from './ActionMenuTable'
 
-const columnHelper = createColumnHelper<Event>()
+const columnHelper = createColumnHelper<TEventAdapter>()
 
 const columns = [
 	columnHelper.accessor(
 		row => {
-			// .OOOZ hack for correct date parsing for user's timezone, because
-			// dates from backend are in UTC+0
-			const parsedStartDate = dayjs(`${row.date_start}.000Z`).format(
-				'HH:mm DD.MM.YYYY'
-			)
-			const parsedEndDate = dayjs(`${row.date_stop}.000Z`).format(
-				'HH:mm DD.MM.YYYY'
-			)
-
-			return `${parsedStartDate} - ${parsedEndDate}`
+			return `${row.parsedStartDate} - ${row.parsedEndDate}`
 		},
 		{
 			id: 'date',
@@ -59,12 +50,12 @@ const columns = [
 ]
 
 interface Props {
-	data: Event[]
+	data: TEventAdapter[]
 }
 
 const EventsTable: FC<Props> = ({ data }) => {
 	const table = useReactTable({
-		data: data,
+		data,
 		columns,
 		getCoreRowModel: getCoreRowModel(),
 	})

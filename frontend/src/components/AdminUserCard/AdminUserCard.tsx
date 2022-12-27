@@ -2,99 +2,75 @@ import UserRating from '@components/UserRating'
 import {
 	Avatar,
 	Button,
+	Flex,
 	Group,
-	Rating,
+	LoadingOverlay,
 	ScrollArea,
 	Stack,
-	Table,
 	Text,
 	Title,
 } from '@mantine/core'
 import { useQuery } from '@tanstack/react-query'
-import {
-	createColumnHelper,
-	flexRender,
-	getCoreRowModel,
-	useReactTable,
-} from '@tanstack/react-table'
-import { useRouter } from 'next/router'
-import { FC, useMemo } from 'react'
-import { getFeedback, getUsersColleagues, QueryKeys } from 'src/api'
-import { Colleagues } from 'src/api/generatedTypes'
-import tableStyles from 'src/styles/table.module.sass'
+import { useEffect } from 'react'
+import { getFeedbackStats, QueryKeys } from 'src/api'
+import { useAdminFeedbackStore } from 'src/stores'
+import shallow from 'zustand/shallow'
 import styles from './AdminUserCard.module.sass'
-import {
-	AdminUserCardContext,
-	IAdminUserCardContext,
-} from './AdminUserCardContext'
-import { ColleaguesTitle } from './components'
+import { CategoryRating, ColleaguesTable, ColleaguesTitle } from './components'
 
-const columnHelper = createColumnHelper<Colleagues>()
-
-const columns = [
-	columnHelper.accessor('colleague.full_name', {
-		header: 'Сотрудник',
-	}),
-	columnHelper.accessor('colleague.job_title', {
-		header: 'Должность',
-	}),
-]
-
-const AdminUserCard: FC = () => {
-	const {
-		query: { feedbackId },
-	} = useRouter()
-
-	const { data: feedbackData, isLoading } = useQuery({
-		queryKey: [QueryKeys.FEEDBACK, +(feedbackId as string)],
-		queryFn: () => getFeedback(+(feedbackId as string)),
-		enabled: !!feedbackId,
-	})
-	const { data: colleagues, isLoading: isColleaguesLoading } = useQuery({
-		queryKey: [QueryKeys.COLLEAGUES, feedbackData?.receiver.id],
-		queryFn: () => getUsersColleagues(feedbackData?.receiver.id as number),
-		enabled: !!feedbackData?.receiver.id,
-	})
-
-	const table = useReactTable({
-		data: colleagues || [],
-		columns,
-		getCoreRowModel: getCoreRowModel(),
-	})
-
-	const contextValue: IAdminUserCardContext = useMemo(
-		() => ({
-			colleagues: colleagues || [],
+const AdminUserCard = () => {
+	const { eventId, userId } = useAdminFeedbackStore(
+		state => ({
+			eventId: state.eventId,
+			userId: state.userId,
 		}),
-		[colleagues]
+		shallow
 	)
 
-	if (isLoading)
-		return (
-			<div className={styles.root}>
-				<p>Загрузка...</p>
-			</div>
-		)
+	const { data, isFetching, refetch } = useQuery({
+		queryKey: [QueryKeys.FEEDBACK_STATS, userId, eventId],
+		queryFn: () =>
+			getFeedbackStats(userId, eventId === 'all' ? undefined : eventId),
+		enabled: !!userId,
+		keepPreviousData: true,
+	})
+
+	useEffect(() => {
+		if (userId) refetch()
+	}, [userId, eventId, refetch])
 
 	return (
-		<AdminUserCardContext.Provider value={contextValue}>
-			<div className={styles.root}>
+		<div className={styles.root}>
+			<LoadingOverlay visible={isFetching} />
+			{!userId && !data && (
+				<Flex align="center" justify="center" h="100%">
+					<Text color="brand" weight={600} size={19}>
+						Выберите сотрудника для просмотра его оценок
+					</Text>
+				</Flex>
+			)}
+
+			{(userId || data) && (
 				<ScrollArea>
 					<Group position="apart" align="flex-start">
 						<Group>
-							<Avatar src={null} size={64} radius={100} />
+							<Avatar
+								src={data?.user.avatar?.thumbnail_url}
+								size={64}
+								radius={100}
+							/>
 							<Stack spacing={5}>
 								<Group spacing={'sm'}>
 									<Title order={2} color="brand.5">
-										{feedbackData?.receiver.full_name}
+										{data?.user.full_name}
 									</Title>
-									{feedbackData?.avg_rating && (
-										<UserRating rating={feedbackData.avg_rating} />
+									{data?.avg_rating && (
+										<UserRating rating={data.avg_rating} />
 									)}
 								</Group>
-								<Text color="brand.5">
-									{feedbackData?.receiver.job_title}
-								</Text>
+								{data?.user.job_title && (
+									<Text color="brand.5">{data.user.job_title}</Text>
+								)}
 							</Stack>
 						</Group>
 						<Button variant="outline">Архив</Button>
@@ -107,81 +83,29 @@ const AdminUserCard: FC = () => {
 						my={40}
 					>
 						<Text size={14}>Средние значения</Text>
-						<Group position="apart">
-							<div>Выполнение задач</div>
-							<Rating
-								size="md"
-								value={feedbackData?.task_completion}
-								readOnly
-							/>
-						</Group>
-						<Group position="apart">
-							<div>Вовлеченность</div>
-							<Rating
-								size="md"
-								value={feedbackData?.involvement}
-								readOnly
-							/>
-						</Group>
-						<Group position="apart">
-							<div>Мотивация</div>
-							<Rating
-								size="md"
-								value={feedbackData?.motivation}
-								readOnly
-							/>
-						</Group>
-						<Group position="apart">
-							<div>Взаимодействие с командой</div>
-							<Rating
-								size="md"
-								value={feedbackData?.interaction}
-								readOnly
-							/>
-						</Group>
+						<CategoryRating
+							category="Выполнение задач"
+							rating={data?.task_completion_avg || 0}
+						/>
+						<CategoryRating
+							category="Вовлеченность"
+							rating={data?.involvement_avg || 0}
+						/>
+						<CategoryRating
+							category="Мотивация"
+							rating={data?.motivation_avg || 0}
+						/>
+						<CategoryRating
+							category="Взаимодействие с командой"
+							rating={data?.interaction_avg || 0}
+						/>
 					</Stack>
 
 					<ColleaguesTitle />
-
-					{isColleaguesLoading ? (
-						<p>Загрузка...</p>
-					) : (
-						<Table className={tableStyles.table}>
-							<thead>
-								{table.getHeaderGroups().map(headerGroup => (
-									<tr key={headerGroup.id}>
-										{headerGroup.headers.map(header => (
-											<th key={header.id}>
-												{header.isPlaceholder
-													? null
-													: flexRender(
-															header.column.columnDef.header,
-															header.getContext()
-													  )}
-											</th>
-										))}
-									</tr>
-								))}
-							</thead>
-							<tbody>
-								{table.getRowModel().rows.map(row => (
-									<tr key={row.id}>
-										{row.getVisibleCells().map(cell => (
-											<td key={cell.id}>
-												{flexRender(
-													cell.column.columnDef.cell,
-													cell.getContext()
-												)}
-											</td>
-										))}
-									</tr>
-								))}
-							</tbody>
-						</Table>
-					)}
+					<ColleaguesTable />
 				</ScrollArea>
-			</div>
-		</AdminUserCardContext.Provider>
+			)}
+		</div>
 	)
 }
 

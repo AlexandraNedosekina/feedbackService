@@ -7,6 +7,9 @@ import type { AppProps } from 'next/app'
 import { ReactElement, ReactNode } from 'react'
 import '../styles/global.css'
 import { mantineTheme } from '../styles/mantineTheme'
+import '@fullcalendar/common/main.css'
+import '@fullcalendar/daygrid/main.css'
+import '@fullcalendar/timegrid/main.css'
 
 function displayErrorNotification(error: Error) {
 	showNotification({

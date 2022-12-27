@@ -1,9 +1,9 @@
-import { ActionIcon, Button, Flex, Menu, Modal, Title } from '@mantine/core'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
-import Image from 'next/image'
-import { deleteEvent, QueryKeys } from 'src/api'
 import Icon from '@components/Icon'
+import { ActionMenu } from '@components/Table'
+import { Button, Flex, Modal, Title } from '@mantine/core'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { FC, useState } from 'react'
+import { deleteEvent, QueryKeys } from 'src/api'
 
 interface Props {
 	eventId: string
@@ -28,24 +28,15 @@ const ActionMenuTable: FC<Props> = ({ eventId }) => {
 
 	return (
 		<>
-			<Menu position="bottom-end">
-				<Menu.Target>
-					<Flex justify={'flex-end'}>
-						<ActionIcon color={'brand'}>
-							<Image src={'/menu.svg'} width={24} height={24} alt="" />
-						</ActionIcon>
-					</Flex>
-				</Menu.Target>
-				<Menu.Dropdown>
-					<Menu.Item
-						onClick={() => setIsDeleteModalOpen(true)}
-						icon={<Icon icon="delete" />}
-						color="red"
-					>
-						Удалить
-					</Menu.Item>
-				</Menu.Dropdown>
-			</Menu>
+			<ActionMenu>
+				<ActionMenu.Item
+					onClick={() => setIsDeleteModalOpen(true)}
+					icon={<Icon icon="delete" />}
+					color="red"
+				>
+					Удалить
+				</ActionMenu.Item>
+			</ActionMenu>
 			<Modal
 				title={<Title order={4}>Удаление сбора обратной связи</Title>}
 				opened={isDeleteModalOpen}

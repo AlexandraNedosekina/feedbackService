@@ -1,5 +1,7 @@
 export * from './getMyCareerAdapter'
 export { default as getMyCareerAdapter } from './getMyCareerAdapter'
+export * from './getAllEventsAdapter'
+export { default as getAllEventsAdapter } from './getAllEventsAdapter'
 export * from './getUserAdapter'
 export { default as getUserAdapter } from './getUserAdapter'
 export * from './searchUserByFullnameAdapter'

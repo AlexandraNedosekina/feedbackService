@@ -1,7 +1,7 @@
 import logging
 from datetime import datetime, timedelta, timezone
 
-from fastapi import APIRouter, Depends, HTTPException, Response
+from fastapi import APIRouter, Depends, HTTPException, Query, Response
 from fastapi_utils.tasks import repeat_every
 from pydantic import parse_obj_as
 from sqlalchemy import or_
@@ -164,7 +164,6 @@ async def show_current_user_feedback_list(
     )
 
     feedbacks = feedbacks_q.filter(models.Feedback.sender_id == curr_user.id).all()
-    logger.debug(f"final feedbacks filter={feedbacks}")
     return parse_obj_as(list[schemas.Feedback], feedbacks)
 
 
@@ -207,13 +206,10 @@ async def is_allowed_to_send_feedback(
 
     # Boss, Manager, Admin can send feedback to anyone
     if is_allowed(curr_user, None, ["admin", "boss", "manager"]):
-        logger.debug("sender roles is admin or boss or manager")
         return "privilege"
 
     if "trainee" in receiver_roles:
-        logger.debug("receiver role is trainee and sender not admin or boss or manager")
         return False
-
     return True
 
 
@@ -283,10 +279,28 @@ async def show_receiver_archive_feedback_list_by_user_id(
     return parse_obj_as(list[schemas.Feedback], feedbacks)
 
 
+@router.get("/stats/{user_id}")
+async def get_user_rating(
+    user_id: int,
+    event_id: int | None = None,
+    db: Session = Depends(get_db),
+    _: models.User = Depends(get_admin_boss_manager_hr),
+) -> schemas.FeedbackStat:
+    user = crud.user.get(db, user_id)
+    if not user:
+        raise HTTPException(status_code=404, detail="User does not exist")
+
+    if event_id:
+        event = crud.event.get(db, event_id)
+        if not event:
+            raise HTTPException(status_code=404, detail="Event does not exist")
+
+    return crud.feedback.get_user_avg_ratings(db, user=user, event_id=event_id)
+
+
 @router.delete("/")
 async def test_method_delete_all_feedback(db: Session = Depends(get_db)):
-    obj = crud.feedback.remove_all(db=db)
-    logger.debug(f"Num of rows deleted: {obj}")
+    _ = crud.feedback.remove_all(db=db)
     return Response(status_code=200)
 
 

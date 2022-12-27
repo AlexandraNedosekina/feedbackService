@@ -65,12 +65,7 @@ const EditCareer = () => {
 			) : (
 				<Group mt="xl">
 					<Avatar
-						src={
-							null
-							// data
-							// 	? `${process.env.NEXT_PUBLIC_BACKEND_URL}/user/${data.receiver.id}/avatar`
-							// 	: null
-						}
+						src={user?.avatar?.thumbnail_url}
 						size={64}
 						radius={100}
 					/>
@@ -78,7 +73,9 @@ const EditCareer = () => {
 						<Title order={2} color="brand.5">
 							{user?.full_name}
 						</Title>
-						{user?.job_title && <Text color="brand.5">Fullstack</Text>}
+						{user?.job_title && (
+							<Text color="brand.5">{user.job_title}</Text>
+						)}
 					</Stack>
 				</Group>
 			)}

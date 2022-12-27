@@ -32,6 +32,7 @@ const UserCard: FC<Props> = () => {
 		queryKey: [QueryKeys.FEEDBACK, +(feedbackId as string)],
 		queryFn: () => getFeedback(+(feedbackId as string)),
 		enabled: !!feedbackId,
+		keepPreviousData: true,
 		onSuccess: data => {
 			update({
 				task_completion: data.task_completion,
@@ -61,11 +62,7 @@ const UserCard: FC<Props> = () => {
 			<ScrollArea>
 				<Group>
 					<Avatar
-						src={
-							data
-								? `${process.env.NEXT_PUBLIC_BACKEND_URL}/user/${data.receiver.id}/avatar`
-								: null
-						}
+						src={data.receiver.avatar?.thumbnail_url || null}
 						size={64}
 						radius={100}
 					/>
