@@ -22,6 +22,7 @@ export type Icons =
 	| 'sort'
 	| 'remove'
 	| 'arrow_back_ios_new'
+	| 'question_mark'
 type IconType = 'outlined' | 'rounded' | 'sharp'
 
 export interface IconProps {
@@ -29,9 +30,16 @@ export interface IconProps {
 	type?: IconType
 	size?: number
 	filled?: boolean
+	weight?: number
 }
 
-const Icon: FC<IconProps> = ({ icon, size, type = 'outlined', filled }) => {
+const Icon: FC<IconProps> = ({
+	icon,
+	size,
+	type = 'outlined',
+	weight = 300,
+	filled,
+}) => {
 	return (
 		<span
 			className={`material-symbols-${type}`}
@@ -39,7 +47,7 @@ const Icon: FC<IconProps> = ({ icon, size, type = 'outlined', filled }) => {
 				fontSize: size ? `${size}px` : 'inherit',
 				fontVariationSettings: `'FILL' ${
 					filled ? '1' : '0'
-				}, 'wght' 300, 'GRAD' 0, 'opsz' 48`,
+				}, 'wght' ${weight}, 'GRAD' 0, 'opsz' 48`,
 			}}
 		>
 			{icon}
