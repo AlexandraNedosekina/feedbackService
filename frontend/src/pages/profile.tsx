@@ -34,15 +34,21 @@ const ProfilePage: NextPageWithLayout = () => {
 
 				<Stack spacing={6}>
 					<Text size={18}>{user?.full_name}</Text>
-					<Text color="brand.5" weight={600} size={18}>
-						{user?.job_title}
-					</Text>
-					<Text color="gray" size={14}>
-						{user?.email}
-					</Text>
-					<Text color="gray" size={14}>
-						День рождения: 12.08.1990 (32 года)
-					</Text>
+					{user?.job_title && (
+						<Text color="brand.5" weight={600} size={18}>
+							{user.job_title}
+						</Text>
+					)}
+					{user?.email && (
+						<Text color="gray" size={14}>
+							{user.email}
+						</Text>
+					)}
+					{user?.date_of_birth && (
+						<Text color="gray" size={14}>
+							День рождения: {user.date_of_birth}
+						</Text>
+					)}
 				</Stack>
 			</Group>
 
