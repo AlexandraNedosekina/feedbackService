@@ -1,7 +1,7 @@
-import { Table, Text } from '@mantine/core'
+import Table from '@components/Table'
+import { Box, Text } from '@mantine/core'
 import {
 	createColumnHelper,
-	flexRender,
 	getCoreRowModel,
 	useReactTable,
 } from '@tanstack/react-table'
@@ -9,7 +9,6 @@ import 'dayjs/locale/ru'
 import { FC } from 'react'
 import { TEventAdapter } from 'src/api'
 import { EventStatus } from 'src/api/generatedTypes'
-import tableStyles from 'src/styles/table.module.sass'
 import ActionMenuTable from './ActionMenuTable'
 
 const columnHelper = createColumnHelper<TEventAdapter>()
@@ -39,10 +38,10 @@ const columns = [
 		},
 		header: 'Статус',
 	}),
-	columnHelper.accessor(() => 'TODO', {
-		id: 'qty',
-		header: 'Кол-во участников',
-	}),
+	// columnHelper.accessor(() => 'TODO', {
+	// 	id: 'qty',
+	// 	header: 'Кол-во участников',
+	// }),
 	columnHelper.display({
 		id: 'actions',
 		cell: ({ row }) => <ActionMenuTable eventId={String(row.original.id)} />,
@@ -61,38 +60,9 @@ const EventsTable: FC<Props> = ({ data }) => {
 	})
 
 	return (
-		<Table className={tableStyles.table} mt="lg">
-			<thead>
-				{table.getHeaderGroups().map(headerGroup => (
-					<tr key={headerGroup.id}>
-						{headerGroup.headers.map(header => (
-							<th key={header.id}>
-								{header.isPlaceholder
-									? null
-									: flexRender(
-											header.column.columnDef.header,
-											header.getContext()
-									  )}
-							</th>
-						))}
-					</tr>
-				))}
-			</thead>
-			<tbody>
-				{table.getRowModel().rows.map(row => (
-					<tr key={row.id}>
-						{row.getVisibleCells().map(cell => (
-							<td key={cell.id}>
-								{flexRender(
-									cell.column.columnDef.cell,
-									cell.getContext()
-								)}
-							</td>
-						))}
-					</tr>
-				))}
-			</tbody>
-		</Table>
+		<Box mt="lg">
+			<Table table={table} />
+		</Box>
 	)
 }
 
