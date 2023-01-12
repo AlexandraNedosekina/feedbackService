@@ -106,7 +106,7 @@ class FeedbackInDB(Base):
     receiver: UserDetails
 
     completed: bool
-    avg_rating: float | None
+    avg_ratinNoneg: float | None
 
     task_completion: int | None
     involvement: int | None
@@ -123,6 +123,12 @@ class Feedback(FeedbackInDB):
     pass
 
 
+class ColleagueRating(Base):
+    feedback_id: int
+    colleague: UserDetails
+    avg_rating: float
+
+
 class FeedbackStat(Base):
     user: UserDetails
 
@@ -131,10 +137,12 @@ class FeedbackStat(Base):
     involvement_avg: float | None
     motivation_avg: float | None
     interaction_avg: float | None
-    
+
+    colleagues_rating: list[ColleagueRating] | None
+
     @root_validator
     def round_numbers(cls, values):
         for key, val in values.items():
-            if key not in ("user") and val is not None:
+            if key not in ("user", "colleagues_rating") and val is not None:
                 values[key] = round(val, 2)
         return values
