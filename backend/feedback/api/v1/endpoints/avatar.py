@@ -191,4 +191,5 @@ def create_thumbnail(
 
     thumbnail = img.crop((x, y, x + w, y + h))
     thumbnail.save(thumbnail_path)
+    img.close()
     return True
