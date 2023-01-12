@@ -106,7 +106,7 @@ class FeedbackInDB(Base):
     receiver: UserDetails
 
     completed: bool
-    avg_ratinNoneg: float | None
+    avg_rating: float | None
 
     task_completion: int | None
     involvement: int | None
