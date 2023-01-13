@@ -7,47 +7,19 @@ import {
 	useReactTable,
 } from '@tanstack/react-table'
 import { FC, useMemo, useState } from 'react'
-import { Colleagues } from 'src/api/generatedTypes'
+import { IFeedbackStats } from 'src/types/feedbackStats'
 import ActionMenuTable from './ActionMenuTable'
 import FeedbackModal from './FeedbackModal'
 import MoreButton from './MoreButton'
 
-const columnHelper = createColumnHelper<Colleagues & { feedbackId: number }>()
+const columnHelper =
+	createColumnHelper<IFeedbackStats['colleagues_rating'][number]>()
 
-const data: (Colleagues & { feedbackId: number })[] = [
-	{
-		id: 1,
-		owner_id: 1,
-		colleague: {
-			id: 1,
-			full_name: 'Иванов Иван Иванович',
-			job_title: 'Директор',
-		},
-		feedbackId: 1,
-	},
-	{
-		id: 2,
-		owner_id: 2,
-		colleague: {
-			id: 2,
-			full_name: 'Test Test Test',
-			job_title: 'Аналитик',
-		},
-		feedbackId: 2,
-	},
-	{
-		id: 3,
-		owner_id: 3,
-		colleague: {
-			id: 3,
-			full_name: 'Test Test Test 2',
-			job_title: 'Тестировщик',
-		},
-		feedbackId: 3,
-	},
-]
+interface Props {
+	colleagues: IFeedbackStats['colleagues_rating']
+}
 
-const ColleaguesTable: FC = () => {
+const ColleaguesTable: FC<Props> = ({ colleagues }) => {
 	const [feedbackId, setFeedbackId] = useState<number | null>(null)
 	const [isOpen, setIsOpen] = useState(false)
 
@@ -68,10 +40,14 @@ const ColleaguesTable: FC = () => {
 			columnHelper.display({
 				id: 'average_rating',
 				header: 'Оценка',
-				cell: () => {
+				cell: ({
+					row: {
+						original: { avg_rating },
+					},
+				}) => {
 					return (
 						<Flex>
-							<UserRating rating={4.8} withBorder />
+							<UserRating rating={avg_rating} withBorder />
 						</Flex>
 					)
 				},
@@ -80,7 +56,7 @@ const ColleaguesTable: FC = () => {
 				id: 'more',
 				cell: ({
 					row: {
-						original: { feedbackId },
+						original: { feedback_id: feedbackId },
 					},
 				}) => <MoreButton onClick={() => handleOpenFeedback(feedbackId)} />,
 			}),
@@ -88,7 +64,9 @@ const ColleaguesTable: FC = () => {
 				id: 'actions',
 				cell: ({
 					row: {
-						original: { id },
+						original: {
+							colleague: { id },
+						},
 					},
 				}) => {
 					return <ActionMenuTable colleagueId={String(id)} />
@@ -99,7 +77,7 @@ const ColleaguesTable: FC = () => {
 	)
 
 	const table = useReactTable({
-		data,
+		data: colleagues,
 		columns,
 		getCoreRowModel: getCoreRowModel(),
 	})

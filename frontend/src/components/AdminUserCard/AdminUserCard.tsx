@@ -102,7 +102,9 @@ const AdminUserCard = () => {
 					</Stack>
 
 					<ColleaguesTitle />
-					<ColleaguesTable />
+					{data && data?.colleagues_rating.length !== 0 && (
+						<ColleaguesTable colleagues={data.colleagues_rating} />
+					)}
 				</ScrollArea>
 			)}
 		</div>
