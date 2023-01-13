@@ -36,7 +36,6 @@ const ColleaguesTable: FC<Props> = ({ colleagues }) => {
 			columnHelper.accessor('colleague.job_title', {
 				header: 'Должность',
 			}),
-			// accessor average rating
 			columnHelper.display({
 				id: 'average_rating',
 				header: 'Оценка',
@@ -45,6 +44,8 @@ const ColleaguesTable: FC<Props> = ({ colleagues }) => {
 						original: { avg_rating },
 					},
 				}) => {
+					if (!avg_rating) return 'Нет оценки'
+
 					return (
 						<Flex>
 							<UserRating rating={avg_rating} withBorder />
@@ -56,9 +57,14 @@ const ColleaguesTable: FC<Props> = ({ colleagues }) => {
 				id: 'more',
 				cell: ({
 					row: {
-						original: { feedback_id: feedbackId },
+						original: { feedback_id: feedbackId, avg_rating },
 					},
-				}) => <MoreButton onClick={() => handleOpenFeedback(feedbackId)} />,
+				}) => {
+					if (!avg_rating) return null
+					return (
+						<MoreButton onClick={() => handleOpenFeedback(feedbackId)} />
+					)
+				},
 			}),
 			columnHelper.display({
 				id: 'actions',
