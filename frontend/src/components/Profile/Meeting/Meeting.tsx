@@ -1,4 +1,5 @@
-import { Stack, Switch, Title } from '@mantine/core'
+import Icon from '@components/Icon'
+import { ActionIcon, Flex, Stack, Switch, Title, Tooltip } from '@mantine/core'
 import { showNotification } from '@mantine/notifications'
 import { useMutation } from '@tanstack/react-query'
 import { FC, useState } from 'react'
@@ -31,7 +32,20 @@ const Meeting: FC = () => {
 
 	return (
 		<Stack spacing={0}>
-			<Title order={2}>Готовность к личным встречам</Title>
+			<Flex align="center" gap="xs">
+				<Title order={2}>Готовность к личным встречам</Title>
+				<Tooltip
+					label="Готовность записываться на встречи через календарь"
+					withArrow
+					color="brand"
+					width={200}
+					multiline
+				>
+					<ActionIcon variant="light" color="brand" radius={100}>
+						<Icon icon="question_mark" weight={400} />
+					</ActionIcon>
+				</Tooltip>
+			</Flex>
 			<Switch
 				checked={isOn}
 				onChange={event => {

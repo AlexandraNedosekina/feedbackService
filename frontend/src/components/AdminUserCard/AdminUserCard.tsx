@@ -51,7 +51,7 @@ const AdminUserCard = () => {
 			)}
 
 			{(userId || data) && (
-				<ScrollArea>
+				<ScrollArea h={'100%'}>
 					<Group position="apart" align="flex-start">
 						<Group>
 							<Avatar
