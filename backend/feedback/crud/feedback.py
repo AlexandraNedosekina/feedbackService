@@ -98,6 +98,17 @@ class CRUDFeedback(
             func.avg(models.Feedback.motivation),
             func.avg(models.Feedback.interaction),
         ).first()
+
+        colleagues_rating = []
+        for rating in q.all():
+            colleagues_rating.append(
+                schemas.ColleagueRating(
+                    feedback_id=rating.id,
+                    colleague=rating.sender,
+                    avg_rating=rating.avg_rating,
+                )
+            )
+
         return schemas.FeedbackStat(
             user=schemas.UserDetails.from_orm(user),
             avg_rating=avg_values[0],
@@ -105,6 +116,7 @@ class CRUDFeedback(
             involvement_avg=avg_values[2],
             motivation_avg=avg_values[3],
             interaction_avg=avg_values[4],
+            colleagues_rating=colleagues_rating,
         )
 
 

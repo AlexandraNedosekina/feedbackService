@@ -54,6 +54,10 @@ async def create_avater(
             detail=f"File size can not be more than {MAX_FILE_SIZE_IN_MB} MB",
         )
 
+    if curr_user.avatar:
+        os.remove(curr_user.avatar.original_path)
+        os.remove(curr_user.avatar.thumbnail_path)
+
     async with aiofiles.open(original_path, "wb") as f:
         await f.write(content)
 
@@ -191,4 +195,5 @@ def create_thumbnail(
 
     thumbnail = img.crop((x, y, x + w, y + h))
     thumbnail.save(thumbnail_path)
+    img.close()
     return True
