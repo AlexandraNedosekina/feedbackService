@@ -99,9 +99,6 @@ class CRUDFeedback(
             func.avg(models.Feedback.interaction),
         ).first()
 
-        if not avg_values:
-            return None
-
         colleagues_rating = []
         for rating in q.all():
             colleagues_rating.append(
