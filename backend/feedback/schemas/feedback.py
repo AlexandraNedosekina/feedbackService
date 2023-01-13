@@ -126,7 +126,7 @@ class Feedback(FeedbackInDB):
 class ColleagueRating(Base):
     feedback_id: int
     colleague: UserDetails
-    avg_rating: float
+    avg_rating: float | None
 
 
 class FeedbackStat(Base):
