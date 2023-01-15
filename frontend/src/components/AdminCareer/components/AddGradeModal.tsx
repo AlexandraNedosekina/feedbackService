@@ -1,30 +1,36 @@
 import { FormInput, required } from '@components/form'
 import { Button, Flex, Modal, Stack, Title } from '@mantine/core'
-import { FC } from 'react'
+import arrayMutators from 'final-form-arrays'
+import { FC, useState } from 'react'
 import { Form, FormSpy } from 'react-final-form'
 import { useAddCareerGrade } from 'src/stores'
+import { IFormValues } from '../types'
+import Tasks from './Tasks'
 
 interface Props {
 	isOpen: boolean
 	onClose: () => void
 }
 
-interface FormValues {
-	title: string
-	salary: string
-}
-
 const AddGradeModal: FC<Props> = ({ isOpen, onClose }) => {
 	const isEdit = useAddCareerGrade(state => state.isEdit)
+	const [idsToDelete, setIdsToDelete] = useState<string[]>([])
 
 	// @ts-expect-error implicity any
 	function onSubmit(data) {
 		console.log(data)
 	}
 
-	const initialValues: FormValues = {
+	const initialValues: IFormValues = {
 		title: '',
 		salary: '',
+		toComplete: [
+			{
+				text: 'test',
+				id: '10',
+			},
+		],
+		toLearn: [],
 	}
 
 	return (
@@ -44,6 +50,10 @@ const AddGradeModal: FC<Props> = ({ isOpen, onClose }) => {
 				subscription={{
 					submitting: true,
 					pristine: true,
+				}}
+				initialValuesEqual={() => true}
+				mutators={{
+					...arrayMutators,
 				}}
 			>
 				{props => {
@@ -72,6 +82,21 @@ const AddGradeModal: FC<Props> = ({ isOpen, onClose }) => {
 										autoComplete: 'off',
 									}}
 								/>
+								<Tasks
+									title="Что нужно изучить"
+									type="toLearn"
+									onDelete={id =>
+										setIdsToDelete(prev => [...prev, id])
+									}
+								/>
+								<Tasks
+									title="Что нужно сделать"
+									type="toComplete"
+									onDelete={id =>
+										setIdsToDelete(prev => [...prev, id])
+									}
+								/>
+
 								{/* <SalaryInput />
         <Tasks title="Что нужно изучить" type="toLearn" />
     <Tasks title="Что нужно сделать" type="toComplete" /> */}
@@ -82,21 +107,32 @@ const AddGradeModal: FC<Props> = ({ isOpen, onClose }) => {
 										submitting,
 										pristine,
 										invalid,
+										form: { getState },
 									}) => {
+										console.log(getState())
 										return (
-											<Flex justify={'end'}>
-												<Button
-													type="submit"
-													disabled={
-														submitting ||
-														pristine ||
-														invalid ||
-														hasValidationErrors
-													}
-												>
-													Submit
-												</Button>
-											</Flex>
+											<>
+												<pre>
+													{JSON.stringify(
+														getState().values,
+														null,
+														2
+													)}
+												</pre>
+												<Flex justify={'end'}>
+													<Button
+														type="submit"
+														disabled={
+															submitting ||
+															pristine ||
+															invalid ||
+															hasValidationErrors
+														}
+													>
+														Submit
+													</Button>
+												</Flex>
+											</>
 										)
 									}}
 								</FormSpy>

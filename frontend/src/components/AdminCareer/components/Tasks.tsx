@@ -2,8 +2,9 @@ import Icon from '@components/Icon'
 import { ActionIcon, createStyles, Group, Input, Title } from '@mantine/core'
 import { useClickOutside, useFocusTrap } from '@mantine/hooks'
 import { FC, useState } from 'react'
-import { useAddCareerGrade } from 'src/stores'
-import shallow from 'zustand/shallow'
+import { Field } from 'react-final-form'
+import { useFieldArray } from 'react-final-form-arrays'
+import { IFormValues } from '../types'
 import AddItem from './AddItem'
 
 const useStyles = createStyles((_theme, _params, getRef) => ({
@@ -24,19 +25,11 @@ const useStyles = createStyles((_theme, _params, getRef) => ({
 interface Props {
 	title: string
 	type: 'toLearn' | 'toComplete'
+	onDelete: (id: string) => void
 }
 
-const Tasks: FC<Props> = ({ title, type }) => {
-	const { addParam, deleteParam, items, updateParam } = useAddCareerGrade(
-		state => ({
-			items: state[type],
-			addParam: state.addParam,
-			deleteParam: state.deleteParam,
-			updateParam: state.updateParam,
-		}),
-		shallow
-	)
-
+const Tasks: FC<Props> = ({ title, type, onDelete }) => {
+	const { fields } = useFieldArray<IFormValues[typeof type][number]>(type)
 	const [isEdit, setIsEdit] = useState(false)
 	const [editIndex, setEditIndex] = useState<number>(0)
 	const [updatedValue, setUpdatedValue] = useState<string>('')
@@ -45,20 +38,26 @@ const Tasks: FC<Props> = ({ title, type }) => {
 	const { classes } = useStyles()
 
 	function handleAdd(value: string) {
-		addParam(type, value)
+		fields.push({ text: value })
 	}
 
-	function handleDelete(id: string) {
-		deleteParam(type, id)
+	function handleDelete(index: number) {
+		const removed = fields.remove(index)
+
+		if (removed.id) {
+			onDelete(removed.id)
+		}
 	}
 
-	function handleUpdate(id: string, value: string) {
-		updateParam(type, id, value)
+	function handleUpdate(index: number, value: string) {
+		const field = fields.value[index]
+		fields.update(index, { ...field, text: value })
 		setIsEdit(false)
 	}
 
 	function handleEdit(index: number) {
-		setUpdatedValue(items[index].text)
+		const field = fields.value[index]
+		setUpdatedValue(field.text)
 		setIsEdit(true)
 		setEditIndex(index)
 	}
@@ -71,62 +70,64 @@ const Tasks: FC<Props> = ({ title, type }) => {
 				</Title>
 				<AddItem onAdd={handleAdd} />
 			</Group>
-
-			<ul>
-				{items.map((item, index) => {
-					if (item.isDeleted) return
-
-					return (
-						<Group key={index} position="apart" className={classes.root}>
-							<li>
-								{isEdit && index === editIndex ? (
-									<div ref={editInputRef}>
-										<Input
-											value={updatedValue}
-											onChange={e =>
-												setUpdatedValue(e.currentTarget.value)
+			{fields.map((name, index) => {
+				return (
+					<Group key={index} position="apart" className={classes.root}>
+						<Field
+							name={`${name}.text`}
+							component="input"
+							type="hidden"
+						/>
+						{isEdit && index === editIndex ? (
+							<div ref={editInputRef}>
+								<Input
+									value={updatedValue}
+									onChange={e =>
+										setUpdatedValue(e.currentTarget.value)
+									}
+									onKeyUp={e => {
+										if (e.key === 'Enter') {
+											handleUpdate(index, updatedValue)
+										}
+									}}
+									rightSection={
+										<ActionIcon
+											onClick={() =>
+												handleUpdate(index, updatedValue)
 											}
-											onKeyUp={e => {
-												if (e.key === 'Enter') {
-													handleUpdate(item.id, updatedValue)
-												}
-											}}
-											rightSection={
-												<ActionIcon
-													onClick={() =>
-														handleUpdate(item.id, updatedValue)
-													}
-												>
-													<Icon icon="done" />
-												</ActionIcon>
-											}
-											size="xs"
-											ref={focusTrapRef}
-										/>
-									</div>
-								) : (
-									item.text
-								)}
-							</li>
-							<Group spacing={0}>
-								<ActionIcon
-									onClick={() => handleEdit(index)}
-									className={classes.actionIcon}
-									ml={'lg'}
-								>
-									<Icon icon="edit" />
-								</ActionIcon>
-								<ActionIcon
-									onClick={() => handleDelete(item.id)}
-									className={classes.actionIcon}
-								>
-									<Icon icon="delete" />
-								</ActionIcon>
-							</Group>
+										>
+											<Icon icon="done" />
+										</ActionIcon>
+									}
+									size="xs"
+									ref={focusTrapRef}
+								/>
+							</div>
+						) : (
+							<>{fields.value[index].text}</>
+						)}
+						<Group spacing={0}>
+							<ActionIcon
+								onClick={() => {
+									handleEdit(index)
+								}}
+								className={classes.actionIcon}
+								ml={'lg'}
+							>
+								<Icon icon="edit" />
+							</ActionIcon>
+							<ActionIcon
+								onClick={() => {
+									handleDelete(index)
+								}}
+								className={classes.actionIcon}
+							>
+								<Icon icon="delete" />
+							</ActionIcon>
 						</Group>
-					)
-				})}
-			</ul>
+					</Group>
+				)
+			})}
 		</div>
 	)
 }
