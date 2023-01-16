@@ -1,37 +1,33 @@
 import { FormInput, required } from '@components/form'
-import { Button, Flex, Modal, Stack, Title } from '@mantine/core'
+import { Modal, Stack, Title } from '@mantine/core'
 import arrayMutators from 'final-form-arrays'
-import { FC, useState } from 'react'
-import { Form, FormSpy } from 'react-final-form'
+import { FC } from 'react'
+import { Form } from 'react-final-form'
 import { useAddCareerGrade } from 'src/stores'
 import { IFormValues } from '../types'
+import SubmitButton from './SubmitButton'
 import Tasks from './Tasks'
+
+const defaultInitialValues: IFormValues = {
+	title: '',
+	salary: '',
+	toComplete: [],
+	toLearn: [],
+	idsToDelete: [],
+}
 
 interface Props {
 	isOpen: boolean
 	onClose: () => void
+	initialValues?: IFormValues
 }
 
-const AddGradeModal: FC<Props> = ({ isOpen, onClose }) => {
+const AddGradeModal: FC<Props> = ({
+	isOpen,
+	onClose,
+	initialValues = defaultInitialValues,
+}) => {
 	const isEdit = useAddCareerGrade(state => state.isEdit)
-	const [idsToDelete, setIdsToDelete] = useState<string[]>([])
-
-	// @ts-expect-error implicity any
-	function onSubmit(data) {
-		console.log(data)
-	}
-
-	const initialValues: IFormValues = {
-		title: '',
-		salary: '',
-		toComplete: [
-			{
-				text: 'test',
-				id: '10',
-			},
-		],
-		toLearn: [],
-	}
 
 	return (
 		<Modal
@@ -45,7 +41,8 @@ const AddGradeModal: FC<Props> = ({ isOpen, onClose }) => {
 			size="lg"
 		>
 			<Form
-				onSubmit={onSubmit}
+				// eslint-disable-next-line @typescript-eslint/no-empty-function
+				onSubmit={() => {}}
 				initialValues={initialValues}
 				subscription={{
 					submitting: true,
@@ -82,60 +79,10 @@ const AddGradeModal: FC<Props> = ({ isOpen, onClose }) => {
 										autoComplete: 'off',
 									}}
 								/>
-								<Tasks
-									title="Что нужно изучить"
-									type="toLearn"
-									onDelete={id =>
-										setIdsToDelete(prev => [...prev, id])
-									}
-								/>
-								<Tasks
-									title="Что нужно сделать"
-									type="toComplete"
-									onDelete={id =>
-										setIdsToDelete(prev => [...prev, id])
-									}
-								/>
+								<Tasks title="Что нужно изучить" type="toLearn" />
+								<Tasks title="Что нужно сделать" type="toComplete" />
 
-								{/* <SalaryInput />
-        <Tasks title="Что нужно изучить" type="toLearn" />
-    <Tasks title="Что нужно сделать" type="toComplete" /> */}
-								{/* <SubmitButton onClose={onClose} /> */}
-								<FormSpy>
-									{({
-										hasValidationErrors,
-										submitting,
-										pristine,
-										invalid,
-										form: { getState },
-									}) => {
-										console.log(getState())
-										return (
-											<>
-												<pre>
-													{JSON.stringify(
-														getState().values,
-														null,
-														2
-													)}
-												</pre>
-												<Flex justify={'end'}>
-													<Button
-														type="submit"
-														disabled={
-															submitting ||
-															pristine ||
-															invalid ||
-															hasValidationErrors
-														}
-													>
-														Submit
-													</Button>
-												</Flex>
-											</>
-										)
-									}}
-								</FormSpy>
+								<SubmitButton onClose={onClose} />
 							</Stack>
 						</form>
 					)

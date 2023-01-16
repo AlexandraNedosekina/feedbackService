@@ -25,11 +25,11 @@ const useStyles = createStyles((_theme, _params, getRef) => ({
 interface Props {
 	title: string
 	type: 'toLearn' | 'toComplete'
-	onDelete: (id: string) => void
 }
 
-const Tasks: FC<Props> = ({ title, type, onDelete }) => {
+const Tasks: FC<Props> = ({ title, type }) => {
 	const { fields } = useFieldArray<IFormValues[typeof type][number]>(type)
+	const { fields: deleleFields } = useFieldArray<string>('idsToDelete')
 	const [isEdit, setIsEdit] = useState(false)
 	const [editIndex, setEditIndex] = useState<number>(0)
 	const [updatedValue, setUpdatedValue] = useState<string>('')
@@ -44,8 +44,8 @@ const Tasks: FC<Props> = ({ title, type, onDelete }) => {
 	function handleDelete(index: number) {
 		const removed = fields.remove(index)
 
-		if (removed.id) {
-			onDelete(removed.id)
+		if (removed.apiId) {
+			deleleFields.push(removed.apiId)
 		}
 	}
 

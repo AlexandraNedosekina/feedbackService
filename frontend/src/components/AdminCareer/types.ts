@@ -1,6 +1,6 @@
 interface ICareerGradeParam {
 	text: string
-	id?: string
+	apiId?: string
 }
 
 export interface IFormValues {
@@ -8,4 +8,5 @@ export interface IFormValues {
 	salary: string
 	toLearn: ICareerGradeParam[]
 	toComplete: ICareerGradeParam[]
+	idsToDelete: string[]
 }
