@@ -124,15 +124,17 @@ const Tasks: FC<Props> = ({ title, type }) => {
 							<>{fields.value[index].text}</>
 						)}
 						<Group spacing={0}>
-							<ActionIcon
-								onClick={() => {
-									handleEdit(index)
-								}}
-								className={classes.actionIcon}
-								ml={'lg'}
-							>
-								<Icon icon="edit" />
-							</ActionIcon>
+							{!isEdit ? (
+								<ActionIcon
+									onClick={() => {
+										handleEdit(index)
+									}}
+									className={classes.actionIcon}
+									ml={'lg'}
+								>
+									<Icon icon="edit" />
+								</ActionIcon>
+							) : null}
 							<ActionIcon
 								onClick={() => {
 									handleDelete(index)
