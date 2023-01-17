@@ -1,5 +1,12 @@
 import Icon from '@components/Icon'
-import { ActionIcon, createStyles, Group, Input, Title } from '@mantine/core'
+import {
+	ActionIcon,
+	createStyles,
+	Group,
+	Input,
+	Text,
+	TextInput,
+} from '@mantine/core'
 import { useClickOutside, useFocusTrap } from '@mantine/hooks'
 import { FC, useState } from 'react'
 import { Field } from 'react-final-form'
@@ -28,7 +35,10 @@ interface Props {
 }
 
 const Tasks: FC<Props> = ({ title, type }) => {
-	const { fields } = useFieldArray<IFormValues[typeof type][number]>(type)
+	const {
+		fields,
+		meta: { error, dirty, submitFailed },
+	} = useFieldArray<IFormValues[typeof type][number]>(type)
 	const { fields: deleleFields } = useFieldArray<string>('idsToDelete')
 	const [isEdit, setIsEdit] = useState(false)
 	const [editIndex, setEditIndex] = useState<number>(0)
@@ -65,11 +75,18 @@ const Tasks: FC<Props> = ({ title, type }) => {
 	return (
 		<div>
 			<Group h={40}>
-				<Title size={14} fw={700}>
-					{title}
-				</Title>
+				<TextInput
+					label={title}
+					withAsterisk
+					styles={{ input: { display: 'none' } }}
+				/>
 				<AddItem onAdd={handleAdd} />
 			</Group>
+			{error && (dirty || submitFailed) ? (
+				<Text size="sm" color="red">
+					{error}
+				</Text>
+			) : null}
 			{fields.map((name, index) => {
 				return (
 					<Group key={index} position="apart" className={classes.root}>
