@@ -15,7 +15,7 @@ async function updateCareerTrack(
 
 		return res.data
 	} catch (error: any) {
-		throw new Error(errorHandler(error))
+		return errorHandler(error)
 	}
 }
 

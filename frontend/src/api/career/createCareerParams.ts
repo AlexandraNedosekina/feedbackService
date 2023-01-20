@@ -15,7 +15,7 @@ async function createCareerParams(
 
 		return res.data
 	} catch (error: any) {
-		throw new Error(errorHandler(error))
+		return errorHandler(error)
 	}
 }
 

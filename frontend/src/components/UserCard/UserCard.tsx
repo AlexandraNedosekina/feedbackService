@@ -1,5 +1,6 @@
 import Username from '@components/Username'
 import { Flex, ScrollArea, Stack } from '@mantine/core'
+import { showNotification } from '@mantine/notifications'
 import { useQuery } from '@tanstack/react-query'
 import { useRouter } from 'next/router'
 import { FC } from 'react'
@@ -38,8 +39,18 @@ const UserCard: FC<Props> = () => {
 				comment: data.comment,
 			})
 		},
-		onError() {
+		retry(failureCount, error: any) {
+			if (error.cause?.code === 404) return false
+
+			return failureCount < 3
+		},
+		onError(error: Error) {
 			router.push('/feedback')
+			showNotification({
+				title: 'Ошибка',
+				message: error.message,
+				color: 'red',
+			})
 		},
 	})
 

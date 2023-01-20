@@ -14,7 +14,7 @@ async function getCareerByUserId(userId: string, skip = 0, limit = 100) {
 
 		return getMyCareerAdapter(res.data)
 	} catch (error: any) {
-		throw new Error(errorHandler(error))
+		return errorHandler(error)
 	}
 }
 

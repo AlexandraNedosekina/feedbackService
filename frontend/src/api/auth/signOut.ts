@@ -7,7 +7,7 @@ async function signOut() {
 
 		return res.data
 	} catch (error: any) {
-		throw new Error(errorHandler(error))
+		return errorHandler(error)
 	}
 }
 

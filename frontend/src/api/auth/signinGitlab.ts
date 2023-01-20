@@ -11,7 +11,7 @@ async function signinGitlab() {
 	} catch (error: any) {
 		console.error(error)
 
-		throw new Error(errorHandler(error))
+		return errorHandler(error)
 	}
 }
 

@@ -13,7 +13,7 @@ async function searchUserByFullname(query: string) {
 
 		return searchUserByFullnameAdapter(res.data)
 	} catch (error: any) {
-		throw new Error(errorHandler(error))
+		return errorHandler(error)
 	}
 }
 

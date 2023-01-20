@@ -8,7 +8,7 @@ async function getUsersColleagues(userId: number) {
 
 		return res.data
 	} catch (error: any) {
-		throw new Error(errorHandler(error))
+		return errorHandler(error)
 	}
 }
 

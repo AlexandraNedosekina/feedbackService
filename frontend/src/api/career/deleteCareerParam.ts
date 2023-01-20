@@ -7,7 +7,7 @@ async function deleteCareerParam(paramId: string): Promise<string> {
 
 		return res.data
 	} catch (error: any) {
-		throw new Error(errorHandler(error))
+		return errorHandler(error)
 	}
 }
 

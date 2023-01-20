@@ -1,43 +1,16 @@
 import { MantineProvider } from '@mantine/core'
-import { NotificationsProvider, showNotification } from '@mantine/notifications'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { NotificationsProvider } from '@mantine/notifications'
+import { QueryClientProvider } from '@tanstack/react-query'
 import 'dayjs/locale/ru'
 import { NextPage } from 'next'
 import type { AppProps } from 'next/app'
 import { ReactElement, ReactNode } from 'react'
+import { queryClient } from 'src/api'
 import '../styles/global.css'
 import { mantineTheme } from '../styles/mantineTheme'
 import '@fullcalendar/common/main.css'
 import '@fullcalendar/daygrid/main.css'
 import '@fullcalendar/timegrid/main.css'
-
-function displayErrorNotification(error: Error) {
-	showNotification({
-		title: 'Ошибка',
-		message: error.message,
-		color: 'red',
-	})
-}
-
-const queryClient = new QueryClient({
-	defaultOptions: {
-		queries: {
-			refetchOnWindowFocus: false,
-			onError: error => {
-				if (error instanceof Error) {
-					displayErrorNotification(error)
-				}
-			},
-		},
-		mutations: {
-			onError: error => {
-				if (error instanceof Error) {
-					displayErrorNotification(error)
-				}
-			},
-		},
-	},
-})
 
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
 	getLayout?: (page: ReactElement) => ReactNode
