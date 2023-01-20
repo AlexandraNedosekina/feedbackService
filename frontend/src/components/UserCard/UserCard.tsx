@@ -1,12 +1,5 @@
-import {
-	Avatar,
-	Flex,
-	Group,
-	ScrollArea,
-	Stack,
-	Text,
-	Title,
-} from '@mantine/core'
+import Username from '@components/Username'
+import { Flex, ScrollArea, Stack } from '@mantine/core'
 import { useQuery } from '@tanstack/react-query'
 import { useRouter } from 'next/router'
 import { FC } from 'react'
@@ -60,19 +53,11 @@ const UserCard: FC<Props> = () => {
 	return (
 		<Flex direction={'column'} className={classes.root} gap="md">
 			<ScrollArea>
-				<Group>
-					<Avatar
-						src={data.receiver.avatar?.thumbnail_url || null}
-						size={64}
-						radius={100}
-					/>
-					<Stack spacing={5}>
-						<Title order={2} color="brand.5">
-							{data.receiver.full_name}
-						</Title>
-						<Text color="brand.5">{data.receiver.job_title}</Text>
-					</Stack>
-				</Group>
+				<Username
+					name={data?.receiver.full_name}
+					jobTitle={data?.receiver.job_title}
+					avatar={data?.receiver.avatar?.thumbnail_url}
+				/>
 
 				<Stack
 					sx={() => ({

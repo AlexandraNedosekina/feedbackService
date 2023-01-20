@@ -1,13 +1,6 @@
 import Icon from '@components/Icon'
-import {
-	ActionIcon,
-	Avatar,
-	Container,
-	Group,
-	Stack,
-	Text,
-	Title,
-} from '@mantine/core'
+import Username from '@components/Username'
+import { ActionIcon, Box, Container, Group, Title } from '@mantine/core'
 import { useQuery } from '@tanstack/react-query'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
@@ -63,21 +56,13 @@ const EditCareer = () => {
 			{isUserLoading ? (
 				<div>Загрузка...</div>
 			) : (
-				<Group mt="xl">
-					<Avatar
-						src={user?.avatar?.thumbnail_url}
-						size={64}
-						radius={100}
+				<Box mt="xl">
+					<Username
+						name={user?.full_name || ''}
+						jobTitle={user?.job_title}
+						avatar={user?.avatar?.thumbnail_url}
 					/>
-					<Stack spacing={5}>
-						<Title order={2} color="brand.5">
-							{user?.full_name}
-						</Title>
-						{user?.job_title && (
-							<Text color="brand.5">{user.job_title}</Text>
-						)}
-					</Stack>
-				</Group>
+				</Box>
 			)}
 
 			{isLoading ? (

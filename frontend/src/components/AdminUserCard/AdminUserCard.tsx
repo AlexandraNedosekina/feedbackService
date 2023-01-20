@@ -1,6 +1,5 @@
-import UserRating from '@components/UserRating'
+import Username from '@components/Username'
 import {
-	Avatar,
 	Button,
 	Flex,
 	Group,
@@ -8,7 +7,6 @@ import {
 	ScrollArea,
 	Stack,
 	Text,
-	Title,
 } from '@mantine/core'
 import { useQuery } from '@tanstack/react-query'
 import { useEffect } from 'react'
@@ -53,26 +51,12 @@ const AdminUserCard = () => {
 			{(userId || data) && (
 				<ScrollArea h={'100%'}>
 					<Group position="apart" align="flex-start">
-						<Group>
-							<Avatar
-								src={data?.user.avatar?.thumbnail_url}
-								size={64}
-								radius={100}
-							/>
-							<Stack spacing={5}>
-								<Group spacing={'sm'}>
-									<Title order={2} color="brand.5">
-										{data?.user.full_name}
-									</Title>
-									{data?.avg_rating && (
-										<UserRating rating={data.avg_rating} />
-									)}
-								</Group>
-								{data?.user.job_title && (
-									<Text color="brand.5">{data.user.job_title}</Text>
-								)}
-							</Stack>
-						</Group>
+						<Username
+							name={data?.user.full_name || ''}
+							avatar={data?.user.avatar?.thumbnail_url}
+							jobTitle={data?.user.job_title || undefined}
+							rating={data?.avg_rating}
+						/>
 						<Button variant="outline">Архив</Button>
 					</Group>
 
