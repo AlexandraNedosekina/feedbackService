@@ -40,22 +40,6 @@ const GradeCardMenu: FC<Props> = ({ grade }) => {
 
 	function handleEdit() {
 		update({
-			title: grade.name,
-			salary: grade.salary,
-			toLearn: grade.toLearn.map(i => ({
-				id: String(i.id),
-				text: i.description,
-				isCreated: false,
-				isDeleted: false,
-				isEdited: false,
-			})),
-			toComplete: grade.toComplete.map(i => ({
-				id: String(i.id),
-				text: i.description,
-				isCreated: false,
-				isDeleted: false,
-				isEdited: false,
-			})),
 			careerId: String(grade.id),
 			isEdit: true,
 		})
@@ -118,6 +102,19 @@ const GradeCardMenu: FC<Props> = ({ grade }) => {
 				onClose={() => {
 					setIsEditModalOpen(false)
 					restore()
+				}}
+				initialValues={{
+					title: grade.name ?? '',
+					salary: String(grade.salary) ?? '',
+					toLearn: grade.toLearn.map(i => ({
+						text: i.description,
+						apiId: String(i.id),
+					})),
+					toComplete: grade.toComplete.map(i => ({
+						text: i.description,
+						apiId: String(i.id),
+					})),
+					idsToDelete: [],
 				}}
 			/>
 		</>

@@ -1,42 +1,37 @@
 import { CareerParamCreate, CareerParamUpdate } from 'src/api/generatedTypes'
-import { ICareerGradeParam } from 'src/stores'
+import { IFormValues } from '../types'
 
 export function reduceParams(
-	params: ICareerGradeParam[],
+	dirtyFields: { [key: string]: boolean },
+	params: IFormValues['toComplete'],
 	type: 'to_learn' | 'to_complete'
 ) {
+	const typeCamelCase = type.replace(/_./g, match => match[1].toUpperCase())
+
 	return params.reduce<{
 		created: CareerParamCreate[]
-		edited: CareerParamUpdate[]
-		deleted: string[]
+		updated: CareerParamUpdate[]
 	}>(
-		(prev, curr) => {
-			if (curr.isDeleted) {
-				// From api
-				if (!curr.isCreated) {
-					prev.deleted.push(curr.id)
+		(acc, item, index) => {
+			if (item.apiId) {
+				if (dirtyFields[`${typeCamelCase}[${index}].text`]) {
+					acc.updated.push({
+						id: +item.apiId,
+						description: item.text,
+						type,
+					})
 				}
 			} else {
-				if (curr.isCreated) {
-					prev.created.push({
-						description: curr.text,
-						type,
-					})
-				} else if (curr.isEdited) {
-					prev.edited.push({
-						id: +curr.id,
-						description: curr.text,
-						type,
-					})
-				}
+				acc.created.push({
+					description: item.text,
+					type,
+				})
 			}
-
-			return prev
+			return acc
 		},
 		{
 			created: [],
-			edited: [],
-			deleted: [],
+			updated: [],
 		}
 	)
 }
