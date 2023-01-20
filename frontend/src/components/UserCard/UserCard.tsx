@@ -7,6 +7,7 @@ import { FC } from 'react'
 import { getFeedback, QueryKeys } from 'src/api'
 import { useFeedbackStore } from 'src/stores'
 import { Buttons } from './Buttons'
+import { CompletedBadge } from './CompletedBadge'
 import { Rating } from './Rating'
 import { Textarea } from './Textarea'
 import { useStyles } from './useStyles'
@@ -70,11 +71,14 @@ const UserCard: FC<Props> = () => {
 					avatar={data?.receiver.avatar?.thumbnail_url}
 				/>
 
+				{data.completed ? <CompletedBadge /> : null}
+
 				<Stack
 					sx={() => ({
 						maxWidth: 'max-content',
 					})}
-					my={40}
+					mt={20}
+					mb={40}
 				>
 					<Rating title="Выполнение задач" name="task_completion" />
 					<Rating title="Вовлеченность" name="involvement" />
