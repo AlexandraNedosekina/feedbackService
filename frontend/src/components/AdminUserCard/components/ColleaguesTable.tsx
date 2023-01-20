@@ -75,7 +75,7 @@ const ColleaguesTable: FC<Props> = ({ colleagues }) => {
 						},
 					},
 				}) => {
-					return <ActionMenuTable colleagueId={String(id)} />
+					return <ActionMenuTable colleagueId={id} />
 				},
 			}),
 		],
