@@ -1,0 +1,38 @@
+version: "3.8"
+
+services:
+  app:
+    build: .
+    restart: unless-stopped 
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres
+    env_file: .env
+    volumes:
+      - avatars:/app/avatars
+
+  postgres:
+    image: postgres:12
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: ${DATABASE_USER:?err}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD:?err}
+      POSTGRES_DB: ${DATABASE_NAME:?err}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  adminer:
+    image: adminer:latest
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+    depends_on:
+      - postgres
+
+
+volumes:
+  postgres-data:
+  avatars:

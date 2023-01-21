@@ -1,4 +1,4 @@
-import os
+from pathlib import Path
 
 import aiofiles
 from fastapi import (APIRouter, Depends, File, HTTPException, Response,
@@ -35,10 +35,9 @@ async def create_avater(
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
 
-    if not os.path.exists(AVATARS_BASE_DIR):
-        os.mkdir(AVATARS_BASE_DIR)
-        os.mkdir(ORIGINALS_DIR)
-        os.mkdir(THUMBNAILS_DIR)
+    if not Path(ORIGINALS_DIR).exists() or not Path(THUMBNAILS_DIR).exists():
+        Path(ORIGINALS_DIR).mkdir(parents=True, exist_ok=True)
+        Path(THUMBNAILS_DIR).mkdir(parents=True, exist_ok=True)
 
     image_extension = file.filename.split(".")[-1].lower()
     if image_extension not in ACCEPTED_IMAGE_EXTENSIONS:
@@ -55,8 +54,8 @@ async def create_avater(
         )
 
     if curr_user.avatar:
-        os.remove(curr_user.avatar.original_path)
-        os.remove(curr_user.avatar.thumbnail_path)
+        Path(curr_user.avatar.original_path).unlink(missing_ok=True)
+        Path(curr_user.avatar.thumbnail_path).unlink(missing_ok=True)
 
     async with aiofiles.open(original_path, "wb") as f:
         await f.write(content)
@@ -67,7 +66,7 @@ async def create_avater(
         raise HTTPException(status_code=500, detail="Error when creating thumbnail")
 
     if not result:
-        os.remove(original_path)
+        Path(original_path).unlink(missing_ok=True)
         raise HTTPException(status_code=400, detail="Bad params for thumbnail")
 
     crud.avatar.create(
@@ -148,7 +147,7 @@ async def get_thumbnail(
         raise HTTPException(status_code=404, detail="User does not have avatar")
 
     avatar = user.avatar
-    if not os.path.exists(avatar.thumbnail_path):
+    if not Path(avatar.thumbnail_path).exists():
         raise HTTPException(status_code=404, detail="Can not find avatar")
     return FileResponse(avatar.thumbnail_path)
 
@@ -170,7 +169,7 @@ async def get_original(
         raise HTTPException(status_code=404, detail="User does not have avatar")
 
     avatar = user.avatar
-    if not os.path.exists(avatar.original_path):
+    if not Path(avatar.original_path).exists():
         raise HTTPException(status_code=404, detail="Can not find avatar")
     return FileResponse(avatar.original_path)
 
