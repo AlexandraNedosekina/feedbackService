@@ -2,6 +2,7 @@ import logging
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+
 # from fastapi_utils.timing import add_timing_middleware
 from starlette.middleware.sessions import SessionMiddleware
 

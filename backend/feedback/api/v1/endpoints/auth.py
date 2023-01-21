@@ -1,7 +1,6 @@
 import datetime
 
-from fastapi import (APIRouter, Depends, HTTPException, Request, Response,
-                     responses)
+from fastapi import APIRouter, Depends, HTTPException, Request, Response, responses
 from fastapi.responses import RedirectResponse
 from httpx_oauth.oauth2 import GetAccessTokenError
 from sqlalchemy.orm import Session

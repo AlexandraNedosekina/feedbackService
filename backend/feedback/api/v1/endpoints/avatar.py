@@ -1,8 +1,7 @@
 from pathlib import Path
 
 import aiofiles
-from fastapi import (APIRouter, Depends, File, HTTPException, Response,
-                     UploadFile)
+from fastapi import APIRouter, Depends, File, HTTPException, Response, UploadFile
 from fastapi.responses import FileResponse
 from PIL import Image
 from sqlalchemy.orm import Session

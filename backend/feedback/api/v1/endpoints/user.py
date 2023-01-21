@@ -3,8 +3,7 @@ from pydantic import parse_obj_as
 from sqlalchemy.orm import Session
 
 from feedback import crud, models, schemas
-from feedback.api.deps import (GetUserWithRoles, get_current_user, get_db,
-                               is_allowed)
+from feedback.api.deps import GetUserWithRoles, get_current_user, get_db, is_allowed
 
 get_admin = GetUserWithRoles(["admin"])
 router = APIRouter()
