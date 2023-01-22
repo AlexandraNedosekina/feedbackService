@@ -367,4 +367,4 @@ async def sheduled_update_event_status():
         update_event_status_to_archived(db)
 
     except Exception as e:
-        logger.debug(f"Error sheduled update event status: {e}")
+        logger.error(f"Error sheduled update event status: {e}")

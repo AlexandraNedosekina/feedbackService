@@ -1,9 +1,18 @@
+import logging
+
 from sqlalchemy import create_engine
-from sqlalchemy.orm import declarative_base, sessionmaker
+from sqlalchemy.orm import sessionmaker
 
 from feedback.core.config import settings
 
-engine = create_engine(settings.SQLALCHEMY_DATABASE_URI)
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+logger = logging.getLogger(__name__)
 
-Base = declarative_base()
+engine = create_engine(
+    settings.SQLALCHEMY_DATABASE_URI,
+    echo=settings.IS_DEBUG,
+    pool_pre_ping=True,
+)
+
+session_local = sessionmaker(
+    expire_on_commit=False, autocommit=False, autoflush=False, bind=engine
+)

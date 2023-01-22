@@ -1,7 +1,7 @@
 from sqlalchemy import Boolean, Column, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
 
-from feedback.db.session import Base
+from feedback.db.base import Base
 
 
 class CareerTrack(Base):

@@ -8,6 +8,8 @@ ENV_FILE_DIR = Path(__file__).absolute().parent.parent.parent
 
 class Settings(BaseSettings):
     # App
+    IS_DEBUG: bool = False
+    LOG_LEVEL: str = "ERROR"
     APP_PORT: int = 8000
     APP_HOST: str = "localhost"
     SECRET_KEY: str = Field(...)
@@ -54,4 +56,4 @@ class Settings(BaseSettings):
         env_file_encoding = "utf-8"
 
 
-settings = Settings(_env_file=None)
+settings = Settings()

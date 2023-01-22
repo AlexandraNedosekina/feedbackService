@@ -1,3 +1,4 @@
+import logging
 from typing import AsyncGenerator, Callable, Literal
 
 from fastapi import Depends, HTTPException
@@ -6,15 +7,20 @@ from sqlalchemy.orm import Session
 from feedback import crud, models
 from feedback.core.jwt import decode_token
 from feedback.core.OAuth2CookieChecker import OAuth2PasswordBearerWithCookie
-from feedback.db.session import SessionLocal
+from feedback.db.session import session_local
 
 oauth2_scheme = OAuth2PasswordBearerWithCookie(tokenUrl="auth/signin-gitlab")
 
+logger = logging.getLogger(__name__)
+
 
 async def get_db() -> AsyncGenerator:
-    db = SessionLocal()
+    db = session_local()
     try:
         yield db
+    except Exception as e:
+        logger.error(e)
+        raise
     finally:
         db.close()
 

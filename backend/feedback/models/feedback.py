@@ -12,7 +12,7 @@ from sqlalchemy import (
 )
 from sqlalchemy.orm import relationship
 
-from feedback.db.session import Base
+from feedback.db.base import Base
 
 
 class MyDateTime(TypeDecorator):

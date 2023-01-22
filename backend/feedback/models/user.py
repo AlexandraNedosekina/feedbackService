@@ -1,16 +1,7 @@
-from sqlalchemy import (
-    Boolean,
-    Column,
-    Date,
-    DateTime,
-    ForeignKey,
-    Integer,
-    String,
-    Time,
-)
+from sqlalchemy import Boolean, Column, Date, ForeignKey, Integer, String, Time
 from sqlalchemy.orm import relationship
 
-from feedback.db.session import Base
+from feedback.db.base import Base
 
 
 class User(Base):
