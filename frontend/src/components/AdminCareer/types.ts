@@ -10,3 +10,9 @@ export interface IFormValues {
 	toComplete: ICareerGradeParam[]
 	idsToDelete: string[]
 }
+
+export enum EStatus {
+	notCompleted = 'not_completed',
+	completed = 'completed',
+	current = 'current',
+}

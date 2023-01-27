@@ -1,9 +1,13 @@
-import { Badge, Box, Button, Flex, Group, Text, Title } from '@mantine/core'
+import { Badge, Box, Flex, Group, Select, Text, Title } from '@mantine/core'
+import { showNotification } from '@mantine/notifications'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useRouter } from 'next/router'
+import { useEffect, useMemo, useState } from 'react'
 import { QueryKeys, TCareerAdapter, updateCareerTrack } from 'src/api'
 import { CareerTrackUpdate } from 'src/api/generatedTypes'
 import { useEditCareerStore } from 'src/stores'
+import { EStatus } from '../types'
+import { setInitialStatus } from '../utils/setInitialStatus'
 import GradeCardMenu from './GradeCardMenu'
 import ParamCheckbox from './ParamCheckbox'
 
@@ -13,37 +17,66 @@ const GradeCard = () => {
 	} = useRouter()
 	const queryClient = useQueryClient()
 	const selectedGradeId = useEditCareerStore(state => state.selectedGradeId)
-	const { mutate, isLoading } = useMutation({
-		mutationFn: (data: CareerTrackUpdate) =>
-			updateCareerTrack(selectedGradeId, data),
-		onSuccess: () => {
-			queryClient.invalidateQueries([QueryKeys.CAREER_BY_USER_ID, id])
-		},
-	})
+
 	const data = queryClient.getQueryData<TCareerAdapter[]>([
 		QueryKeys.CAREER_BY_USER_ID,
 		id,
 	])
-
 	const grade = data?.find(i => i.id === +selectedGradeId)
 
-	function handleSubmit() {
-		if (!grade) return
-		const data: { is_completed?: boolean; is_current?: boolean } = {}
+	const statusData = useMemo<{ value: EStatus; label: string }[]>(
+		() => [
+			{ value: EStatus.notCompleted, label: 'Незавершенный' },
+			{ value: EStatus.current, label: 'Текущий' },
+			{ value: EStatus.completed, label: 'Завершенный' },
+		],
+		[]
+	)
+	const [status, setStatus] = useState<EStatus>(() => setInitialStatus(grade))
 
-		if (!grade.is_completed) {
-			if (grade.is_current) {
-				data.is_completed = true
-				data.is_current = false
-			} else {
-				data.is_current = true
-			}
-		} else {
-			data.is_completed = false
+	const { mutate: updateStatus } = useMutation({
+		mutationFn: (data: CareerTrackUpdate) =>
+			updateCareerTrack(selectedGradeId, data),
+		onSuccess: () => {
+			queryClient.invalidateQueries([QueryKeys.CAREER_BY_USER_ID, id])
+			showNotification({
+				title: 'Успешно',
+				message: 'Статус успешно обновлен',
+				color: 'green',
+			})
+		},
+		onError(error: any) {
+			showNotification({
+				title: 'Ошибка',
+				message: error,
+				color: 'red',
+			})
+			setStatus(() => setInitialStatus(grade))
+		},
+	})
+
+	function handleStatusChange(value: EStatus) {
+		if (value === status) return
+
+		setStatus(value)
+		switch (value) {
+			case EStatus.notCompleted:
+				updateStatus({ is_completed: false, is_current: false })
+				break
+			case EStatus.current:
+				updateStatus({ is_completed: false, is_current: true })
+				break
+			case EStatus.completed:
+				updateStatus({ is_completed: true, is_current: false })
+				break
 		}
-
-		mutate(data)
 	}
+
+	useEffect(() => {
+		setStatus(() => setInitialStatus(grade))
+
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [grade?.is_completed, grade?.is_current, selectedGradeId])
 
 	if (!grade) return null
 
@@ -94,19 +127,13 @@ const GradeCard = () => {
 				/>
 			))}
 
-			<Flex justify={'flex-end'}>
-				<Button
-					onClick={handleSubmit}
-					variant="outline"
-					bg={'white'}
-					loading={isLoading}
-				>
-					{!grade.is_completed
-						? grade.is_current
-							? 'Сделать завершенным'
-							: 'Сделать текущим'
-						: 'Сделать незавершенным'}
-				</Button>
+			<Text mt="sm">Статус:</Text>
+			<Flex>
+				<Select
+					data={statusData}
+					value={status}
+					onChange={handleStatusChange}
+				/>
 			</Flex>
 		</Box>
 	)
