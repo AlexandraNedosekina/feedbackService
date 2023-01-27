@@ -6,5 +6,6 @@ export const useStyles = createStyles(theme => ({
 		borderRadius: '4px',
 		padding: theme.spacing.lg,
 		height: '100%',
+		position: 'relative',
 	},
 }))
