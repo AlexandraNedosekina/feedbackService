@@ -3,8 +3,8 @@ import { Flex, LoadingOverlay, ScrollArea, Stack } from '@mantine/core'
 import { showNotification } from '@mantine/notifications'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useRouter } from 'next/router'
-import { FC, useEffect, useMemo, useState } from 'react'
-import { Form, FormSpy } from 'react-final-form'
+import { FC } from 'react'
+import { Form } from 'react-final-form'
 import { createFeedback, getFeedback, QueryKeys } from 'src/api'
 import { useFeedbackStore } from 'src/stores'
 import { Buttons } from './Buttons'
@@ -82,7 +82,7 @@ const UserCard: FC<Props> = () => {
 		},
 	})
 
-	const [initialValues, setInitialValues] = useState<IFormValues>({
+	const initialValues: IFormValues = {
 		taskCompletion: data?.task_completion || 0,
 		involvement: data?.involvement || 0,
 		motivation: data?.motivation || 0,
@@ -91,38 +91,9 @@ const UserCard: FC<Props> = () => {
 		wishes: data?.wishes || '',
 		remarks: data?.remarks || '',
 		comments: data?.comment || '',
-	})
+	}
 
-	useEffect(() => {
-		console.log('here')
-		setInitialValues({
-			taskCompletion: data?.task_completion || 0,
-			involvement: data?.involvement || 0,
-			motivation: data?.motivation || 0,
-			interaction: data?.interaction || 0,
-			achievements: data?.achievements || '',
-			wishes: data?.wishes || '',
-			remarks: data?.remarks || '',
-			comments: data?.comment || '',
-		})
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [feedbackId, data])
-
-	// const initialValues = useMemo<IFormValues>(() => {
-	// 	return {
-	// 		taskCompletion: data?.task_completion || 0,
-	// 		involvement: data?.involvement || 0,
-	// 		motivation: data?.motivation || 0,
-	// 		interaction: data?.interaction || 0,
-	// 		achievements: data?.achievements || '',
-	// 		wishes: data?.wishes || '',
-	// 		remarks: data?.remarks || '',
-	// 		comments: data?.comment || '',
-	// 	}
-	// 	// eslint-disable-next-line react-hooks/exhaustive-deps
-	// }, [feedbackId, data])
-
-	if (isLoading || isError)
+	if (isLoading || isError || isFetching)
 		return (
 			<div className={classes.root}>
 				<LoadingOverlay visible />
@@ -138,6 +109,7 @@ const UserCard: FC<Props> = () => {
 				initialValues={initialValues}
 				subscription={{
 					submitting: true,
+					pristine: true,
 				}}
 				validate={values => {
 					const errors: Partial<Record<keyof IFormValues, string>> = {}
@@ -151,7 +123,6 @@ const UserCard: FC<Props> = () => {
 					return errors
 				}}
 				keepDirtyOnReinitialize={true}
-				initialValuesEqual={() => false}
 			>
 				{() => (
 					<>
@@ -163,12 +134,6 @@ const UserCard: FC<Props> = () => {
 							/>
 
 							{data.completed ? <CompletedBadge /> : null}
-
-							{/* <FormSpy>
-								{({ values }) => {
-									return <pre>{JSON.stringify(values, null, 2)}</pre>
-								}}
-							</FormSpy> */}
 
 							<Stack
 								sx={() => ({
