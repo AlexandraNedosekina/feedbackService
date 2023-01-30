@@ -164,27 +164,20 @@ const AddGradeModal: FC<Props> = ({
 						>
 							<Stack>
 								<FormInput
-									fieldProps={{
-										name: 'title',
-										validate: required,
-									}}
-									inputProps={{
-										label: 'Название',
-										autoComplete: 'off',
-										withAsterisk: true,
-										required: true,
-									}}
+									name="title"
+									validate={required}
+									label="Название"
+									autoComplete="off"
+									withAsterisk={true}
+									required={true}
 								/>
 								<FormInput
-									fieldProps={{
-										name: 'salary',
-									}}
-									inputProps={{
-										label: 'Зарплата',
-										type: 'number',
-										autoComplete: 'off',
-									}}
+									name="salary"
+									label="Зарплата"
+									autoComplete="off"
+									type="number"
 								/>
+
 								<Tasks title="Что нужно изучить" type="toLearn" />
 								<Tasks title="Что нужно сделать" type="toComplete" />
 

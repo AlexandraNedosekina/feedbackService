@@ -11,16 +11,12 @@ interface Props {
 export const Textarea: FC<Props> = ({ name, label, placeholder }) => {
 	return (
 		<FormTextarea
-			fieldProps={{
-				name,
-			}}
-			textareaProps={{
-				placeholder,
-				label,
-				autosize: true,
-				minRows: 3,
-				maxRows: 8,
-			}}
+			name={name}
+			placeholder={placeholder}
+			label={label}
+			minRows={3}
+			maxRows={8}
+			autosize
 		/>
 	)
 }
