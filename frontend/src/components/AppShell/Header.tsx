@@ -11,10 +11,10 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { FC } from 'react'
-import { signOut } from 'src/api'
-import { ERoles } from 'src/types/roles'
-import { useBaseLayoutContext } from 'src/utils/useBaseLayoutContext'
-import { useUser } from 'src/utils/useUser'
+import { signOut } from 'shared/api'
+import { ERoles } from 'types/roles'
+import { useBaseLayoutContext } from 'utils/useBaseLayoutContext'
+import { useUser } from 'utils/useUser'
 
 const useStyles = createStyles(theme => ({
 	header: {

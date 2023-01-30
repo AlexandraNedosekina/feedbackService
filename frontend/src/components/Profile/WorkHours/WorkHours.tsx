@@ -4,8 +4,8 @@ import { useDebouncedValue } from '@mantine/hooks'
 import { showNotification } from '@mantine/notifications'
 import { useMutation } from '@tanstack/react-query'
 import { FC, useEffect, useState } from 'react'
-import { updateUser } from 'src/api'
-import { useUser } from 'src/utils/useUser'
+import { updateUser } from 'shared/api'
+import { useUser } from 'utils/useUser'
 
 const WorkHours: FC = () => {
 	const { user } = useUser()

@@ -2,8 +2,8 @@ import { Button, Flex } from '@mantine/core'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import dayjs from 'dayjs'
 import { FC } from 'react'
-import { createEvent, QueryKeys } from 'src/api'
-import { useCreateEventStore } from 'src/stores'
+import { createEvent, QueryKeys } from 'shared/api'
+import { useCreateEventStore } from 'stores'
 
 interface Props {
 	onClose: () => void

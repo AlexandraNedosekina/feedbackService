@@ -1,4 +1,4 @@
-import { IFeedbackStats } from 'src/types/feedbackStats'
+import { IFeedbackStats } from 'types/feedbackStats'
 import api from '..'
 import { errorHandler } from '../errorHandler'
 

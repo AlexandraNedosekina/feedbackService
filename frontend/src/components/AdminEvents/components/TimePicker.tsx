@@ -1,7 +1,7 @@
 import { Box, Group, Text } from '@mantine/core'
 import { DatePicker, TimeInput } from '@mantine/dates'
 import { FC } from 'react'
-import { useCreateEventStore } from 'src/stores'
+import { useCreateEventStore } from 'stores'
 import shallow from 'zustand/shallow'
 
 interface Props {}

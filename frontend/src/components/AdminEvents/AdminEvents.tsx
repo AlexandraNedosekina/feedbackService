@@ -2,8 +2,8 @@ import Icon from '@components/Icon'
 import { Button, Modal, Title } from '@mantine/core'
 import { useQuery } from '@tanstack/react-query'
 import { FC, useState } from 'react'
-import { getAllEvents, QueryKeys } from 'src/api'
-import { useCreateEventStore } from 'src/stores'
+import { getAllEvents, QueryKeys } from 'shared/api'
+import { useCreateEventStore } from 'stores'
 import { CreateEventModal, EventsTable } from './components'
 
 const AdminEvents: FC = () => {

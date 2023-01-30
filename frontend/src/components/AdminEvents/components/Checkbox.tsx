@@ -1,5 +1,5 @@
 import { Checkbox as MantineCheckbox } from '@mantine/core'
-import { useCreateEventStore } from 'src/stores'
+import { useCreateEventStore } from 'stores'
 import shallow from 'zustand/shallow'
 
 const Checkbox = () => {

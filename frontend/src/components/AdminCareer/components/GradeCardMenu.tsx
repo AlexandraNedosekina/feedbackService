@@ -12,8 +12,8 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
 import { FC, useState } from 'react'
-import { deleteCareerTrack, QueryKeys, TCareerAdapter } from 'src/api'
-import { useAddCareerGrade } from 'src/stores'
+import { deleteCareerTrack, QueryKeys, TCareerAdapter } from 'shared/api'
+import { useAddCareerGrade } from 'stores'
 import AddGradeModal from './AddGradeModal'
 
 interface Props {

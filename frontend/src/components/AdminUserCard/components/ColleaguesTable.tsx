@@ -7,7 +7,7 @@ import {
 	useReactTable,
 } from '@tanstack/react-table'
 import { FC, useMemo, useState } from 'react'
-import { IFeedbackStats } from 'src/types/feedbackStats'
+import { IFeedbackStats } from 'types/feedbackStats'
 import ActionMenuTable from './ActionMenuTable'
 import FeedbackModal from './FeedbackModal'
 import MoreButton from './MoreButton'

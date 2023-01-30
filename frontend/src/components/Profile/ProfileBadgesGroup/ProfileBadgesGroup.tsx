@@ -10,9 +10,9 @@ import {
 	TUpdateUser,
 	TUserAdapter,
 	updateUser,
-} from 'src/api'
-import { IProfileBadge } from 'src/types/profile'
-import { useUser } from 'src/utils/useUser'
+} from 'shared/api'
+import { IProfileBadge } from 'types/profile'
+import { useUser } from 'utils/useUser'
 import ProfileBadge from '../ProfileBadge'
 import { useStyles } from './useStyles'
 

@@ -11,7 +11,7 @@
 		"format": "prettier --write \"src/**/*\"",
 		"prepare": "cd .. && husky install frontend/.husky",
 		"test": "jest --watch",
-		"generate-types": "swagger-typescript-api -p http://localhost:8000/openapi.json -o ./src/api -n generatedTypes.ts --no-client && git add ./src/api/generatedTypes.ts"
+		"generate-types": "swagger-typescript-api -p http://localhost:8000/openapi.json -o ./src/shared/api -n generatedTypes.ts --no-client && git add ./src/shared/api/generatedTypes.ts"
 	},
 	"dependencies": {
 		"@emotion/react": "^11.10.5",

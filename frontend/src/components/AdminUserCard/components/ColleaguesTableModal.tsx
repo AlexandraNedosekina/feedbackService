@@ -8,8 +8,8 @@ import {
 	useReactTable,
 } from '@tanstack/react-table'
 import { FC, useState } from 'react'
-import { Colleagues } from 'src/api/generatedTypes'
-import { useAdminUserCardContext } from 'src/utils/useAdminUserCardContext'
+import { Colleagues } from 'shared/api/generatedTypes'
+import { useAdminUserCardContext } from 'utils/useAdminUserCardContext'
 
 const columnHelper = createColumnHelper<Colleagues>()
 

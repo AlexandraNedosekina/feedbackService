@@ -4,8 +4,8 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import produce from 'immer'
 import { useRouter } from 'next/router'
 import { ChangeEvent, FC, useState } from 'react'
-import { QueryKeys, TCareerAdapter, updateCareerTrack } from 'src/api'
-import { CareerTrackUpdate } from 'src/api/generatedTypes'
+import { QueryKeys, TCareerAdapter, updateCareerTrack } from 'shared/api'
+import { CareerTrackUpdate } from 'shared/api/generatedTypes'
 
 interface Props {
 	isCompleted: boolean

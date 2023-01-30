@@ -1,6 +1,6 @@
 import { Grid, Stack } from '@mantine/core'
 import Head from 'next/head'
-import { BaseLayout } from 'src/layouts'
+import { BaseLayout } from 'layouts'
 import { NextPageWithLayout } from './_app'
 import dynamic from 'next/dynamic'
 // import SelectWorker from '@components/FullCalendar/components/SelectWorker'
@@ -19,15 +19,15 @@ const CommunicationPage: NextPageWithLayout = () => {
 			</Head>
 			<div className={styles.wrapper}>
 				{/* <Grid columns={4} mt="md"> */}
-					{/* <Grid.Col span={1} h={'100%'} py={0}>
+				{/* <Grid.Col span={1} h={'100%'} py={0}>
 						<Stack spacing='md'>
 							<SelectWorker />
 							<DateInput />
 						</Stack>
 					</Grid.Col> */}
-					{/* <Grid.Col span={3} h={'100%'} py={0}> */}
-						<FullCalendar />
-					{/* </Grid.Col> */}
+				{/* <Grid.Col span={3} h={'100%'} py={0}> */}
+				<FullCalendar />
+				{/* </Grid.Col> */}
 				{/* </Grid> */}
 			</div>
 		</>

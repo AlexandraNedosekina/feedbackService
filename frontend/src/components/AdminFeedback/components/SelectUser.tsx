@@ -1,6 +1,6 @@
 import { UserSearchSelect } from '@components/UserSearchSelect'
 import { Text } from '@mantine/core'
-import { useAdminFeedbackStore } from 'src/stores'
+import { useAdminFeedbackStore } from 'stores'
 import shallow from 'zustand/shallow'
 
 const SelectEvent = () => {

@@ -1,5 +1,5 @@
 import { createContext } from 'react'
-import { Colleagues } from 'src/api/generatedTypes'
+import { Colleagues } from 'shared/api/generatedTypes'
 
 export interface IAdminUserCardContext {
 	colleagues: Colleagues[]

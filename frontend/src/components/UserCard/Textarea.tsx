@@ -1,5 +1,5 @@
-import { FormTextarea } from '@components/form'
 import { FC } from 'react'
+import { FormTextarea } from 'shared/ui'
 import { IFormValues } from './types'
 
 interface Props {

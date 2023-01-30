@@ -1,7 +1,7 @@
 import { Modal, Stack, Textarea, Title } from '@mantine/core'
 import { useQuery } from '@tanstack/react-query'
 import { FC } from 'react'
-import { getFeedback, QueryKeys } from 'src/api'
+import { getFeedback, QueryKeys } from 'shared/api'
 import CategoryRating from './CategoryRating'
 
 interface Props {

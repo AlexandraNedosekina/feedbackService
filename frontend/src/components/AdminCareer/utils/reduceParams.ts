@@ -1,4 +1,4 @@
-import { CareerParamCreate, CareerParamUpdate } from 'src/api/generatedTypes'
+import { CareerParamCreate, CareerParamUpdate } from 'shared/api/generatedTypes'
 import { IFormValues } from '../types'
 
 export function reduceParams(

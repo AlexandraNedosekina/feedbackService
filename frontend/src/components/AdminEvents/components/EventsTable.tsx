@@ -7,8 +7,8 @@ import {
 } from '@tanstack/react-table'
 import 'dayjs/locale/ru'
 import { FC } from 'react'
-import { TEventAdapter } from 'src/api'
-import { EventStatus } from 'src/api/generatedTypes'
+import { TEventAdapter } from 'shared/api'
+import { EventStatus } from 'shared/api/generatedTypes'
 import ActionMenuTable from './ActionMenuTable'
 
 const columnHelper = createColumnHelper<TEventAdapter>()

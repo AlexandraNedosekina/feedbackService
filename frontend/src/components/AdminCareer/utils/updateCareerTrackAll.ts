@@ -2,12 +2,12 @@ import {
 	createCareerParams,
 	deleteCareerParam,
 	updateCareerTrack,
-} from 'src/api'
+} from 'shared/api'
 import {
 	CareerParamCreate,
 	CareerParamUpdate,
 	CareerTrack,
-} from 'src/api/generatedTypes'
+} from 'shared/api/generatedTypes'
 
 export interface IUpdateCareerTrackAllParams {
 	paramsToDelete: string[]

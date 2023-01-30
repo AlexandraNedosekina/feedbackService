@@ -1,5 +1,5 @@
-import { IProfileBadge } from 'src/types/profile'
-import { ERoles } from 'src/types/roles'
+import { IProfileBadge } from 'types/profile'
+import { ERoles } from 'types/roles'
 import { Fact, JobExpectation, Skill, User } from '../generatedTypes'
 
 export type TProfileBadges = Record<

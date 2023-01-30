@@ -7,8 +7,8 @@ import {
 } from '@components/Profile'
 import { Container, Group, Stack, Text, Title } from '@mantine/core'
 import Head from 'next/head'
-import { BaseLayout } from 'src/layouts'
-import { useUser } from 'src/utils/useUser'
+import { BaseLayout } from 'layouts'
+import { useUser } from 'utils/useUser'
 import { NextPageWithLayout } from './_app'
 
 const ProfilePage: NextPageWithLayout = () => {

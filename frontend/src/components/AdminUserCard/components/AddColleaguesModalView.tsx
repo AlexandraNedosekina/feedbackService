@@ -14,9 +14,9 @@ import {
 	getUsersColleagues,
 	QueryKeys,
 	searchUserByFullname,
-} from 'src/api'
-import { User } from 'src/api/generatedTypes'
-import { useAdminFeedbackStore } from 'src/stores'
+} from 'shared/api'
+import { User } from 'shared/api/generatedTypes'
+import { useAdminFeedbackStore } from 'stores'
 
 const columnHelper = createColumnHelper<User>()
 

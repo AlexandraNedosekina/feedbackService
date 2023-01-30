@@ -2,11 +2,11 @@ import { EditCareer } from '@components/AdminCareer/components'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { useEffect } from 'react'
-import { BaseLayout } from 'src/layouts'
-import { NextPageWithLayout } from 'src/pages/_app'
-import { ERoles } from 'src/types/roles'
-import { useBaseLayoutContext } from 'src/utils/useBaseLayoutContext'
-import { useUser } from 'src/utils/useUser'
+import { BaseLayout } from 'layouts'
+import { NextPageWithLayout } from 'pages/_app'
+import { ERoles } from 'types/roles'
+import { useBaseLayoutContext } from 'utils/useBaseLayoutContext'
+import { useUser } from 'utils/useUser'
 
 const EditCareerPage: NextPageWithLayout = () => {
 	const { user } = useUser()

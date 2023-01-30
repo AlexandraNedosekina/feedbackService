@@ -1,4 +1,4 @@
-import { Colleagues } from 'src/api/generatedTypes'
+import { Colleagues } from 'shared/api/generatedTypes'
 
 export const getSelectedColleagues = (
 	selectedRows: Record<number, boolean>,

@@ -1,4 +1,4 @@
-import { TCareerAdapter } from 'src/api'
+import { TCareerAdapter } from 'shared/api'
 import { EStatus } from '../types'
 
 export const setInitialStatus = (

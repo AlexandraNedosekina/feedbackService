@@ -1,7 +1,7 @@
 import { MantineProvider } from '@mantine/core'
 import { render, RenderOptions } from '@testing-library/react'
 import React, { FC, ReactElement } from 'react'
-import { mantineTheme } from 'src/styles/mantineTheme'
+import { mantineTheme } from 'styles/mantineTheme'
 
 const AllTheProviders: FC<{ children: React.ReactNode }> = ({ children }) => {
 	return (

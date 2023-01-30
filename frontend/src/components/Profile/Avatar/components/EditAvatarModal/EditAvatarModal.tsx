@@ -1,8 +1,8 @@
 import { Button, Group, Modal, Slider } from '@mantine/core'
 import { FC, useCallback, useState } from 'react'
 import Cropper, { Area } from 'react-easy-crop'
-import { BodyCreateAvaterUserUserIdAvatarPost } from 'src/api/generatedTypes'
-import { useUser } from 'src/utils/useUser'
+import { BodyCreateAvaterUserUserIdAvatarPost } from 'shared/api/generatedTypes'
+import { useUser } from 'utils/useUser'
 import styles from './EditAvatarModal.module.sass'
 
 const MAX_ZOOM_SIZE = 9

@@ -1,6 +1,6 @@
 import { Badge } from '@mantine/core'
 import { ChangeEvent, FC, useState } from 'react'
-import { IProfileBadge } from 'src/types/profile'
+import { IProfileBadge } from 'types/profile'
 import { DeletePopover, UpdatePopover } from './components'
 import { useStyles } from './useStyles'
 

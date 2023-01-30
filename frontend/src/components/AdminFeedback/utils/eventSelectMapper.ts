@@ -1,4 +1,4 @@
-import { TEventAdapter } from 'src/api'
+import { TEventAdapter } from 'shared/api'
 
 export const eventSelectMapper = (
 	events: TEventAdapter[]

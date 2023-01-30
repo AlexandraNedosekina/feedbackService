@@ -2,9 +2,9 @@ import { Select, Stack, Title } from '@mantine/core'
 import { showNotification } from '@mantine/notifications'
 import { useMutation } from '@tanstack/react-query'
 import { FC, useState } from 'react'
-import { updateUser } from 'src/api'
-import { User } from 'src/api/generatedTypes'
-import { useUser } from 'src/utils/useUser'
+import { updateUser } from 'shared/api'
+import { User } from 'shared/api/generatedTypes'
+import { useUser } from 'utils/useUser'
 
 const workFormatData: Array<{
 	label: string

@@ -1,4 +1,4 @@
-import { FeedbackFromUser } from 'src/api/generatedTypes'
+import { FeedbackFromUser } from 'shared/api/generatedTypes'
 import create from 'zustand'
 import { immer } from 'zustand/middleware/immer'
 import { devtools } from 'zustand/middleware'

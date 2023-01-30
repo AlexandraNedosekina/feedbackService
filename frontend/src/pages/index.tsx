@@ -13,8 +13,8 @@ import Head from 'next/head'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
 import { useCallback } from 'react'
-import { signinGitlab } from 'src/api'
-import styles from 'src/styles/main.module.scss'
+import { signinGitlab } from 'shared/api'
+import styles from 'styles/main.module.scss'
 import { NextPageWithLayout } from './_app'
 
 export const getServerSideProps: GetServerSideProps = async ({ req }) => {

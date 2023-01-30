@@ -9,8 +9,8 @@ import {
 	useReactTable,
 } from '@tanstack/react-table'
 import { useEffect, useMemo, useState } from 'react'
-import { getAllUsers, QueryKeys, searchUserByFullname } from 'src/api'
-import { User } from 'src/api/generatedTypes'
+import { getAllUsers, QueryKeys, searchUserByFullname } from 'shared/api'
+import { User } from 'shared/api/generatedTypes'
 import { GotoEditButton } from './components'
 
 const columnHelper = createColumnHelper<User>()

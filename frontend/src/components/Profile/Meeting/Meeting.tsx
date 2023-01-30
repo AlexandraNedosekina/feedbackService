@@ -3,8 +3,8 @@ import { ActionIcon, Flex, Stack, Switch, Title, Tooltip } from '@mantine/core'
 import { showNotification } from '@mantine/notifications'
 import { useMutation } from '@tanstack/react-query'
 import { FC, useState } from 'react'
-import { updateUser } from 'src/api'
-import { useUser } from 'src/utils/useUser'
+import { updateUser } from 'shared/api'
+import { useUser } from 'utils/useUser'
 
 const Meeting: FC = () => {
 	const { user } = useUser()

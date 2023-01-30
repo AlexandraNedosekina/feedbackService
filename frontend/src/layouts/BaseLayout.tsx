@@ -10,7 +10,7 @@ import {
 	useEffect,
 	useState,
 } from 'react'
-import { useUser } from 'src/utils/useUser'
+import { useUser } from 'utils/useUser'
 
 interface IBaseLayoutContext {
 	isEdit: boolean

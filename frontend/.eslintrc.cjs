@@ -27,6 +27,6 @@ module.exports = {
 		'next.config.js',
 		'__tests__/**/*',
 		'.eslintrc.cjs',
-		'src/api/generatedTypes.ts',
+		'src/shared/api/generatedTypes.ts',
 	],
 }

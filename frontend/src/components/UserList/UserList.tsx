@@ -5,7 +5,7 @@ import { Flex, ScrollArea, Text } from '@mantine/core'
 import { useQuery } from '@tanstack/react-query'
 import { useRouter } from 'next/router'
 import { FC, useMemo, useState } from 'react'
-import { getFeedbackList, QueryKeys } from 'src/api'
+import { getFeedbackList, QueryKeys } from 'shared/api'
 
 interface Props {}
 

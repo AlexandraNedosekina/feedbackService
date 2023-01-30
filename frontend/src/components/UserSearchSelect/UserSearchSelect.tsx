@@ -2,7 +2,7 @@ import { Select, SelectItem, Text } from '@mantine/core'
 import { useDebouncedValue } from '@mantine/hooks'
 import { useQuery } from '@tanstack/react-query'
 import { FC, forwardRef, useEffect, useState } from 'react'
-import { QueryKeys, TSearchUserAdapter, searchUserByFullname } from 'src/api'
+import { QueryKeys, TSearchUserAdapter, searchUserByFullname } from 'shared/api'
 
 type ItemProps = React.ComponentPropsWithoutRef<'div'> & TSearchUserAdapter
 

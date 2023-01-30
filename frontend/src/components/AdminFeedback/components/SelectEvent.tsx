@@ -1,7 +1,7 @@
 import { Select, Text } from '@mantine/core'
 import { useQuery } from '@tanstack/react-query'
-import { getAllEvents, QueryKeys } from 'src/api'
-import { useAdminFeedbackStore } from 'src/stores'
+import { getAllEvents, QueryKeys } from 'shared/api'
+import { useAdminFeedbackStore } from 'stores'
 import shallow from 'zustand/shallow'
 import { eventSelectMapper } from '../utils'
 

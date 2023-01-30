@@ -16,12 +16,12 @@ import {
 	getOriginalAvatar,
 	QueryKeys,
 	updateAvatarThumbnail,
-} from 'src/api'
+} from 'shared/api'
 import {
 	AvatarUpdate,
 	BodyCreateAvaterUserUserIdAvatarPost,
-} from 'src/api/generatedTypes'
-import { useUser } from 'src/utils/useUser'
+} from 'shared/api/generatedTypes'
+import { useUser } from 'utils/useUser'
 import styles from './Avatar.module.sass'
 import { EditAvatarModal } from './components'
 

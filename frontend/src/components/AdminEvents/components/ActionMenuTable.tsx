@@ -3,7 +3,7 @@ import { ActionMenu } from '@components/Table'
 import { Button, Flex, Modal, Title } from '@mantine/core'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { FC, useState } from 'react'
-import { deleteEvent, QueryKeys } from 'src/api'
+import { deleteEvent, QueryKeys } from 'shared/api'
 
 interface Props {
 	eventId: string

@@ -1,4 +1,4 @@
-import { Avatar } from 'src/api/generatedTypes'
+import { Avatar } from 'shared/api/generatedTypes'
 
 export interface IFeedbackStats {
 	user: {

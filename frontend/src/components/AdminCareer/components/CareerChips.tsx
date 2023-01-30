@@ -1,7 +1,7 @@
 import Icon from '@components/Icon'
 import { ActionIcon, Chip, createStyles } from '@mantine/core'
 import { useState } from 'react'
-import { useAddCareerGrade, useEditCareerStore } from 'src/stores'
+import { useAddCareerGrade, useEditCareerStore } from 'stores'
 import shallow from 'zustand/shallow'
 import AddGradeModal from './AddGradeModal'
 

@@ -1,7 +1,7 @@
 import AdminUserCard from '@components/AdminUserCard'
 import { Grid, Title } from '@mantine/core'
 import { FC } from 'react'
-import styles from 'src/styles/feedback.module.sass'
+import styles from 'styles/feedback.module.sass'
 import { UserPicker } from './components'
 
 const AdminFeedback: FC = () => {

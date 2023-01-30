@@ -14,12 +14,17 @@
 		"isolatedModules": true,
 		"jsx": "preserve",
 		"incremental": true,
-		"baseUrl": ".",
+		"baseUrl": "./src",
 		"paths": {
-			"@components/*": ["src/components/*"],
-			"@public/*": ["public/*"]
+			"@components/*": ["components/*"]
 		}
 	},
-	"include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "src/types/*.d.ts", "src/components/FullCalendar/Locale.js"],
+	"include": [
+		"next-env.d.ts",
+		"**/*.ts",
+		"**/*.tsx",
+		"src/types/*.d.ts",
+		"src/components/FullCalendar/Locale.js"
+	],
 	"exclude": ["node_modules"]
 }

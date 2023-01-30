@@ -1,6 +1,6 @@
 import { Text } from '@mantine/core'
 import { FC } from 'react'
-import tableStyles from 'src/styles/table.module.sass'
+import tableStyles from 'styles/table.module.sass'
 
 interface Props {
 	onClick?: () => void
