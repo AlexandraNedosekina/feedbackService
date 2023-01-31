@@ -7,8 +7,9 @@ import {
 } from '@components/Profile'
 import { Container, Group, Stack, Text, Title } from '@mantine/core'
 import Head from 'next/head'
-import { BaseLayout } from 'layouts'
+import { BaseWrapper } from 'shared/ui'
 import { useUser } from 'utils/useUser'
+import { AppShell } from 'widgets/app-shell'
 import { NextPageWithLayout } from './_app'
 
 const ProfilePage: NextPageWithLayout = () => {
@@ -77,7 +78,11 @@ const ProfilePage: NextPageWithLayout = () => {
 }
 
 ProfilePage.getLayout = function getLayout(page) {
-	return <BaseLayout>{page}</BaseLayout>
+	return (
+		<BaseWrapper>
+			<AppShell>{page}</AppShell>
+		</BaseWrapper>
+	)
 }
 
 export default ProfilePage

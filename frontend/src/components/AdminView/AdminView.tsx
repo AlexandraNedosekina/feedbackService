@@ -1,10 +1,10 @@
 import AdminCareer from '@components/AdminCareer'
-import AdminFeedback from '@components/AdminFeedback'
 import { FC } from 'react'
 import { EPages } from 'types/pages'
+import { AdminFeedbackPage } from 'widgets/admin-feedback-page'
 
 const Components: { [key in EPages]: FC } = {
-	[EPages.Feedback]: AdminFeedback,
+	[EPages.Feedback]: AdminFeedbackPage,
 	[EPages.Career]: AdminCareer,
 }
 

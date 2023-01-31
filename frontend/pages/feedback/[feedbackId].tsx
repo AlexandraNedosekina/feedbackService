@@ -5,8 +5,8 @@ import { EPages } from 'types/pages'
 import { ERoles } from 'types/roles'
 import { useUser } from 'utils/useUser'
 import { NextPageWithLayout } from '../_app'
-import { FeedbackPage } from 'widgets/feedback-page'
 import { AppShell } from 'widgets/app-shell'
+import { FeedbackPage } from 'pages/feedback'
 
 const Page: NextPageWithLayout = () => {
 	const { user } = useUser()

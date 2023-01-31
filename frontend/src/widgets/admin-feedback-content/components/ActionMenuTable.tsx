@@ -5,21 +5,14 @@ import { showNotification } from '@mantine/notifications'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
 import { deleteUsersColleagues, QueryKeys } from 'shared/api'
-import shallow from 'zustand/shallow'
-import { useAdminFeedbackStore } from '../../lib'
 
 interface IProps {
 	colleagueId: number
+	eventId: string
+	userId: string
 }
 
-const ActionMenuTable = ({ colleagueId }: IProps) => {
-	const { eventId, userId } = useAdminFeedbackStore(
-		state => ({
-			eventId: state.eventId,
-			userId: state.userId,
-		}),
-		shallow
-	)
+const ActionMenuTable = ({ colleagueId, eventId, userId }: IProps) => {
 	const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
 
 	const queryClient = useQueryClient()

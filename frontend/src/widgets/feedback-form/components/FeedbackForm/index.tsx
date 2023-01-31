@@ -1,6 +1,6 @@
 import { Form } from 'react-final-form'
 import { IFormValues } from '../../types'
-import { Flex, LoadingOverlay, ScrollArea, Stack } from '@mantine/core'
+import { Flex, LoadingOverlay, ScrollArea, Stack, Text } from '@mantine/core'
 import { CompletedBadge } from '../CompletedBadge'
 import { UserRatingsByCategory } from 'features/user-ratings-by-category'
 import { Textarea } from '../Textarea'
@@ -18,6 +18,7 @@ const FeedbackForm = () => {
 	const {
 		query: { feedbackId },
 	} = useRouter()
+
 	const router = useRouter()
 	const queryClient = useQueryClient()
 
@@ -74,6 +75,16 @@ const FeedbackForm = () => {
 		wishes: data?.wishes || '',
 		remarks: data?.remarks || '',
 		comments: data?.comment || '',
+	}
+
+	if (!feedbackId) {
+		return (
+			<div className={classes.root}>
+				<Text color="brand" weight={600} size={19}>
+					Выберите сотрудника для оценки
+				</Text>
+			</div>
+		)
 	}
 
 	if (isLoading || isError || isFetching)

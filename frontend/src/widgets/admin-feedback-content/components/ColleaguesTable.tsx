@@ -17,9 +17,11 @@ const columnHelper =
 
 interface IProps {
 	colleagues: IFeedbackStats['colleagues_rating']
+	eventId: string
+	userId: string
 }
 
-const ColleaguesTable = ({ colleagues }: IProps) => {
+const ColleaguesTable = ({ colleagues, eventId, userId }: IProps) => {
 	const [feedbackId, setFeedbackId] = useState<number | null>(null)
 	const [isOpen, setIsOpen] = useState(false)
 
@@ -75,10 +77,17 @@ const ColleaguesTable = ({ colleagues }: IProps) => {
 						},
 					},
 				}) => {
-					return <ActionMenuTable colleagueId={id} />
+					return (
+						<ActionMenuTable
+							colleagueId={id}
+							eventId={eventId}
+							userId={userId}
+						/>
+					)
 				},
 			}),
 		],
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 		[]
 	)
 

@@ -1,8 +1,3 @@
-import styles from './styles.module.sass'
-import shallow from 'zustand/shallow'
-import { useQuery } from '@tanstack/react-query'
-import { getFeedbackStats, QueryKeys } from 'shared/api'
-import { useEffect } from 'react'
 import {
 	Button,
 	Flex,
@@ -12,21 +7,21 @@ import {
 	Stack,
 	Text,
 } from '@mantine/core'
-import { useAdminFeedbackStore } from '../../lib'
+import { useQuery } from '@tanstack/react-query'
 import { UserCard, UserRating } from 'entities/user'
 import { UserRatingsByCategory } from 'features/user-ratings-by-category'
-import ColleaguesTitle from './ColleaguesTitle'
+import { useEffect } from 'react'
+import { getFeedbackStats, QueryKeys } from 'shared/api'
 import ColleaguesTable from './ColleaguesTable'
+import ColleaguesTitle from './ColleaguesTitle'
+import styles from './styles.module.sass'
 
-export const Content = () => {
-	const { eventId, userId } = useAdminFeedbackStore(
-		state => ({
-			eventId: state.eventId,
-			userId: state.userId,
-		}),
-		shallow
-	)
+interface IProps {
+	userId: string
+	eventId: string
+}
 
+export const AdminFeedbackContent = ({ eventId, userId }: IProps) => {
 	const { data, isFetching, refetch } = useQuery({
 		queryKey: [QueryKeys.FEEDBACK_STATS, userId, eventId],
 		queryFn: () =>
@@ -86,7 +81,11 @@ export const Content = () => {
 
 					<ColleaguesTitle />
 					{data && data?.colleagues_rating.length !== 0 && (
-						<ColleaguesTable colleagues={data.colleagues_rating} />
+						<ColleaguesTable
+							colleagues={data.colleagues_rating}
+							eventId={eventId}
+							userId={userId}
+						/>
 					)}
 				</ScrollArea>
 			)}

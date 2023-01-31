@@ -7,7 +7,7 @@ import { useMemo, useState } from 'react'
 import { getFeedbackList, QueryKeys } from 'shared/api'
 import { UserCardLink } from 'entities/user'
 
-const UserList = () => {
+export const FeedbackUserList = () => {
 	const [searchValue, setSearchValue] = useState<string>('')
 	const {
 		query: { feedbackId },
@@ -81,5 +81,3 @@ const UserList = () => {
 		</Flex>
 	)
 }
-
-export default UserList

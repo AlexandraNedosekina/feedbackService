@@ -1,5 +1,5 @@
 import { useContext } from 'react'
-import { BaseWrapperContext } from 'shared/ui/BaseLayout/index'
+import { BaseWrapperContext } from '../components'
 
 export const useBaseWrapperContext = () => {
 	const context = useContext(BaseWrapperContext)

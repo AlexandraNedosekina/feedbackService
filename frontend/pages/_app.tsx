@@ -6,7 +6,7 @@ import 'app/styles/global.css'
 import '@fullcalendar/common/main.css'
 import '@fullcalendar/daygrid/main.css'
 import '@fullcalendar/timegrid/main.css'
-import { withProviders } from 'App/providers'
+import { withProviders } from 'app/providers'
 
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
 	getLayout?: (page: ReactElement) => ReactNode
