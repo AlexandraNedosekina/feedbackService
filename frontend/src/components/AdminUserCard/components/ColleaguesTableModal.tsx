@@ -1,5 +1,5 @@
 import { Icon } from 'shared/ui'
-import Table from '@components/Table'
+import { Table } from 'shared/ui'
 import { ActionIcon, Flex } from '@mantine/core'
 import {
 	createColumnHelper,

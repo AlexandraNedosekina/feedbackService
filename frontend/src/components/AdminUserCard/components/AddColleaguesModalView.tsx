@@ -1,5 +1,5 @@
 import { Icon } from 'shared/ui'
-import Table from '@components/Table'
+import { Table } from 'shared/ui'
 import { ActionIcon, Box, Button, Flex, Input, Text } from '@mantine/core'
 import { useDebouncedValue } from '@mantine/hooks'
 import { useMutation, useQuery } from '@tanstack/react-query'

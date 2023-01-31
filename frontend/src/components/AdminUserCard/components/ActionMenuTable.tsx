@@ -1,5 +1,5 @@
 import { FC, useState } from 'react'
-import { ActionMenu } from '@components/Table'
+import { ActionMenu } from 'shared/ui'
 import { Icon } from 'shared/ui'
 import { Button, Flex, Modal, Title } from '@mantine/core'
 import { deleteUsersColleagues, QueryKeys } from 'shared/api'

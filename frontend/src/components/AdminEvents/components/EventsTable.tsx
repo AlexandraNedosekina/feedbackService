@@ -1,4 +1,4 @@
-import Table from '@components/Table'
+import { Table } from 'shared/ui'
 import { Box, Text } from '@mantine/core'
 import {
 	createColumnHelper,

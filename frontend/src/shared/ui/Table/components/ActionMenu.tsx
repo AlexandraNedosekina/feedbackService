@@ -7,13 +7,12 @@ const ActionMenuItem: FC<MenuItemProps & { onClick?: () => void }> = ({
 	...props
 }) => <Menu.Item {...props}>{children}</Menu.Item>
 
-interface Props {
+interface IProps {
 	children: React.ReactNode
+	Item: FC<MenuItemProps & { onClick?: () => void }>
 }
 
-const ActionMenu: FC<Props> & {
-	Item: FC<MenuItemProps & { onClick?: () => void }>
-} = ({ children }) => {
+const ActionMenu = ({ children }: IProps) => {
 	return (
 		<Menu position="bottom-end">
 			<Menu.Target>

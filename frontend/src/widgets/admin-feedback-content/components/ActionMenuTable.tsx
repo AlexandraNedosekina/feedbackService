@@ -1,5 +1,5 @@
 import { Icon } from 'shared/ui'
-import { ActionMenu } from '@components/Table'
+import { ActionMenu } from 'shared/ui'
 import { Button, Flex, Modal, Title } from '@mantine/core'
 import { showNotification } from '@mantine/notifications'
 import { useMutation, useQueryClient } from '@tanstack/react-query'

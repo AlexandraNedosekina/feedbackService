@@ -1,13 +1,12 @@
 import { Table as TableMantine } from '@mantine/core'
 import { flexRender, Table as ITable } from '@tanstack/react-table'
-import { FC } from 'react'
 import tableStyles from 'styles/table.module.sass'
 
-interface Props {
+interface IProps {
 	table: ITable<any>
 }
 
-const Table: FC<Props> = ({ table }) => {
+const Table = ({ table }: IProps) => {
 	return (
 		<TableMantine className={tableStyles.table}>
 			<thead>

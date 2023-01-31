@@ -1,4 +1,4 @@
-import Table from '@components/Table'
+import { Table } from 'shared/ui'
 import UserRating from '@components/UserRating'
 import { Flex } from '@mantine/core'
 import {
