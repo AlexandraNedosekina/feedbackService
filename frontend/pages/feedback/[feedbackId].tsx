@@ -1,12 +1,12 @@
-import AdminView from '@components/AdminView'
+import { AdminView } from 'app/admin-view'
 import Head from 'next/head'
+import { FeedbackPage } from 'pages/feedback'
 import { BaseWrapper, useBaseWrapperContext } from 'shared/ui'
 import { EPages } from 'types/pages'
 import { ERoles } from 'types/roles'
 import { useUser } from 'utils/useUser'
-import { NextPageWithLayout } from '../_app'
 import { AppShell } from 'widgets/app-shell'
-import { FeedbackPage } from 'pages/feedback'
+import { NextPageWithLayout } from '../_app'
 
 const Page: NextPageWithLayout = () => {
 	const { user } = useUser()

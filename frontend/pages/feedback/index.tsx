@@ -1,4 +1,4 @@
-import AdminView from '@components/AdminView'
+import { AdminView } from 'app/admin-view'
 import Head from 'next/head'
 import { FeedbackPage } from 'pages/feedback'
 import { BaseWrapper, useBaseWrapperContext } from 'shared/ui'

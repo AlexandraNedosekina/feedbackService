@@ -1,21 +1,19 @@
 import AdminCareer from '@components/AdminCareer'
+import { AdminFeedbackPage } from 'pages/admin-feedback'
 import { FC } from 'react'
 import { EPages } from 'types/pages'
-import { AdminFeedbackPage } from 'widgets/admin-feedback-page'
 
 const Components: { [key in EPages]: FC } = {
 	[EPages.Feedback]: AdminFeedbackPage,
 	[EPages.Career]: AdminCareer,
 }
 
-interface Props {
+interface IProps {
 	page: EPages
 }
 
-const AdminView: FC<Props> = ({ page }) => {
+export const AdminView = ({ page }: IProps) => {
 	const Component = Components[page]
 
 	return <Component />
 }
-
-export default AdminView
