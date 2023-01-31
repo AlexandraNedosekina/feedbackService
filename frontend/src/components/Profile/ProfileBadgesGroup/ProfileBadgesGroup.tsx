@@ -1,4 +1,4 @@
-import Icon from '@components/Icon'
+import { Icon } from 'shared/ui'
 import { ActionIcon, Badge, Group, Input, Stack, Title } from '@mantine/core'
 import { useClickOutside, useFocusTrap } from '@mantine/hooks'
 import { showNotification } from '@mantine/notifications'

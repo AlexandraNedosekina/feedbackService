@@ -1,4 +1,4 @@
-import Icon from '@components/Icon'
+import { Icon } from 'shared/ui'
 import { ActionIcon, Flex } from '@mantine/core'
 import Link from 'next/link'
 import { FC } from 'react'

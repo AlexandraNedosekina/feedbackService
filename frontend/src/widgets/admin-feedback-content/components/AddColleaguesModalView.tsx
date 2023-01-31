@@ -1,4 +1,4 @@
-import Icon from '@components/Icon'
+import { Icon } from 'shared/ui'
 import Table from '@components/Table'
 import { ActionIcon, Box, Button, Flex, Input, Text } from '@mantine/core'
 import { useDebouncedValue } from '@mantine/hooks'

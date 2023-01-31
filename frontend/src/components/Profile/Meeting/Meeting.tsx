@@ -1,4 +1,4 @@
-import Icon from '@components/Icon'
+import { Icon } from 'shared/ui'
 import { ActionIcon, Flex, Stack, Switch, Title, Tooltip } from '@mantine/core'
 import { showNotification } from '@mantine/notifications'
 import { useMutation } from '@tanstack/react-query'

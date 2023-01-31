@@ -1,4 +1,4 @@
-import Icon from '@components/Icon'
+import { Icon } from 'shared/ui'
 import { ActionMenu } from '@components/Table'
 import { Button, Flex, Modal, Title } from '@mantine/core'
 import { useMutation, useQueryClient } from '@tanstack/react-query'

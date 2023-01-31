@@ -1,4 +1,4 @@
-import Icon from '@components/Icon'
+import { Icon } from 'shared/ui'
 import { ActionIcon, Chip, createStyles } from '@mantine/core'
 import { useState } from 'react'
 import { useAddCareerGrade, useEditCareerStore } from 'stores'

@@ -1,4 +1,4 @@
-import Icon from '@components/Icon'
+import { Icon } from 'shared/ui'
 import { ActionIcon, Button, Group, Popover, Text } from '@mantine/core'
 import { FC } from 'react'
 import { useStyles } from '../useStyles'

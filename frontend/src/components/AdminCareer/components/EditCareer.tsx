@@ -1,4 +1,4 @@
-import Icon from '@components/Icon'
+import { Icon } from 'shared/ui'
 import Username from '@components/Username'
 import { ActionIcon, Box, Container, Group, Title } from '@mantine/core'
 import { useQuery } from '@tanstack/react-query'

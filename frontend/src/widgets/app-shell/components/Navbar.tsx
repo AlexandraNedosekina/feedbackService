@@ -1,4 +1,3 @@
-import Icon, { Icons } from '@components/Icon'
 import {
 	ActionIcon,
 	Box,
@@ -14,12 +13,12 @@ import { useMutation } from '@tanstack/react-query'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import { signOut } from 'shared/api'
+import { Icon, TIcons, useBaseWrapperContext } from 'shared/ui'
 import { ERoles } from 'types/roles'
-import { useBaseWrapperContext } from 'shared/ui'
 import { useUser } from 'utils/useUser'
 import NavItem from 'widgets/app-shell/components/NavItem'
 
-const navItems: { icon: Icons; href: string; text: string }[] = [
+const navItems: { icon: TIcons; href: string; text: string }[] = [
 	{
 		icon: 'star',
 		href: '/feedback',

@@ -1,4 +1,4 @@
-import Icon from '@components/Icon'
+import { Icon } from 'shared/ui'
 import classNames from 'classnames'
 import Link from 'next/link'
 import UserInfoCard from '../Card'

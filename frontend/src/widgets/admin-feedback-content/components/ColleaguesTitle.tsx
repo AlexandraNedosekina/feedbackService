@@ -1,4 +1,4 @@
-import Icon from '@components/Icon'
+import { Icon } from 'shared/ui'
 import { ActionIcon, Group, Title } from '@mantine/core'
 import { useState } from 'react'
 import AddColleaguesModal from './AddColleaguesModal'

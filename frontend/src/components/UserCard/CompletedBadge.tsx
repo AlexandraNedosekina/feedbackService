@@ -1,4 +1,4 @@
-import Icon from '@components/Icon'
+import { Icon } from 'shared/ui'
 import { Badge, Flex, Text } from '@mantine/core'
 
 export const CompletedBadge = () => {

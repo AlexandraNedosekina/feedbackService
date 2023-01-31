@@ -1,4 +1,4 @@
-import Icon from '@components/Icon'
+import { Icon } from 'shared/ui'
 import Table from '@components/Table'
 import { ActionIcon, Flex } from '@mantine/core'
 import {

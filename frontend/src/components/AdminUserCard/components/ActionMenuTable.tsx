@@ -1,6 +1,6 @@
 import { FC, useState } from 'react'
 import { ActionMenu } from '@components/Table'
-import Icon from '@components/Icon'
+import { Icon } from 'shared/ui'
 import { Button, Flex, Modal, Title } from '@mantine/core'
 import { deleteUsersColleagues, QueryKeys } from 'shared/api'
 import { useMutation, useQueryClient } from '@tanstack/react-query'

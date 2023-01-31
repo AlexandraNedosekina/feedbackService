@@ -1,4 +1,4 @@
-import Icon from '@components/Icon'
+import { Icon } from 'shared/ui'
 import { ActionIcon, Input } from '@mantine/core'
 import { useClickOutside, useFocusTrap } from '@mantine/hooks'
 import { FC, useEffect, useState } from 'react'

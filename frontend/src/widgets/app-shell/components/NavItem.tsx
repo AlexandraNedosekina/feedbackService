@@ -1,14 +1,14 @@
-import Icon, { IconProps, Icons } from '@components/Icon'
+import { Icon, IIconProps, TIcons } from 'shared/ui'
 import { ActionIcon, ActionIconProps, Button, ButtonProps } from '@mantine/core'
 import Link from 'next/link'
 
 interface IProps {
-	icon: Icons
+	icon: TIcons
 	href: string
 	active?: boolean
 	text?: string
 	isFull?: boolean
-	iconProps?: Partial<IconProps>
+	iconProps?: Partial<IIconProps>
 	closeMenu?: () => void
 }
 

@@ -1,4 +1,4 @@
-import Icon from '@components/Icon'
+import { Icon } from 'shared/ui'
 import { Avatar, Text, Title } from '@mantine/core'
 import classNames from 'classnames'
 import Link from 'next/link'
