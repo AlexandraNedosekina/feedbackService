@@ -7,7 +7,6 @@ export * from './colleagues'
 export * from './event'
 export * from './feedback'
 export * from './promts'
-export * from './queryClient'
 export * from './queryKeys'
 export * from './user'
 
