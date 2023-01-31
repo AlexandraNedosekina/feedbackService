@@ -79,7 +79,7 @@ export const AdminFeedbackContent = ({ eventId, userId }: IProps) => {
 						/>
 					</Stack>
 
-					<ColleaguesTitle />
+					<ColleaguesTitle userId={userId} />
 					{data && data?.colleagues_rating.length !== 0 && (
 						<ColleaguesTable
 							colleagues={data.colleagues_rating}

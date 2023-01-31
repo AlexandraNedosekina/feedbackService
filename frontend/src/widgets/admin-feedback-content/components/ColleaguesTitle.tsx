@@ -3,7 +3,11 @@ import { ActionIcon, Group, Title } from '@mantine/core'
 import { useState } from 'react'
 import AddColleaguesModal from './AddColleaguesModal'
 
-const ColleaguesTitle = () => {
+interface IProps {
+	userId: string
+}
+
+const ColleaguesTitle = ({ userId }: IProps) => {
 	const [isModalOpened, setIsModalOpened] = useState(false)
 
 	return (
@@ -23,6 +27,7 @@ const ColleaguesTitle = () => {
 			<AddColleaguesModal
 				opened={isModalOpened}
 				onClose={() => setIsModalOpened(false)}
+				userId={userId}
 			/>
 		</>
 	)
