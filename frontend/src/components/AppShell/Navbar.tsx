@@ -15,7 +15,7 @@ import { useRouter } from 'next/router'
 import { FC, useEffect, useState } from 'react'
 import { signOut } from 'shared/api'
 import { ERoles } from 'types/roles'
-import { useBaseLayoutContext } from 'utils/useBaseLayoutContext'
+import { useBaseLayoutContext } from 'shared/ui'
 import { useUser } from 'utils/useUser'
 import NavItem from './NavItem'
 

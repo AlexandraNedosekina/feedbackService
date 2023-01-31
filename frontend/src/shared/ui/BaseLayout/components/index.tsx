@@ -19,7 +19,7 @@ interface IBaseLayoutContext {
 
 export const BaseLayoutContext = createContext<IBaseLayoutContext | null>(null)
 
-const BaseLayout = ({ children }: { children: ReactNode }) => {
+export const BaseLayout = ({ children }: { children: ReactNode }) => {
 	const router = useRouter()
 	const cookie = getCookie('refresh-token')
 	const [isLoading, setIsLoading] = useState(true)
@@ -59,5 +59,3 @@ const BaseLayout = ({ children }: { children: ReactNode }) => {
 		</BaseLayoutContext.Provider>
 	)
 }
-
-export default BaseLayout

@@ -1,12 +1,12 @@
 import AdminView from '@components/AdminView'
 import { Box, Text } from '@mantine/core'
 import Head from 'next/head'
-import { BaseLayout, FeedbackLayout } from 'layouts'
+import { FeedbackLayout } from 'layouts'
 import { EPages } from 'types/pages'
 import { ERoles } from 'types/roles'
-import { useBaseLayoutContext } from 'utils/useBaseLayoutContext'
 import { useUser } from 'utils/useUser'
 import { NextPageWithLayout } from '../_app'
+import { BaseLayout, useBaseLayoutContext } from 'shared/ui'
 
 const FeedbackPage: NextPageWithLayout = () => {
 	const { user } = useUser()

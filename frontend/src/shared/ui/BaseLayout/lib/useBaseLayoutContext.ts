@@ -1,5 +1,5 @@
 import { useContext } from 'react'
-import { BaseLayoutContext } from 'layouts'
+import { BaseLayoutContext } from 'shared/ui/BaseLayout/index'
 
 export const useBaseLayoutContext = () => {
 	const context = useContext(BaseLayoutContext)

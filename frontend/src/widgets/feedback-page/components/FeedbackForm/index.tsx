@@ -1,25 +1,19 @@
-import Username from '@components/Username'
-import { Flex, LoadingOverlay, ScrollArea, Stack } from '@mantine/core'
-import { showNotification } from '@mantine/notifications'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { UserRatingsByCategory } from 'features/user-ratings-by-category'
-import { useRouter } from 'next/router'
-import { FC } from 'react'
 import { Form } from 'react-final-form'
+import { IFormValues } from '../../types'
+import { Flex, LoadingOverlay, ScrollArea, Stack } from '@mantine/core'
+import { CompletedBadge } from '../CompletedBadge'
+import { UserRatingsByCategory } from 'features/user-ratings-by-category'
+import { Textarea } from '../Textarea'
+import { Buttons } from '../Buttons'
+import { useStyles } from './lib/useStyles'
+import { useRouter } from 'next/router'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createFeedback, getFeedback, QueryKeys } from 'shared/api'
-import { useFeedbackStore } from 'stores'
-import { Buttons } from './Buttons'
-import { CompletedBadge } from './CompletedBadge'
-import { Rating } from './Rating'
-import { Textarea } from './Textarea'
-import { IFormValues } from './types'
-import { useStyles } from './useStyles'
+import { showNotification } from '@mantine/notifications'
+import { UserCard } from 'entities/user'
 
-interface Props {}
-
-const UserCard: FC<Props> = () => {
+const FeedbackForm = () => {
 	const { classes } = useStyles()
-	const update = useFeedbackStore(state => state.update)
 
 	const {
 		query: { feedbackId },
@@ -32,18 +26,6 @@ const UserCard: FC<Props> = () => {
 		queryFn: () => getFeedback(+(feedbackId as string)),
 		enabled: !!feedbackId,
 		keepPreviousData: true,
-		onSuccess: data => {
-			update({
-				task_completion: data.task_completion,
-				involvement: data.involvement,
-				motivation: data.motivation,
-				interaction: data.interaction,
-				achievements: data.achievements,
-				wishes: data.wishes,
-				remarks: data.remarks,
-				comment: data.comment,
-			})
-		},
 		retry(failureCount, error: any) {
 			if (error.cause?.code === 404) return false
 
@@ -128,47 +110,20 @@ const UserCard: FC<Props> = () => {
 				{() => (
 					<>
 						<ScrollArea>
-							<Username
-								name={data?.receiver.full_name}
+							<UserCard
+								name={data?.receiver?.full_name}
 								jobTitle={data?.receiver.job_title}
-								avatar={data?.receiver.avatar?.thumbnail_url}
+								avatar={data?.receiver.avatar?.thumbnail_url || ''}
 							/>
 
 							{data.completed ? <CompletedBadge /> : null}
 
-							{/* <Stack
-								sx={() => ({
-									maxWidth: 'max-content',
-								})}
-								mt={20}
-								mb={40}
-							>
-								<Rating
-									title="Выполнение задач"
-									name="taskCompletion"
-								/>
-								<Rating title="Вовлеченность" name="involvement" />
-								<Rating title="Мотивация" name="motivation" />
-								<Rating
-									title="Взаимодействие с командой"
-									name="interaction"
-								/>
-							</Stack> */}
 							<UserRatingsByCategory
 								formNames={{
 									'Выполнение задач': 'taskCompletion',
 									Вовлеченность: 'involvement',
 									Мотивация: 'motivation',
 									'Взаимодействие с командой': 'interaction',
-								}}
-							/>
-							<UserRatingsByCategory
-								readOnly={true}
-								values={{
-									'Выполнение задач': 5,
-									Вовлеченность: 3,
-									Мотивация: 4,
-									'Взаимодействие с командой': 5,
 								}}
 							/>
 
@@ -203,4 +158,4 @@ const UserCard: FC<Props> = () => {
 	)
 }
 
-export default UserCard
+export default FeedbackForm

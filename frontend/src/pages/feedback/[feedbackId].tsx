@@ -1,14 +1,13 @@
 import AdminView from '@components/AdminView'
-import UserCard from '@components/UserCard/UserCard'
 import Head from 'next/head'
-import { BaseLayout, FeedbackLayout } from 'layouts'
+import { BaseLayout, useBaseLayoutContext } from 'shared/ui'
 import { EPages } from 'types/pages'
 import { ERoles } from 'types/roles'
-import { useBaseLayoutContext } from 'utils/useBaseLayoutContext'
 import { useUser } from 'utils/useUser'
 import { NextPageWithLayout } from '../_app'
+import { FeedbackPage } from 'widgets/feedback-page'
 
-const FeedbackUserPage: NextPageWithLayout = () => {
+const Page: NextPageWithLayout = () => {
 	const { user } = useUser()
 	const { isEdit } = useBaseLayoutContext()
 
@@ -29,15 +28,13 @@ const FeedbackUserPage: NextPageWithLayout = () => {
 				<title>Обратная связь</title>
 			</Head>
 
-			<FeedbackLayout>
-				<UserCard />
-			</FeedbackLayout>
+			<FeedbackPage />
 		</>
 	)
 }
 
-FeedbackUserPage.getLayout = function getLayout(page) {
+Page.getLayout = function getLayout(page) {
 	return <BaseLayout>{page}</BaseLayout>
 }
 
-export default FeedbackUserPage
+export default Page
