@@ -13,7 +13,7 @@ import { useRouter } from 'next/router'
 import { FC } from 'react'
 import { signOut } from 'shared/api'
 import { ERoles } from 'types/roles'
-import { useBaseLayoutContext } from 'shared/ui'
+import { useBaseWrapperContext } from 'shared/ui'
 import { useUser } from 'utils/useUser'
 
 const useStyles = createStyles(theme => ({
@@ -43,7 +43,7 @@ const Header: FC<Props> = ({ openMenu, isOpen }) => {
 	const { mutate: signOutMutate } = useMutation({
 		mutationFn: signOut,
 	})
-	const { isEdit, setIsEdit } = useBaseLayoutContext()
+	const { isEdit, setIsEdit } = useBaseWrapperContext()
 
 	function activateEdit() {
 		if (typeof window !== 'undefined') {

@@ -5,7 +5,7 @@ import { useRouter } from 'next/router'
 import { useEffect } from 'react'
 import { BaseLayout } from 'layouts'
 import { ERoles } from 'types/roles'
-import { useBaseLayoutContext } from 'utils/useBaseLayoutContext'
+import { useBaseLayoutContext } from 'utils/useBaseWrapperContext'
 import { useUser } from 'utils/useUser'
 import { NextPageWithLayout } from './_app'
 

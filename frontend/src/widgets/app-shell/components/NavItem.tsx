@@ -1,9 +1,8 @@
 import Icon, { IconProps, Icons } from '@components/Icon'
 import { ActionIcon, ActionIconProps, Button, ButtonProps } from '@mantine/core'
 import Link from 'next/link'
-import { FC } from 'react'
 
-interface Props {
+interface IProps {
 	icon: Icons
 	href: string
 	active?: boolean
@@ -13,7 +12,7 @@ interface Props {
 	closeMenu?: () => void
 }
 
-const NavItem: FC<Props> = ({
+const NavItem = ({
 	icon,
 	href,
 	active,
@@ -21,7 +20,7 @@ const NavItem: FC<Props> = ({
 	text,
 	iconProps,
 	closeMenu,
-}) => {
+}: IProps) => {
 	const actionIconProps: ActionIconProps = {
 		variant: 'transparent',
 		size: 'lg',

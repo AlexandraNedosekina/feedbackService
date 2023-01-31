@@ -7,12 +7,7 @@ interface IProps {
 	variant?: 'default' | 'sm'
 }
 
-const UserInfoCard = ({
-	name,
-	jobTitle,
-	avatar,
-	variant = 'default',
-}: IProps) => {
+const UserCard = ({ name, jobTitle, avatar, variant = 'default' }: IProps) => {
 	const isDefaultVariant = variant === 'default'
 
 	return (
@@ -23,7 +18,7 @@ const UserInfoCard = ({
 				radius={100}
 			/>
 			<Stack spacing={isDefaultVariant ? 5 : 0}>
-				<Title order={isDefaultVariant ? 4 : 2} color="brand.5">
+				<Title order={isDefaultVariant ? 2 : 4} color="brand.5">
 					{name}
 				</Title>
 				{jobTitle ? (
@@ -40,4 +35,4 @@ const UserInfoCard = ({
 	)
 }
 
-export default UserInfoCard
+export default UserCard

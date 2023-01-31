@@ -5,7 +5,7 @@ import { useEffect } from 'react'
 import { BaseLayout } from 'layouts'
 import { NextPageWithLayout } from 'pages/_app'
 import { ERoles } from 'types/roles'
-import { useBaseLayoutContext } from 'utils/useBaseLayoutContext'
+import { useBaseLayoutContext } from 'utils/useBaseWrapperContext'
 import { useUser } from 'utils/useUser'
 
 const EditCareerPage: NextPageWithLayout = () => {

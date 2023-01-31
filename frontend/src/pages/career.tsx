@@ -7,7 +7,7 @@ import { BaseLayout } from 'layouts'
 import styles from 'styles/career.module.sass'
 import { EPages } from 'types/pages'
 import { ERoles } from 'types/roles'
-import { useBaseLayoutContext } from 'utils/useBaseLayoutContext'
+import { useBaseLayoutContext } from 'utils/useBaseWrapperContext'
 import { useUser } from 'utils/useUser'
 import { NextPageWithLayout } from './_app'
 

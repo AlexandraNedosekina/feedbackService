@@ -1,17 +1,17 @@
-import { AppShell as AppShellMantine } from '@mantine/core'
-import { FC, ReactNode, useState } from 'react'
+import { AppShell } from '@mantine/core'
+import { ReactNode, useState } from 'react'
 import Header from './Header'
 import Navbar from './Navbar'
 
-interface Props {
+interface IProps {
 	children: ReactNode
 }
 
-const AppShell: FC<Props> = ({ children }) => {
+export default ({ children }: IProps) => {
 	const [isMenuOpen, setIsMenuOpen] = useState(false)
 
 	return (
-		<AppShellMantine
+		<AppShell
 			navbar={
 				<Navbar
 					isOpen={isMenuOpen}
@@ -27,8 +27,6 @@ const AppShell: FC<Props> = ({ children }) => {
 			padding={0}
 		>
 			{children}
-		</AppShellMantine>
+		</AppShell>
 	)
 }
-
-export default AppShell

@@ -6,11 +6,11 @@ import { EPages } from 'types/pages'
 import { ERoles } from 'types/roles'
 import { useUser } from 'utils/useUser'
 import { NextPageWithLayout } from '../_app'
-import { BaseLayout, useBaseLayoutContext } from 'shared/ui'
+import { BaseWrapper, useBaseWrapperContext } from 'shared/ui'
 
 const FeedbackPage: NextPageWithLayout = () => {
 	const { user } = useUser()
-	const { isEdit } = useBaseLayoutContext()
+	const { isEdit } = useBaseWrapperContext()
 
 	if (isEdit && user?.roles.includes(ERoles.admin)) {
 		return (
@@ -48,7 +48,7 @@ const FeedbackPage: NextPageWithLayout = () => {
 }
 
 FeedbackPage.getLayout = function getLayout(page) {
-	return <BaseLayout>{page}</BaseLayout>
+	return <BaseWrapper>{page}</BaseWrapper>
 }
 
 export default FeedbackPage

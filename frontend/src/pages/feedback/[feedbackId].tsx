@@ -1,15 +1,16 @@
 import AdminView from '@components/AdminView'
 import Head from 'next/head'
-import { BaseLayout, useBaseLayoutContext } from 'shared/ui'
+import { BaseWrapper, useBaseWrapperContext } from 'shared/ui'
 import { EPages } from 'types/pages'
 import { ERoles } from 'types/roles'
 import { useUser } from 'utils/useUser'
 import { NextPageWithLayout } from '../_app'
 import { FeedbackPage } from 'widgets/feedback-page'
+import { AppShell } from 'widgets/app-shell'
 
 const Page: NextPageWithLayout = () => {
 	const { user } = useUser()
-	const { isEdit } = useBaseLayoutContext()
+	const { isEdit } = useBaseWrapperContext()
 
 	if (isEdit && user?.roles.includes(ERoles.admin)) {
 		return (
@@ -34,7 +35,11 @@ const Page: NextPageWithLayout = () => {
 }
 
 Page.getLayout = function getLayout(page) {
-	return <BaseLayout>{page}</BaseLayout>
+	return (
+		<BaseWrapper>
+			<AppShell>{page}</AppShell>
+		</BaseWrapper>
+	)
 }
 
 export default Page

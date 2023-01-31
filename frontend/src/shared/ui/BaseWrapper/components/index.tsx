@@ -1,4 +1,3 @@
-import AppShell from '@components/AppShell'
 import { LoadingOverlay } from '@mantine/core'
 import { getCookie } from 'cookies-next'
 import { useRouter } from 'next/router'
@@ -12,14 +11,16 @@ import {
 } from 'react'
 import { useUser } from 'utils/useUser'
 
-interface IBaseLayoutContext {
+interface IBaseWrapperContext {
 	isEdit: boolean
 	setIsEdit: Dispatch<SetStateAction<boolean | null>>
 }
 
-export const BaseLayoutContext = createContext<IBaseLayoutContext | null>(null)
+export const BaseWrapperContext = createContext<IBaseWrapperContext | null>(
+	null
+)
 
-export const BaseLayout = ({ children }: { children: ReactNode }) => {
+export const BaseWrapper = ({ children }: { children: ReactNode }) => {
 	const router = useRouter()
 	const cookie = getCookie('refresh-token')
 	const [isLoading, setIsLoading] = useState(true)
@@ -54,8 +55,8 @@ export const BaseLayout = ({ children }: { children: ReactNode }) => {
 	}
 
 	return (
-		<BaseLayoutContext.Provider value={{ isEdit, setIsEdit }}>
-			<AppShell>{children}</AppShell>
-		</BaseLayoutContext.Provider>
+		<BaseWrapperContext.Provider value={{ isEdit, setIsEdit }}>
+			{children}
+		</BaseWrapperContext.Provider>
 	)
 }

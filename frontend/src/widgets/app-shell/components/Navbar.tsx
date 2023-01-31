@@ -12,12 +12,12 @@ import {
 import { useMediaQuery } from '@mantine/hooks'
 import { useMutation } from '@tanstack/react-query'
 import { useRouter } from 'next/router'
-import { FC, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { signOut } from 'shared/api'
 import { ERoles } from 'types/roles'
-import { useBaseLayoutContext } from 'shared/ui'
+import { useBaseWrapperContext } from 'shared/ui'
 import { useUser } from 'utils/useUser'
-import NavItem from './NavItem'
+import NavItem from 'widgets/app-shell/components/NavItem'
 
 const navItems: { icon: Icons; href: string; text: string }[] = [
 	{
@@ -37,14 +37,14 @@ const navItems: { icon: Icons; href: string; text: string }[] = [
 	},
 ]
 
-interface Props {
+interface IProps {
 	isOpen: boolean
 	closeMenu: () => void
 }
 
-const Navbar: FC<Props> = ({ isOpen, closeMenu }) => {
+const Navbar = ({ isOpen, closeMenu }: IProps) => {
 	const router = useRouter()
-	const { isEdit, setIsEdit } = useBaseLayoutContext()
+	const { isEdit, setIsEdit } = useBaseWrapperContext()
 	const { user } = useUser()
 	const [isFull, setIsFull] = useState<boolean>(false)
 
@@ -70,7 +70,7 @@ const Navbar: FC<Props> = ({ isOpen, closeMenu }) => {
 		}
 	}
 
-	function deactiveEdit() {
+	function deactivateEdit() {
 		if (typeof window !== 'undefined') {
 			window.localStorage.setItem('edit', 'false')
 			setIsEdit(false)
@@ -169,7 +169,7 @@ const Navbar: FC<Props> = ({ isOpen, closeMenu }) => {
 						<Box>
 							{user?.roles.includes(ERoles.admin) ? (
 								isEdit ? (
-									<Text onClick={deactiveEdit} ml="sm" color="white">
+									<Text onClick={deactivateEdit} ml="sm" color="white">
 										Выйти из режима управления
 									</Text>
 								) : (
