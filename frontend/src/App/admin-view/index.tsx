@@ -1,11 +1,11 @@
-import AdminCareer from '@components/AdminCareer'
+import { AdminCareerPage } from 'pages/admin-career'
 import { AdminFeedbackPage } from 'pages/admin-feedback'
 import { FC } from 'react'
 import { EPages } from 'shared/types'
 
 const Components: { [key in EPages]: FC } = {
 	[EPages.Feedback]: AdminFeedbackPage,
-	[EPages.Career]: AdminCareer,
+	[EPages.Career]: AdminCareerPage,
 }
 
 interface IProps {
