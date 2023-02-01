@@ -1,16 +1,16 @@
-import { EditCareer } from '@components/AdminCareer/components'
+import { useUser } from 'entities/user'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
+import { AdminCareerEditPage } from 'pages/admin-career-edit'
 import { useEffect } from 'react'
-import { BaseLayout } from 'layouts'
-import { NextPageWithLayout } from 'pages/_app'
 import { ERoles } from 'shared/types'
-import { useBaseLayoutContext } from 'utils/useBaseWrapperContext'
-import { useUser } from 'entities/user'
+import { BaseWrapper, useBaseWrapperContext } from 'shared/ui'
+import { AppShell } from 'widgets/app-shell'
+import { NextPageWithLayout } from '../../_app'
 
-const EditCareerPage: NextPageWithLayout = () => {
+const Page: NextPageWithLayout = () => {
 	const { user } = useUser()
-	const { isEdit } = useBaseLayoutContext()
+	const { isEdit } = useBaseWrapperContext()
 	const router = useRouter()
 
 	useEffect(() => {
@@ -26,13 +26,17 @@ const EditCareerPage: NextPageWithLayout = () => {
 				<title>Редактирование карьерного роста</title>
 			</Head>
 
-			<EditCareer />
+			<AdminCareerEditPage />
 		</>
 	)
 }
 
-EditCareerPage.getLayout = function getLayout(page) {
-	return <BaseLayout>{page}</BaseLayout>
+Page.getLayout = function getLayout(page) {
+	return (
+		<BaseWrapper>
+			<AppShell>{page}</AppShell>
+		</BaseWrapper>
+	)
 }
 
-export default EditCareerPage
+export default Page

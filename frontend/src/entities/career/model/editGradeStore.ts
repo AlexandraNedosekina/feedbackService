@@ -3,29 +3,31 @@ import { devtools } from 'zustand/middleware'
 import { immer } from 'zustand/middleware/immer'
 
 type State = {
-	selectedGradeId: string
-	grades: {
-		label: string
-		value: number
-		isCompleted: boolean
-		isCurrent: boolean
-		isDefault: boolean
-	}[]
+	careerId?: string
+	isEdit?: boolean
 }
 
 type Actions = {
 	update: (value: {
 		[key in keyof State]?: State[key]
 	}) => void
+	restore: () => void
 }
 
-export const useEditCareerStore = create(
+const initialState: State = {
+	careerId: undefined,
+	isEdit: false,
+}
+
+export const useEditGrade = create(
 	devtools(
 		immer<State & Actions>(set => ({
-			selectedGradeId: '',
-			grades: [],
+			...initialState,
 			update(value) {
 				set(() => value)
+			},
+			restore() {
+				set(() => initialState)
 			},
 		}))
 	)
