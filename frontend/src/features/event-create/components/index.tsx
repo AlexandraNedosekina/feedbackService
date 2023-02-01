@@ -3,7 +3,7 @@ import SelectType from './SelectType'
 import TimePicker from './TimePicker'
 
 interface IProps {
-	onCancel: () => void
+	onCancel?: () => void
 }
 
 export default ({ onCancel }: IProps) => {

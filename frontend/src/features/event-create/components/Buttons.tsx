@@ -5,7 +5,7 @@ import { createEvent, QueryKeys } from 'shared/api'
 import { useCreateEventStore } from '../model'
 
 interface IProps {
-	onCancel: () => void
+	onCancel?: () => void
 }
 
 const Buttons = ({ onCancel }: IProps) => {
@@ -32,7 +32,7 @@ const Buttons = ({ onCancel }: IProps) => {
 		}) => createEvent(data),
 		onSuccess: () => {
 			queryClient.invalidateQueries([QueryKeys.EVENTS])
-			onCancel()
+			onCancel?.()
 			restore()
 		},
 	})
@@ -65,9 +65,11 @@ const Buttons = ({ onCancel }: IProps) => {
 			>
 				Создать
 			</Button>
-			<Button onClick={onCancel} variant="outline" ml="md">
-				Отмена
-			</Button>
+			{onCancel ? (
+				<Button onClick={onCancel} variant="outline" ml="md">
+					Отмена
+				</Button>
+			) : null}
 		</Flex>
 	)
 }
