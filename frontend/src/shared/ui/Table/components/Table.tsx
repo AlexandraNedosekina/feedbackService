@@ -1,6 +1,6 @@
 import { Table as TableMantine } from '@mantine/core'
 import { flexRender, Table as ITable } from '@tanstack/react-table'
-import tableStyles from 'styles/table.module.sass'
+import tableStyles from './styles.module.sass'
 
 interface IProps {
 	table: ITable<any>
