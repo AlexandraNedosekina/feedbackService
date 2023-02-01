@@ -4,10 +4,9 @@ import AddColleaguesModalView from './AddColleaguesModalView'
 interface IProps {
 	opened: boolean
 	onClose: () => void
-	userId: string
 }
 
-const AddColleaguesModal = ({ opened, onClose, userId }: IProps) => {
+const AddColleaguesModal = ({ opened, onClose }: IProps) => {
 	return (
 		<Modal
 			title={<Title order={3}>Добавление коллег</Title>}
@@ -15,7 +14,7 @@ const AddColleaguesModal = ({ opened, onClose, userId }: IProps) => {
 			onClose={onClose}
 			size="lg"
 		>
-			<AddColleaguesModalView onClose={onClose} userId={userId} />
+			<AddColleaguesModalView onClose={onClose} />
 		</Modal>
 	)
 }

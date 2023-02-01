@@ -17,11 +17,9 @@ const columnHelper =
 
 interface IProps {
 	colleagues: IFeedbackStats['colleagues_rating']
-	eventId: string
-	userId: string
 }
 
-const ColleaguesTable = ({ colleagues, eventId, userId }: IProps) => {
+const ColleaguesTable = ({ colleagues }: IProps) => {
 	const [feedbackId, setFeedbackId] = useState<number | null>(null)
 	const [isOpen, setIsOpen] = useState(false)
 
@@ -77,13 +75,7 @@ const ColleaguesTable = ({ colleagues, eventId, userId }: IProps) => {
 						},
 					},
 				}) => {
-					return (
-						<ActionMenuTable
-							colleagueId={id}
-							eventId={eventId}
-							userId={userId}
-						/>
-					)
+					return <ActionMenuTable colleagueId={id} />
 				},
 			}),
 		],

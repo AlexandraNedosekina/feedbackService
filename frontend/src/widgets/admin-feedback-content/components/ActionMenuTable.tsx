@@ -1,18 +1,24 @@
-import { Icon } from 'shared/ui'
-import { ActionMenu } from 'shared/ui'
 import { Button, Flex, Modal, Title } from '@mantine/core'
 import { showNotification } from '@mantine/notifications'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { feedbackModel } from 'entities/feedback'
 import { useState } from 'react'
 import { deleteUsersColleagues, QueryKeys } from 'shared/api'
+import { ActionMenu, Icon } from 'shared/ui'
+import shallow from 'zustand/shallow'
 
 interface IProps {
 	colleagueId: number
-	eventId: string
-	userId: string
 }
 
-const ActionMenuTable = ({ colleagueId, eventId, userId }: IProps) => {
+const ActionMenuTable = ({ colleagueId }: IProps) => {
+	const { eventId, userId } = feedbackModel.useAdminFeedbackStore(
+		state => ({
+			eventId: state.eventId,
+			userId: state.userId,
+		}),
+		shallow
+	)
 	const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
 
 	const queryClient = useQueryClient()

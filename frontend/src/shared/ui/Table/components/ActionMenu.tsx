@@ -9,7 +9,7 @@ const ActionMenuItem: FC<MenuItemProps & { onClick?: () => void }> = ({
 
 interface IProps {
 	children: React.ReactNode
-	Item: FC<MenuItemProps & { onClick?: () => void }>
+	Item?: FC<MenuItemProps & { onClick?: () => void }>
 }
 
 const ActionMenu = ({ children }: IProps) => {

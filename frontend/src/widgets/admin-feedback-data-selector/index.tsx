@@ -1,20 +1,20 @@
 import { Select, Text } from '@mantine/core'
 import { useQuery } from '@tanstack/react-query'
+import { feedbackModel } from 'entities/feedback'
 import { UserSearchSelect } from 'features/user-search-select'
 import { getAllEvents, QueryKeys } from 'shared/api'
+import shallow from 'zustand/shallow'
 import { eventSelectMapper } from './lib'
 
-interface IProps {
-	userId: string
-	eventId: string
-	update: (...args: any) => void
-}
-
-export const AdminFeedbackDataSelector = ({
-	userId,
-	eventId,
-	update,
-}: IProps) => {
+export const AdminFeedbackDataSelector = () => {
+	const { eventId, userId, update } = feedbackModel.useAdminFeedbackStore(
+		state => ({
+			eventId: state.eventId,
+			userId: state.userId,
+			update: state.update,
+		}),
+		shallow
+	)
 	const { data, isLoading } = useQuery({
 		queryKey: [QueryKeys.EVENTS],
 		queryFn: getAllEvents,

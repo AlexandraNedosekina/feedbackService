@@ -8,20 +8,24 @@ import {
 	Text,
 } from '@mantine/core'
 import { useQuery } from '@tanstack/react-query'
+import { feedbackModel } from 'entities/feedback'
 import { UserCard, UserRating } from 'entities/user'
 import { UserRatingsByCategory } from 'features/user-ratings-by-category'
 import { useEffect } from 'react'
 import { getFeedbackStats, QueryKeys } from 'shared/api'
+import shallow from 'zustand/shallow'
 import ColleaguesTable from './ColleaguesTable'
 import ColleaguesTitle from './ColleaguesTitle'
 import styles from './styles.module.sass'
 
-interface IProps {
-	userId: string
-	eventId: string
-}
-
-export const AdminFeedbackContent = ({ eventId, userId }: IProps) => {
+export const AdminFeedbackContent = () => {
+	const { eventId, userId } = feedbackModel.useAdminFeedbackStore(
+		state => ({
+			eventId: state.eventId,
+			userId: state.userId,
+		}),
+		shallow
+	)
 	const { data, isFetching, refetch } = useQuery({
 		queryKey: [QueryKeys.FEEDBACK_STATS, userId, eventId],
 		queryFn: () =>
@@ -79,13 +83,9 @@ export const AdminFeedbackContent = ({ eventId, userId }: IProps) => {
 						/>
 					</Stack>
 
-					<ColleaguesTitle userId={userId} />
+					<ColleaguesTitle />
 					{data && data?.colleagues_rating.length !== 0 && (
-						<ColleaguesTable
-							colleagues={data.colleagues_rating}
-							eventId={eventId}
-							userId={userId}
-						/>
+						<ColleaguesTable colleagues={data.colleagues_rating} />
 					)}
 				</ScrollArea>
 			)}

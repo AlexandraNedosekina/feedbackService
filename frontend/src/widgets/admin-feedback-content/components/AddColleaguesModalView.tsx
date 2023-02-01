@@ -16,18 +16,22 @@ import {
 	searchUserByFullname,
 } from 'shared/api'
 import { User } from 'shared/api/generatedTypes'
+import { feedbackModel } from 'entities/feedback'
+import shallow from 'zustand/shallow'
 
 const columnHelper = createColumnHelper<User>()
 
 interface IProps {
 	onClose: () => void
-	userId: string
 }
 
-const AddColleaguesModalView = ({
-	onClose,
-	userId: selectedUserId,
-}: IProps) => {
+const AddColleaguesModalView = ({ onClose }: IProps) => {
+	const { selectedUserId } = feedbackModel.useAdminFeedbackStore(
+		state => ({
+			selectedUserId: state.userId,
+		}),
+		shallow
+	)
 	const [selected, setSelected] = useState<number[]>([])
 	const [searchValue, setSearchValue] = useState<string>('')
 	const [debounced] = useDebouncedValue(searchValue, 300)
