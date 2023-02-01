@@ -8,7 +8,7 @@ import styles from 'styles/career.module.sass'
 import { EPages } from 'types/pages'
 import { ERoles } from 'types/roles'
 import { useBaseLayoutContext } from 'utils/useBaseWrapperContext'
-import { useUser } from 'utils/useUser'
+import { useUser } from 'entities/user'
 import { NextPageWithLayout } from './_app'
 
 const CareerPage: NextPageWithLayout = () => {

@@ -1,13 +1,13 @@
 import { Button, Group, Modal, Slider } from '@mantine/core'
-import { FC, useCallback, useState } from 'react'
+import { useCallback, useState } from 'react'
 import Cropper, { Area } from 'react-easy-crop'
 import { BodyCreateAvaterUserUserIdAvatarPost } from 'shared/api/generatedTypes'
 import { useUser } from 'entities/user'
-import styles from './EditAvatarModal.module.sass'
+import styles from './edit-modal.module.sass'
 
 const MAX_ZOOM_SIZE = 9
 
-interface Props {
+interface IProps {
 	open: boolean
 	onClose: () => void
 	onSave: (data: Omit<BodyCreateAvaterUserUserIdAvatarPost, 'file'>) => void
@@ -15,13 +15,13 @@ interface Props {
 	src?: string
 }
 
-const EditAvatarModal: FC<Props> = ({
+export const EditModal = ({
 	onClose,
 	open,
 	src,
 	isSaveButtonLoading,
 	onSave: onCreate,
-}) => {
+}: IProps) => {
 	const { user } = useUser()
 
 	const [crop, setCrop] = useState({ x: 0, y: 0 })
@@ -103,5 +103,3 @@ const EditAvatarModal: FC<Props> = ({
 		</Modal>
 	)
 }
-
-export default EditAvatarModal

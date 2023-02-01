@@ -1,12 +1,12 @@
-import { Icon } from 'shared/ui'
 import { ActionIcon, Flex, Stack, Switch, Title, Tooltip } from '@mantine/core'
 import { showNotification } from '@mantine/notifications'
 import { useMutation } from '@tanstack/react-query'
-import { FC, useState } from 'react'
-import { updateUser } from 'shared/api'
 import { useUser } from 'entities/user'
+import { useState } from 'react'
+import { updateUser } from 'shared/api'
+import { Icon } from 'shared/ui'
 
-const Meeting: FC = () => {
+const Meeting = () => {
 	const { user } = useUser()
 	const [isOn, setIsOn] = useState(!!user.meeting_readiness)
 

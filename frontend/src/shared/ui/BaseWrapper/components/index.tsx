@@ -9,7 +9,7 @@ import {
 	useEffect,
 	useState,
 } from 'react'
-import { useUser } from 'utils/useUser'
+import { useUser } from 'entities/user'
 
 interface IBaseWrapperContext {
 	isEdit: boolean

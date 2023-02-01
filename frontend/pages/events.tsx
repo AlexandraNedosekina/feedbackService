@@ -6,7 +6,7 @@ import { useEffect } from 'react'
 import { BaseLayout } from 'layouts'
 import { ERoles } from 'types/roles'
 import { useBaseLayoutContext } from 'utils/useBaseWrapperContext'
-import { useUser } from 'utils/useUser'
+import { useUser } from 'entities/user'
 import { NextPageWithLayout } from './_app'
 
 const EventsPage: NextPageWithLayout = () => {

@@ -1,4 +1,3 @@
-import { Icon } from 'shared/ui'
 import {
 	Avatar as MantineAvatar,
 	Button,
@@ -8,7 +7,7 @@ import {
 	Text,
 } from '@mantine/core'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { FC, useMemo, useRef, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import {
 	createAvatar,
 	deleteAvatar,
@@ -21,13 +20,12 @@ import {
 	AvatarUpdate,
 	BodyCreateAvaterUserUserIdAvatarPost,
 } from 'shared/api/generatedTypes'
+import { Icon } from 'shared/ui'
 import { useUser } from 'entities/user'
-import styles from './Avatar.module.sass'
-import { EditAvatarModal } from './components'
+import { EditModal } from './EditModal'
+import styles from './styles.module.sass'
 
-interface Props {}
-
-const Avatar: FC<Props> = () => {
+const Avatar = () => {
 	const { user } = useUser()
 
 	const [file, setFile] = useState<File | null>(null)
@@ -200,7 +198,7 @@ const Avatar: FC<Props> = () => {
 					</Popover>
 				)}
 			</div>
-			<EditAvatarModal
+			<EditModal
 				open={editModalOpen}
 				onClose={onClose}
 				src={editAvatarSrc}

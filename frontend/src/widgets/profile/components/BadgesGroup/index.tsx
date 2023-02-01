@@ -1,9 +1,16 @@
-import { Icon } from 'shared/ui'
-import { ActionIcon, Badge, Group, Input, Stack, Title } from '@mantine/core'
+import {
+	ActionIcon,
+	Badge as MantineBadge,
+	Group,
+	Input,
+	Stack,
+	Title,
+} from '@mantine/core'
 import { useClickOutside, useFocusTrap } from '@mantine/hooks'
 import { showNotification } from '@mantine/notifications'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import React, { FC, useState } from 'react'
+import { IProfileBadge } from 'entities/profile'
+import React, { useState } from 'react'
 import {
 	QueryKeys,
 	TProfileBadges,
@@ -11,18 +18,18 @@ import {
 	TUserAdapter,
 	updateUser,
 } from 'shared/api'
-import { IProfileBadge } from 'types/profile'
+import { Icon } from 'shared/ui'
 import { useUser } from 'entities/user'
-import ProfileBadge from '../ProfileBadge'
+import { Badge } from '../Badge'
 import { useStyles } from './useStyles'
 
-interface Props {
+interface IProps {
 	badges: IProfileBadge[]
 	title: string
 	api_key: keyof TProfileBadges
 }
 
-const ProfileBadgesGroup: FC<Props> = ({ badges, title, api_key }) => {
+export const BadgesGroup = ({ badges, title, api_key }: IProps) => {
 	const { classes } = useStyles()
 
 	const { user } = useUser()
@@ -118,7 +125,7 @@ const ProfileBadgesGroup: FC<Props> = ({ badges, title, api_key }) => {
 
 			<Group>
 				{badges.map(badge => (
-					<ProfileBadge
+					<Badge
 						key={badge.id}
 						badge={badge}
 						onDelete={onDelete}
@@ -146,7 +153,7 @@ const ProfileBadgesGroup: FC<Props> = ({ badges, title, api_key }) => {
 						</form>
 					</div>
 				) : (
-					<Badge
+					<MantineBadge
 						classNames={{
 							root: classes.addBadge,
 						}}
@@ -156,11 +163,9 @@ const ProfileBadgesGroup: FC<Props> = ({ badges, title, api_key }) => {
 						<Group>
 							<Icon icon="add" />
 						</Group>
-					</Badge>
+					</MantineBadge>
 				)}
 			</Group>
 		</Stack>
 	)
 }
-
-export default ProfileBadgesGroup

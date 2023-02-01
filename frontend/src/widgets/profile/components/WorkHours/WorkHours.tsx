@@ -3,11 +3,11 @@ import { TimeRangeInput } from '@mantine/dates'
 import { useDebouncedValue } from '@mantine/hooks'
 import { showNotification } from '@mantine/notifications'
 import { useMutation } from '@tanstack/react-query'
-import { FC, useEffect, useState } from 'react'
-import { updateUser } from 'shared/api'
 import { useUser } from 'entities/user'
+import { useEffect, useState } from 'react'
+import { updateUser } from 'shared/api'
 
-const WorkHours: FC = () => {
+const WorkHours = () => {
 	const { user } = useUser()
 
 	const [value, setValue] = useState<[Date | null, Date | null]>([

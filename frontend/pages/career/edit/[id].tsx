@@ -6,7 +6,7 @@ import { BaseLayout } from 'layouts'
 import { NextPageWithLayout } from 'pages/_app'
 import { ERoles } from 'types/roles'
 import { useBaseLayoutContext } from 'utils/useBaseWrapperContext'
-import { useUser } from 'utils/useUser'
+import { useUser } from 'entities/user'
 
 const EditCareerPage: NextPageWithLayout = () => {
 	const { user } = useUser()

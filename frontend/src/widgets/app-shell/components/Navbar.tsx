@@ -15,7 +15,7 @@ import { useEffect, useState } from 'react'
 import { signOut } from 'shared/api'
 import { Icon, TIcons, useBaseWrapperContext } from 'shared/ui'
 import { ERoles } from 'types/roles'
-import { useUser } from 'utils/useUser'
+import { useUser } from 'entities/user'
 import NavItem from 'widgets/app-shell/components/NavItem'
 
 const navItems: { icon: TIcons; href: string; text: string }[] = [

@@ -4,7 +4,7 @@ import { FeedbackPage } from 'pages/feedback'
 import { BaseWrapper, useBaseWrapperContext } from 'shared/ui'
 import { EPages } from 'types/pages'
 import { ERoles } from 'types/roles'
-import { useUser } from 'utils/useUser'
+import { useUser } from 'entities/user'
 import { AppShell } from 'widgets/app-shell'
 import { NextPageWithLayout } from '../_app'
 

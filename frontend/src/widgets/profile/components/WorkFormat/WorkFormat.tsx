@@ -1,10 +1,10 @@
 import { Select, Stack, Title } from '@mantine/core'
 import { showNotification } from '@mantine/notifications'
 import { useMutation } from '@tanstack/react-query'
-import { FC, useState } from 'react'
+import { useUser } from 'entities/user'
+import { useState } from 'react'
 import { updateUser } from 'shared/api'
 import { User } from 'shared/api/generatedTypes'
-import { useUser } from 'entities/user'
 
 const workFormatData: Array<{
 	label: string
@@ -24,9 +24,7 @@ const workFormatData: Array<{
 	},
 ]
 
-interface Props {}
-
-const WorkFormat: FC<Props> = () => {
+const WorkFormat = () => {
 	const { user } = useUser()
 	const [value, setValue] = useState(user?.work_format || null)
 

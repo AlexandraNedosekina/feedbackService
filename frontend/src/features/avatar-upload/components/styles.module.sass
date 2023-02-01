@@ -1,0 +1,59 @@
+.wrapper
+   position: relative
+   &:hover
+      .delete
+         opacity: 1
+      .controls
+         opacity: 1
+         transform: translateY(0)
+   &_circle
+      position: relative
+      border-radius: 50%
+      overflow: hidden
+
+.controls
+   position: absolute
+   left: 0
+   bottom: 0
+   width: 100%
+   display: flex
+   justify-content: center
+   align-items: center
+   gap: 10px
+   padding: 10px
+   color: white
+   z-index: 1
+   font-size: 20px
+   transition: all 0.3s ease-in-out
+   opacity: 0
+   transform: translateY(10px)
+   &::before
+      content: ''
+      position: absolute
+      background-color: var(--mantine-color-brand-5)
+      opacity: 0.9
+      inset: 0
+      z-index: -1
+
+   .controls_button
+      cursor: pointer
+      display: flex
+      justify-content: center
+      align-items: center
+
+.delete
+   position: absolute
+   right: 0
+   top: -4px
+   width: 18px
+   height: 18px
+   border: 1px solid var(--mantine-color-red-5)
+   color: var(--mantine-color-red-5)
+   border-radius: 50%
+   font-size: 14px
+   display: flex
+   justify-content: center
+   align-items: center
+   cursor: pointer
+   opacity: 0
+   transition: all 0.3s ease-in-out
