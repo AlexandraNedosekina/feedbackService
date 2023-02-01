@@ -1,7 +1,7 @@
 import AdminCareer from '@components/AdminCareer'
 import { AdminFeedbackPage } from 'pages/admin-feedback'
 import { FC } from 'react'
-import { EPages } from 'types/pages'
+import { EPages } from 'shared/types'
 
 const Components: { [key in EPages]: FC } = {
 	[EPages.Feedback]: AdminFeedbackPage,

@@ -1,18 +1,17 @@
-import { AdminEvents } from '@components/AdminEvents'
-import { Container, Title } from '@mantine/core'
+import { useUser } from 'entities/user'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
+import { EventsPage } from 'pages/events'
 import { useEffect } from 'react'
-import { BaseLayout } from 'layouts'
+import { BaseWrapper, useBaseWrapperContext } from 'shared/ui'
 import { ERoles } from 'types/roles'
-import { useBaseLayoutContext } from 'utils/useBaseWrapperContext'
-import { useUser } from 'entities/user'
+import { AppShell } from 'widgets/app-shell'
 import { NextPageWithLayout } from './_app'
 
-const EventsPage: NextPageWithLayout = () => {
+const Page: NextPageWithLayout = () => {
 	const router = useRouter()
 	const { user } = useUser()
-	const { isEdit } = useBaseLayoutContext()
+	const { isEdit } = useBaseWrapperContext()
 
 	useEffect(() => {
 		if (typeof window !== 'undefined') {
@@ -33,17 +32,17 @@ const EventsPage: NextPageWithLayout = () => {
 				<title>Создание сбора обратной связи</title>
 			</Head>
 
-			<Container mt="lg">
-				<Title order={2}>Сбор обратной связи</Title>
-
-				<AdminEvents />
-			</Container>
+			<EventsPage />
 		</>
 	)
 }
 
-EventsPage.getLayout = function getLayout(page) {
-	return <BaseLayout>{page}</BaseLayout>
+Page.getLayout = function getLayout(page) {
+	return (
+		<BaseWrapper>
+			<AppShell>{page}</AppShell>
+		</BaseWrapper>
+	)
 }
 
-export default EventsPage
+export default Page
