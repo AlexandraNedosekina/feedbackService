@@ -4,7 +4,7 @@ import { useRouter } from 'next/router'
 import { EventsPage } from 'pages/events'
 import { useEffect } from 'react'
 import { BaseWrapper, useBaseWrapperContext } from 'shared/ui'
-import { ERoles } from 'types/roles'
+import { ERoles } from 'shared/types'
 import { AppShell } from 'widgets/app-shell'
 import { NextPageWithLayout } from './_app'
 

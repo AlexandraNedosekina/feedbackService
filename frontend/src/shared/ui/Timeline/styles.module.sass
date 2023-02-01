@@ -1,0 +1,78 @@
+$border-width: 1px
+
+.timeline
+   container-type: inline-size
+   &_item
+      display: grid
+      grid-template-columns: 1fr 1fr
+      margin-top: var(--mantine-spacing-xl)
+
+      &_content
+         position: relative
+         ul
+            margin-top: 0
+         li
+            list-style-position: inside
+         &::before
+            content: ''
+            position: absolute
+            right: 0
+            top: 3px
+            bottom: calc(-1 * var(--mantine-spacing-xl) - 3px)
+            border-right: $border-width dashed var(--mantine-color-brand-6)
+
+         &[data-line-active=true]
+            &::before
+               border-right-style: solid
+
+      &:nth-child(odd)
+         text-align: right
+         .timeline_item_content
+            padding-right: var(--mantine-spacing-sm)
+            
+      &:nth-child(even)
+         flex-direction: row-reverse
+         .timeline_item_content
+            padding-left: var(--mantine-spacing-sm)
+         ::before
+            left: -$border-width
+            right: auto
+         .timeline_bullet
+            left: -8px
+            right: auto
+
+      &:last-child
+         .timeline_item_content
+            &::before
+               display: none
+
+   &_bullet
+      position: absolute
+      top: 3px
+      right: -8px
+      width: 16px
+      height: 16px
+      border-radius: 50%
+      background-color: var(--mantine-color-brand-0)
+      border: 2px solid var(--mantine-color-brand-6)
+      &[data-active=true]
+         background-color: var(--mantine-color-brand-6)
+
+@container (max-width: 500px)
+   .timeline
+      &_item
+         grid-template-columns: 1fr
+         &:nth-child(odd)
+            text-align: left
+         .timeline_item_content
+            padding-left: var(--mantine-spacing-sm)
+            padding-right: 0
+         ::before
+            left: -$border-width
+            right: auto
+      &_bullet
+         right: auto
+         left: -8px
+      ul
+         padding-left: var(--mantine-spacing-sm)
+      

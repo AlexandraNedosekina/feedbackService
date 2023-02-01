@@ -4,7 +4,7 @@ import { useRouter } from 'next/router'
 import { useEffect } from 'react'
 import { BaseLayout } from 'layouts'
 import { NextPageWithLayout } from 'pages/_app'
-import { ERoles } from 'types/roles'
+import { ERoles } from 'shared/types'
 import { useBaseLayoutContext } from 'utils/useBaseWrapperContext'
 import { useUser } from 'entities/user'
 

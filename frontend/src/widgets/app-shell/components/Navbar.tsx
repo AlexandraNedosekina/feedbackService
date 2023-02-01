@@ -14,7 +14,7 @@ import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import { signOut } from 'shared/api'
 import { Icon, TIcons, useBaseWrapperContext } from 'shared/ui'
-import { ERoles } from 'types/roles'
+import { ERoles } from 'shared/types'
 import { useUser } from 'entities/user'
 import NavItem from 'widgets/app-shell/components/NavItem'
 

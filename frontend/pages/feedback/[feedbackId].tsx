@@ -4,7 +4,7 @@ import Head from 'next/head'
 import { FeedbackPage } from 'pages/feedback'
 import { EPages } from 'shared/types'
 import { BaseWrapper, useBaseWrapperContext } from 'shared/ui'
-import { ERoles } from 'types/roles'
+import { ERoles } from 'shared/types'
 import { AppShell } from 'widgets/app-shell'
 import { NextPageWithLayout } from '../_app'
 

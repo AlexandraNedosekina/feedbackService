@@ -12,7 +12,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { FC } from 'react'
 import { signOut } from 'shared/api'
-import { ERoles } from 'types/roles'
+import { ERoles } from 'shared/types'
 import { useBaseWrapperContext } from 'shared/ui'
 import { useUser } from 'entities/user'
 
