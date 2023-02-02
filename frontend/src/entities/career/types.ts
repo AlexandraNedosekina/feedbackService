@@ -1,4 +1,4 @@
-export enum EStatus {
+export enum ECareerGradeStatus {
 	notCompleted = 'not_completed',
 	completed = 'completed',
 	current = 'current',
@@ -9,7 +9,7 @@ export interface ICareerGradeParam {
 	apiId?: string
 }
 
-export interface IFormValues {
+export interface ICareerGradeFormValues {
 	title: string
 	salary: string
 	toLearn: ICareerGradeParam[]

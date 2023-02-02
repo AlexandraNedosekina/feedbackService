@@ -1,12 +1,9 @@
 import { Box, Group, Text } from '@mantine/core'
 import { DatePicker, TimeInput } from '@mantine/dates'
-import { FC } from 'react'
-import { useCreateEventStore } from 'stores'
 import shallow from 'zustand/shallow'
+import { useCreateEventStore } from '../model'
 
-interface Props {}
-
-const TimePicker: FC<Props> = () => {
+const TimePicker = () => {
 	const {
 		endTime,
 		startTime,

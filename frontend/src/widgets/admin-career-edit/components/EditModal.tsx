@@ -1,11 +1,11 @@
 import { Modal, Title } from '@mantine/core'
-import { careerModel, careerTypes } from 'entities/career'
+import { careerModel, ICareerGradeFormValues } from 'entities/career'
 import { CareerAddGrade } from 'features/career-add-grade'
 
 interface IProps {
 	isOpen: boolean
 	onClose: () => void
-	initialValues?: careerTypes.IFormValues
+	initialValues?: ICareerGradeFormValues
 }
 
 export const EditModal = ({ isOpen, onClose, initialValues }: IProps) => {

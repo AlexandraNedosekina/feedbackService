@@ -1,7 +1,7 @@
 import { Button, Stack } from '@mantine/core'
 import { showNotification } from '@mantine/notifications'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { careerModel, careerTypes } from 'entities/career'
+import { careerModel, ICareerGradeFormValues } from 'entities/career'
 import arrayMutators from 'final-form-arrays'
 import { useRouter } from 'next/router'
 import { Form, FormSpy } from 'react-final-form'
@@ -15,7 +15,7 @@ import {
 } from '../lib'
 import Tasks from './Tasks'
 
-const defaultInitialValues: careerTypes.IFormValues = {
+const defaultInitialValues: ICareerGradeFormValues = {
 	title: '',
 	salary: '',
 	toComplete: [],
@@ -25,7 +25,7 @@ const defaultInitialValues: careerTypes.IFormValues = {
 
 interface IProps {
 	onClose?: () => void
-	initialValues?: careerTypes.IFormValues
+	initialValues?: ICareerGradeFormValues
 }
 
 export default ({ onClose, initialValues = defaultInitialValues }: IProps) => {
@@ -59,7 +59,7 @@ export default ({ onClose, initialValues = defaultInitialValues }: IProps) => {
 	})
 
 	return (
-		<Form<careerTypes.IFormValues>
+		<Form<ICareerGradeFormValues>
 			onSubmit={(values, { getState }) => {
 				const { dirtyFields } = getState()
 
@@ -110,7 +110,7 @@ export default ({ onClose, initialValues = defaultInitialValues }: IProps) => {
 			initialValuesEqual={() => true}
 			validate={values => {
 				const errors: Partial<
-					Record<keyof careerTypes.IFormValues, string>
+					Record<keyof ICareerGradeFormValues, string>
 				> = {}
 
 				if (!values.toComplete?.length) {

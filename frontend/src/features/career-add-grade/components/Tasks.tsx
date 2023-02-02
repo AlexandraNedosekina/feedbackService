@@ -11,7 +11,7 @@ import { useState } from 'react'
 import { Field } from 'react-final-form'
 import { useFieldArray } from 'react-final-form-arrays'
 import { Icon } from 'shared/ui'
-import { careerTypes } from 'entities/career'
+import { ICareerGradeFormValues } from 'entities/career'
 import AddItem from './AddItem'
 
 const useStyles = createStyles((_theme, _params, getRef) => ({
@@ -38,7 +38,7 @@ const Tasks = ({ title, type }: IProps) => {
 	const {
 		fields,
 		meta: { error, dirty, submitFailed },
-	} = useFieldArray<careerTypes.IFormValues[typeof type][number]>(type)
+	} = useFieldArray<ICareerGradeFormValues[typeof type][number]>(type)
 	const { fields: deleleFields } = useFieldArray<string>('idsToDelete')
 	const [isEdit, setIsEdit] = useState(false)
 	const [editIndex, setEditIndex] = useState<number>(0)

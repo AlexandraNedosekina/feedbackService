@@ -30,9 +30,11 @@ const queryClient = new QueryClient({
 	},
 })
 
-export const withQueryClient = (Component: React.FC) => (props: any) =>
-	(
-		<QueryClientProvider client={queryClient}>
-			<Component {...props} />
-		</QueryClientProvider>
-	)
+export const withQueryClient =
+	<T extends JSX.IntrinsicAttributes>(Component: React.FC<T>) =>
+	(props: T) =>
+		(
+			<QueryClientProvider client={queryClient}>
+				<Component {...props} />
+			</QueryClientProvider>
+		)

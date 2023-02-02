@@ -1,13 +1,13 @@
-import { Table } from 'shared/ui'
-import UserRating from '@components/UserRating'
 import { Flex } from '@mantine/core'
 import {
 	createColumnHelper,
 	getCoreRowModel,
 	useReactTable,
 } from '@tanstack/react-table'
+import { UserRating } from 'entities/user'
 import { useMemo, useState } from 'react'
-import { IFeedbackStats } from 'types/feedbackStats'
+import { IFeedbackStats } from 'shared/types'
+import { Table } from 'shared/ui'
 import ActionMenuTable from './ActionMenuTable'
 import FeedbackModal from './FeedbackModal'
 import MoreButton from './MoreButton'

@@ -1,6 +1,0 @@
-export { default as Avatar } from './Avatar'
-export { default as Meeting } from './Meeting'
-export { default as ProfileBadge } from './ProfileBadge'
-export { default as ProfileBadgesGroup } from './ProfileBadgesGroup'
-export { default as WorkFormat } from './WorkFormat'
-export { default as WorkHours } from './WorkHours'

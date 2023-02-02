@@ -1,9 +1,9 @@
 import { CareerParamCreate, CareerParamUpdate } from 'shared/api/generatedTypes'
-import { IFormValues } from '../types'
+import { ICareerGradeFormValues } from 'entities/career'
 
 export function reduceParams(
 	dirtyFields: { [key: string]: boolean },
-	params: IFormValues['toComplete'],
+	params: ICareerGradeFormValues['toComplete'],
 	type: 'to_learn' | 'to_complete'
 ) {
 	const typeCamelCase = type.replace(/_./g, match => match[1].toUpperCase())

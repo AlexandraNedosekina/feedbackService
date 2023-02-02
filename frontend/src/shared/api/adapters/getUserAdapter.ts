@@ -1,4 +1,4 @@
-import { IProfileBadge } from 'types/profile'
+import { IProfileBadge } from 'entities/profile'
 import { ERoles } from 'shared/types'
 import { Fact, JobExpectation, Skill, User } from '../generatedTypes'
 

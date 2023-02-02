@@ -1,7 +1,7 @@
 import { Badge, Box, Flex, Group, Select, Text, Title } from '@mantine/core'
 import { showNotification } from '@mantine/notifications'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { careerModel, careerTypes } from 'entities/career'
+import { careerModel, ECareerGradeStatus } from 'entities/career'
 import { useRouter } from 'next/router'
 import { useEffect, useMemo, useState } from 'react'
 import { QueryKeys, TCareerAdapter, updateCareerTrack } from 'shared/api'
@@ -23,15 +23,15 @@ const GradeCard = () => {
 	])
 	const grade = data?.find(i => i.id === +selectedGradeId)
 
-	const statusData = useMemo<{ value: careerTypes.EStatus; label: string }[]>(
+	const statusData = useMemo<{ value: ECareerGradeStatus; label: string }[]>(
 		() => [
-			{ value: careerTypes.EStatus.notCompleted, label: 'Незавершенный' },
-			{ value: careerTypes.EStatus.current, label: 'Текущий' },
-			{ value: careerTypes.EStatus.completed, label: 'Завершенный' },
+			{ value: ECareerGradeStatus.notCompleted, label: 'Незавершенный' },
+			{ value: ECareerGradeStatus.current, label: 'Текущий' },
+			{ value: ECareerGradeStatus.completed, label: 'Завершенный' },
 		],
 		[]
 	)
-	const [status, setStatus] = useState<careerTypes.EStatus>(() =>
+	const [status, setStatus] = useState<ECareerGradeStatus>(() =>
 		setInitialStatus(grade)
 	)
 
@@ -56,18 +56,18 @@ const GradeCard = () => {
 		},
 	})
 
-	function handleStatusChange(value: careerTypes.EStatus) {
+	function handleStatusChange(value: ECareerGradeStatus) {
 		if (value === status) return
 
 		setStatus(value)
 		switch (value) {
-			case careerTypes.EStatus.notCompleted:
+			case ECareerGradeStatus.notCompleted:
 				updateStatus({ is_completed: false, is_current: false })
 				break
-			case careerTypes.EStatus.current:
+			case ECareerGradeStatus.current:
 				updateStatus({ is_completed: false, is_current: true })
 				break
-			case careerTypes.EStatus.completed:
+			case ECareerGradeStatus.completed:
 				updateStatus({ is_completed: true, is_current: false })
 				break
 		}

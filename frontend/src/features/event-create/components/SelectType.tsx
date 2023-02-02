@@ -1,5 +1,5 @@
-import { UserSearchSelect } from '@components/UserSearchSelect'
 import { Box, SegmentedControl } from '@mantine/core'
+import { UserSearchSelect } from 'features/user-search-select'
 import shallow from 'zustand/shallow'
 import { useCreateEventStore } from '../model'
 import Checkbox from './Checkbox'
