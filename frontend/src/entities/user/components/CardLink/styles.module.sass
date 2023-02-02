@@ -1,0 +1,25 @@
+.root
+   width: 100%
+   padding: var(--mantine-spacing-sm)
+   background-color: white
+   border-radius: 4px
+   display: flex
+   align-items: center
+   justify-content: space-between
+   text-decoration: none
+   gap: 10px
+   transition: background-color 0.2s ease-in-out
+   &:hover
+      background-color: var(--mantine-color-gray-1)
+   
+
+.active
+   background-color: var(--mantine-color-brand-1)
+   &:hover
+      background-color: var(--mantine-color-brand-1)
+   .done
+      color: var(--mantine-color-green-8)
+
+.done
+   align-self: flex-start
+   color: var(--mantine-color-green-5)
