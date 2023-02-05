@@ -1,5 +1,5 @@
 import { ActionIcon } from '@mantine/core'
-import { ComponentMeta, ComponentStory } from '@storybook/react'
+import { Meta, StoryObj } from '@storybook/react'
 import Icon from './Icon'
 
 export default {
@@ -22,20 +22,19 @@ export default {
 			},
 		},
 	},
-} as ComponentMeta<typeof Icon>
+} as Meta<typeof Icon>
 
-const Template: ComponentStory<typeof Icon> = args => <Icon {...args} />
+export const Default = {}
 
-export const Default = Template.bind({})
-
-export const Action = Template.bind({})
-Action.args = {
-	size: 24,
+export const Action: StoryObj<typeof Icon> = {
+	args: {
+		size: 24,
+	},
+	decorators: [
+		StoryFn => (
+			<ActionIcon variant="filled" color="brand" size="lg">
+				<StoryFn />
+			</ActionIcon>
+		),
+	],
 }
-Action.decorators = [
-	Story => (
-		<ActionIcon variant="filled" color="brand" size="lg">
-			<Story />
-		</ActionIcon>
-	),
-]

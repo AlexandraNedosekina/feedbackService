@@ -1,10 +1,12 @@
 import { MantineProvider } from '@mantine/core'
 import { NotificationsProvider } from '@mantine/notifications'
-import { DecoratorFn } from '@storybook/react'
+import { Decorator } from '@storybook/react'
+import { QueryClientProvider } from '@tanstack/react-query'
 import React from 'react'
 import { mantineTheme } from '../src/App/styles/mantineTheme'
+import { queryClient } from '../src/App/providers'
 
-const withMantine: DecoratorFn = StoryFn => {
+const withMantine: Decorator = StoryFn => {
 	return (
 		<MantineProvider
 			withCSSVariables
@@ -19,4 +21,12 @@ const withMantine: DecoratorFn = StoryFn => {
 	)
 }
 
-export const globalDecorators = [withMantine]
+const withQueryClient: Decorator = StoryFn => {
+	return (
+		<QueryClientProvider client={queryClient}>
+			<StoryFn />
+		</QueryClientProvider>
+	)
+}
+
+export const globalDecorators = [withMantine, withQueryClient]
