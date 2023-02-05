@@ -5,6 +5,7 @@ import { QueryClientProvider } from '@tanstack/react-query'
 import React from 'react'
 import { mantineTheme } from '../src/App/styles/mantineTheme'
 import { queryClient } from '../src/App/providers'
+import { mswDecorator } from 'msw-storybook-addon'
 
 const withMantine: Decorator = StoryFn => {
 	return (
@@ -29,4 +30,4 @@ const withQueryClient: Decorator = StoryFn => {
 	)
 }
 
-export const globalDecorators = [withMantine, withQueryClient]
+export const globalDecorators = [withMantine, withQueryClient, mswDecorator]
