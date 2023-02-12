@@ -1,0 +1,14 @@
+import { Meta, IconGallery, IconItem } from '@storybook/addon-docs'
+import { Icon, iconList } from 'shared/ui'
+
+<Meta title="Iconography" />
+
+# Iconography
+
+<IconGallery>
+	{iconList.map((icon, index) => (
+		<IconItem name={icon} key={index}>
+			<Icon icon={icon} size={24} />
+		</IconItem>
+	))}
+</IconGallery>

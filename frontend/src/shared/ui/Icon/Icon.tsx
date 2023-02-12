@@ -3,9 +3,9 @@ import { IIconProps } from './types'
 const Icon = ({
 	icon,
 	size,
+	filled = false,
 	type = 'outlined',
 	weight = 300,
-	filled,
 }: IIconProps) => {
 	return (
 		<span

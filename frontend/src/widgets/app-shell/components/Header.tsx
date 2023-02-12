@@ -1,4 +1,3 @@
-import { Icon } from 'shared/ui'
 import {
 	ActionIcon,
 	createStyles,
@@ -7,14 +6,13 @@ import {
 	Menu,
 } from '@mantine/core'
 import { useMutation } from '@tanstack/react-query'
+import { useUser } from 'entities/user'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { FC } from 'react'
 import { signOut } from 'shared/api'
 import { ERoles } from 'shared/types'
-import { useBaseWrapperContext } from 'shared/ui'
-import { useUser } from 'entities/user'
+import { Icon, useBaseWrapperContext } from 'shared/ui'
 
 const useStyles = createStyles(theme => ({
 	header: {
@@ -31,12 +29,12 @@ const useStyles = createStyles(theme => ({
 	},
 }))
 
-interface Props {
+interface IProps {
 	openMenu: () => void
 	isOpen: boolean
 }
 
-const Header: FC<Props> = ({ openMenu, isOpen }) => {
+const Header = ({ openMenu, isOpen }: IProps) => {
 	const { classes } = useStyles()
 	const { user } = useUser()
 	const router = useRouter()
