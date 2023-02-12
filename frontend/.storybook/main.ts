@@ -1,4 +1,6 @@
-const config = {
+import { StorybookConfig } from '@storybook/nextjs'
+
+const config: StorybookConfig = {
 	core: {
 		builder: '@storybook/builder-webpack5',
 	},
