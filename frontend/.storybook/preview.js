@@ -1,6 +1,6 @@
 import { initialize } from 'msw-storybook-addon'
 import { globalDecorators } from './decorators'
-import '../src/App/styles/global.css'
+import '../src/app/styles/global.css'
 
 initialize()
 

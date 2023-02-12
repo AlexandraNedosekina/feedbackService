@@ -3,8 +3,8 @@ import { NotificationsProvider } from '@mantine/notifications'
 import { Decorator } from '@storybook/react'
 import { QueryClientProvider } from '@tanstack/react-query'
 import React from 'react'
-import { mantineTheme } from '../src/App/styles/mantineTheme'
-import { queryClient } from '../src/App/providers'
+import { mantineTheme } from '../src/app/styles/mantineTheme'
+import { queryClient } from '../src/app/providers'
 import { mswDecorator } from 'msw-storybook-addon'
 
 const withMantine: Decorator = StoryFn => {
