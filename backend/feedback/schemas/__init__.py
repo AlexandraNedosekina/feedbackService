@@ -12,3 +12,4 @@ from feedback.schemas.oauth import OAuthToken, OAuthTokenData, OAuthUserInfo
 from feedback.schemas.user import (AddSkillPromts, ShowSkillPromts, User,
                                    UserCreate, UserDetails, UserUpdate,
                                    UserUpdateOther, UserUpdateSelf)
+from feedback.schemas.calendar_event import CalendarEvent, CalendarEventCreate, CalendarEventUpdate, CalendarEventStatus, CalendarFormat

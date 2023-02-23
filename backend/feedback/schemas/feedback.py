@@ -4,11 +4,7 @@ from enum import Enum
 from pydantic import BaseModel, Field, root_validator, validator
 
 from feedback.schemas.user import UserDetails
-
-
-class Base(BaseModel):
-    class Config:
-        orm_mode = True
+from feedback.schemas.base import Base
 
 
 class ColleaguesIdList(Base):

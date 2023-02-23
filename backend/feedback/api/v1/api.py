@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 
 from feedback.api.v1.endpoints import (auth, avatar, career, colleagues, event,
-                                       feedback, for_tests, promts, user)
+                                       feedback, for_tests, promts, user, calendar)
 
 api_router = APIRouter()
 
@@ -14,6 +14,7 @@ api_router.include_router(colleagues.router, prefix="/colleagues", tags=["collea
 api_router.include_router(event.router, prefix="/event", tags=["event"])
 api_router.include_router(feedback.router, prefix="/feedback", tags=["feedback"])
 api_router.include_router(career.router, prefix="/career", tags=["career"])
+api_router.include_router(calendar.router, prefix="/calendar", tags=["calendar"])
 
 
 # Remove
