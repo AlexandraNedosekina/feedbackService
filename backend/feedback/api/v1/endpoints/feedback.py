@@ -8,8 +8,7 @@ from sqlalchemy import or_
 from sqlalchemy.orm import Session
 
 from feedback import crud, models, schemas
-from feedback.api.deps import (GetUserWithRoles, get_current_user, get_db,
-                               is_allowed)
+from feedback.api.deps import GetUserWithRoles, get_current_user, get_db, is_allowed
 
 logger = logging.getLogger(__name__)
 
@@ -145,7 +144,6 @@ async def get_all_feedback(
 async def show_current_user_feedback_list(
     curr_user: models.User = Depends(get_current_user), db: Session = Depends(get_db)
 ) -> list[schemas.Feedback]:
-
     events_ids = set()
     for val in (
         db.query(models.Event.id)

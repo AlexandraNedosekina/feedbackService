@@ -1,7 +1,17 @@
 from fastapi import APIRouter
 
-from feedback.api.v1.endpoints import (auth, avatar, career, colleagues, event,
-                                       feedback, for_tests, promts, user, calendar)
+from feedback.api.v1.endpoints import (
+    auth,
+    avatar,
+    calendar,
+    career,
+    colleagues,
+    event,
+    feedback,
+    for_tests,
+    promts,
+    user,
+)
 
 api_router = APIRouter()
 

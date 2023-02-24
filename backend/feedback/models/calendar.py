@@ -1,8 +1,9 @@
-from sqlalchemy import Column, ForeignKey, Integer, String, DateTime
+from sqlalchemy import Column, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
 
 from feedback.db.session import Base
 from feedback.models.feedback import MyDateTime
+
 
 class CalendarEvent(Base):
     __tablename__ = "calendar_event"
@@ -21,6 +22,5 @@ class CalendarEvent(Base):
     date_start = Column(MyDateTime, nullable=False)
     date_end = Column(MyDateTime, nullable=False)
 
-    status = Column(String) # Accepted, Rejected, Resheduled
+    status = Column(String)  # Accepted, Rejected, Resheduled
     rejection_cause = Column(String)
-    

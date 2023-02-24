@@ -52,7 +52,7 @@ def is_allowed(
         ]
     ],
 ) -> bool:
-    current_user_roles = [r.description for r in current_user.roles]
+    current_user_roles = current_user.get_roles
 
     for role in current_user_roles:
         if role in permitted_roles:

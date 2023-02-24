@@ -3,8 +3,8 @@ from enum import Enum
 
 from pydantic import BaseModel, Field, root_validator, validator
 
-from feedback.schemas.user import UserDetails
 from feedback.schemas.base import Base
+from feedback.schemas.user import UserDetails
 
 
 class ColleaguesIdList(Base):

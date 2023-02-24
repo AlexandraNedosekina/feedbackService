@@ -38,7 +38,6 @@ class CRUDAvatar(CRUDBase[models.Avatars, schemas.AvatarCreate, schemas.AvatarUp
         obj_in: schemas.AvatarUpdate,
         thumbnail_path: str,
     ) -> models.Avatars:
-
         obj_data = jsonable_encoder(user.avatar)
         update_data = obj_in.dict(exclude_unset=True)
 

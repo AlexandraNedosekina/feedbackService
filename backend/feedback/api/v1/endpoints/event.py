@@ -18,7 +18,6 @@ async def get_all_events(
     skip: int = 0,
     limit: int = 100,
 ) -> list[schemas.Event]:
-
     return parse_obj_as(
         list[schemas.Event], crud.event.get_multi(db, skip=skip, limit=limit)
     )

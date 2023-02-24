@@ -1,7 +1,15 @@
 from datetime import datetime
 
-from sqlalchemy import (Boolean, Column, DateTime, ForeignKey, Integer,
-                        Numeric, String, TypeDecorator)
+from sqlalchemy import (
+    Boolean,
+    Column,
+    DateTime,
+    ForeignKey,
+    Integer,
+    Numeric,
+    String,
+    TypeDecorator,
+)
 from sqlalchemy.orm import relationship
 
 from feedback.db.session import Base

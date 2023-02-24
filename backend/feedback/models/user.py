@@ -1,5 +1,13 @@
-from sqlalchemy import (Boolean, Column, Date, DateTime, ForeignKey, Integer,
-                        String, Time)
+from sqlalchemy import (
+    Boolean,
+    Column,
+    Date,
+    DateTime,
+    ForeignKey,
+    Integer,
+    String,
+    Time,
+)
 from sqlalchemy.orm import relationship
 
 from feedback.db.session import Base
@@ -54,6 +62,10 @@ class User(Base):
         lazy="joined",
         foreign_keys="Colleagues.owner_id",
     )
+
+    @property
+    def get_roles(self) -> set[str]:
+        return {r.description for r in self.roles}
 
 
 class Avatars(Base):
