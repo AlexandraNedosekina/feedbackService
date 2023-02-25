@@ -36,7 +36,7 @@ class GetUserWithRoles:
     def __call__(
         self, current_user: models.User = Depends(get_current_user)
     ) -> models.User:
-        current_user_roles = [r.description for r in current_user.roles]
+        current_user_roles = current_user.get_roles
         for role in current_user_roles:
             if role in self.roles:
                 return current_user

@@ -15,8 +15,8 @@ get_admin_boss_manager_hr = GetUserWithRoles(["admin", "boss", "manager", "hr"])
 
 
 @router.get("/me", response_model=list[schemas.CalendarEvent])
-def get_events_for_current_user(
-    date: datetime.date = Query(..., example="2023-02-23", description="Date UTC"),
+def get_calendar_events_for_current_user(
+    date: datetime.date = Query(..., example="2023-02-23", description="UTC Date"),
     format: schemas.CalendarFormat = Query(
         ..., description="Determines the range of return events"
     ),
@@ -32,11 +32,15 @@ def get_events_for_current_user(
     return events
 
 
-@router.get("/{cal_id}", response_model=schemas.CalendarEvent)
-def get_event_by_id(
-    cal_id: int, db: Session = Depends(get_db), curr_user=Depends(get_current_user)
+@router.get("/{calendar_id}", response_model=schemas.CalendarEvent)
+def get_calendar_event_by_id(
+    calendar_id: int, db: Session = Depends(get_db), curr_user=Depends(get_current_user)
 ):
-    event = crud.calendar.get(db, cal_id)
+    """
+    Returns calendar event with provided id
+    If user is associdated with that event. (Associated = if user is creator or participant or user has one of the roles [HR, manager, boss, admin])
+    """
+    event = crud.calendar.get(db, calendar_id)
     if not event:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
 
@@ -54,11 +58,19 @@ def get_event_by_id(
 
 
 @router.post("/", response_model=schemas.CalendarEvent)
-def create_event(
+def create_calendar_event(
     cal_event_create: schemas.CalendarEventCreate,
     db: Session = Depends(get_db),
     curr_user=Depends(get_current_user),
 ):
+    """
+    Creates calendar event.
+    Cant create if creator is not participants colleague
+    and creator does not have one of the roles [HR, manager, boss, admin]
+
+    - **date_start**: Event end datetime in UTC with timezone. Example: UTC: `2023-02-26T12:30:00Z`, EKB: `2023-02-26T15:00:00+05:00`
+    - **date_end**: Event end datetime in UTC with timezone. Example: UTC: `2023-02-26T12:30:00Z`, EKB: `2023-02-26T15:00:00+05:00`
+    """
     logger.debug(cal_event_create)
 
     user = crud.user.get(db, cal_event_create.user_id)
@@ -74,9 +86,14 @@ def create_event(
             detail=f"You cant create event to yourself",
         )
 
-    # TODO: Check if user is colleague
+    if curr_user.id not in user.get_colleagues_id and not is_allowed(
+        curr_user, None, ["admin", "boss", "manager", "HR"]
+    ):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="You cant create event with this user, because you are not his/her colleague",
+        )
 
-    # NOTE: Not good, better to store start/work_hours already in utc
     if user.work_hours_end and user.work_hours_start:
         work_start_utc = convert_time_to_utc(user.work_hours_start, EKB_UTC_OFFSET)
         work_end_utc = convert_time_to_utc(user.work_hours_end, EKB_UTC_OFFSET)
@@ -103,47 +120,100 @@ def create_event(
 
     # TODO: Check users meeting readiness
     # NOTE: Does 'work from home' have impact on logic
-
     event = crud.calendar.create(db, obj_in=cal_event_create, owner_id=curr_user.id)
     return event
 
 
-@router.patch("/{id}", response_model=schemas.CalendarEvent)
+@router.patch("/{calendar_id}", response_model=schemas.CalendarEvent)
 def update_calendar_event(
-    id: int, db: Session = Depends(get_db), curr_user=Depends(get_current_user)
+    calendar_id: int,
+    calendar_event_update: schemas.CalendarEventUpdate,
+    db: Session = Depends(get_db),
+    curr_user=Depends(get_current_user),
 ):
-    pass
-
-
-@router.delete("/{cal_id}")
-def delete_calendar_event(
-    cal_id: int, db: Session = Depends(get_db), curr_user=Depends(get_current_user)
-):
-    event = crud.calendar.get(db, cal_id)
+    """
+    Updates calendar event with provided id.
+    Only creator of event can update it.
+    If event status is `Accpeted` you cant update it.
+    """
+    event = crud.calendar.get(db, calendar_id)
     if not event:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
 
-    if event.owner_id != curr_user.owner_id:
+    if event.owner_id != curr_user.id:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="You must be creator to delete",
         )
+
     if event.status == schemas.CalendarEventStatus.ACCEPTED:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="You cant do that if event is accepted",
         )
-    crud.calendar.remove(db, id=event.id)
+
+    start = calendar_event_update.date_start
+    end = calendar_event_update.date_end
+    # If only 1 of the dates is changed. check with val in db
+    if bool(start) != bool(end):
+        if start and event.date_end <= start.replace(tzinfo=None):
+            logger.debug(
+                f"{start and event.date_end < start.replace(tzinfo=None)}. event_date_end={event.date_end}"
+            )
+            raise HTTPException(
+                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                detail="date_start cant cant be smaller or equal to date_end",
+            )
+
+        if end and event.date_start >= end.replace(tzinfo=None):
+            logger.debug(
+                f"{end and event.date_start > end.replace(tzinfo=None)}. event_date_end={event.date_end}"
+            )
+            raise HTTPException(
+                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                detail="date_end cant cant be bigger or equal to date_start",
+            )
+
+    event = crud.calendar.update(db, db_obj=event, obj_in=calendar_event_update)
+    return event
+
+
+@router.delete("/{calendar_id}")
+def delete_calendar_event(
+    calendar_id: int, db: Session = Depends(get_db), curr_user=Depends(get_current_user)
+):
+    """
+    Deletes calendar event with provided id.
+    Only creator of event can delete it.
+    If event status is `Accepted` you cant delete it.
+    """
+
+    event = crud.calendar.get(db, calendar_id)
+    if not event:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+
+    if event.owner_id != curr_user.id:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="You must be creator to delete",
+        )
+
+    if event.status == schemas.CalendarEventStatus.ACCEPTED:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="You cant do that if event is accepted",
+        )
+
+    crud.calendar.remove(db, id=calendar_id)
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
 @router.get(
     "/",
-    description="Only for users with roles [admin, boss, manager, hr]",
     dependencies=[Depends(get_admin_boss_manager_hr)],
     response_model=list[schemas.CalendarEvent],
 )
-def get_events_by_user_id(
+def get_calendar_events_by_user_id(
     user_id: int,
     date: datetime.date = Query(..., example="2023-02-23", description="Date UTC"),
     format: schemas.CalendarFormat = Query(
@@ -154,17 +224,20 @@ def get_events_by_user_id(
     ),
     db: Session = Depends(get_db),
 ):
+    """
+    Only for users with roles [admin, boss, manager, hr]
+    """
     events = crud.calendar.get_with_common_queries(
         db, user_id=user_id, date=date, format=format, status=status
     )
     return events
 
 
-@router.post("/{event_id}/accept", response_model=schemas.CalendarEvent)
-def accept_event(
-    event_id: int, db: Session = Depends(get_db), curr_user=Depends(get_current_user)
+@router.post("/{calendar_id}/accept", response_model=schemas.CalendarEvent)
+def accept_calendar_event(
+    calendar_id: int, db: Session = Depends(get_db), curr_user=Depends(get_current_user)
 ):
-    event = crud.calendar.get(db, id=event_id)
+    event = crud.calendar.get(db, id=calendar_id)
     if not event:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
 
@@ -188,14 +261,14 @@ def accept_event(
     return event
 
 
-@router.post("/{event_id}/reject", response_model=schemas.CalendarEvent)
-def reject_event(
-    event_id: int,
+@router.post("/{calendar_id}/reject", response_model=schemas.CalendarEvent)
+def reject_calendar_event(
+    calendar_id: int,
     rejection_cause: str = Body("", embed=True),
     db: Session = Depends(get_db),
     curr_user=Depends(get_current_user),
 ):
-    event = crud.calendar.get(db, id=event_id)
+    event = crud.calendar.get(db, id=calendar_id)
     if not event:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
 
@@ -217,14 +290,14 @@ def reject_event(
     return event
 
 
-@router.post("/{event_id}/reshedule", response_model=schemas.CalendarEvent)
-def reshedule_event(
-    event_id: int,
+@router.post("/{calendar_id}/reshedule", response_model=schemas.CalendarEvent)
+def reshedule_calendar_event(
+    calendar_id: int,
     resheduled_event: schemas.CalendarEventReshedule,
     db: Session = Depends(get_db),
     curr_user=Depends(get_current_user),
 ):
-    event = crud.calendar.get(db, id=event_id)
+    event = crud.calendar.get(db, id=calendar_id)
     if not event:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
 

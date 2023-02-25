@@ -40,8 +40,10 @@ def is_end_after_start(cls, values):
     start = values.get("date_start")
     end = values.get("date_end")
 
-    if not start or not end:
+    if (not start or not end) and cls != CalendarEventUpdate:
         raise ValueError("cant find start or end")
+    elif cls == CalendarEventUpdate and (not start or not end):
+        return values
 
     if end <= start:
         raise ValueError("end date can not be smaller or equal to start")
@@ -54,10 +56,12 @@ class CalendarEventCreate(Base):
     description: str | None
 
     date_start: datetime = Field(
-        ..., description="Event start datetime in UTC with timezone"
+        ...,
+        description="Event start datetime in UTC with timezone. Example: '2023-02-26T12:30:00Z'",
     )
     date_end: datetime = Field(
-        ..., description="Event end datetime in UTC with timezone"
+        ...,
+        description="Event end datetime in UTC with timezone. Example: '2023-02-26T12:30:00Z'",
     )
 
     # validators

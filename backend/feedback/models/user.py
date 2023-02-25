@@ -67,6 +67,10 @@ class User(Base):
     def get_roles(self) -> set[str]:
         return {r.description for r in self.roles}
 
+    @property
+    def get_colleagues_id(self) -> set[int]:
+        return {c.colleague_id for c in self.colleagues}
+
 
 class Avatars(Base):
     __tablename__ = "avatars"
