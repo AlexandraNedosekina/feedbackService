@@ -1,7 +1,6 @@
 import Calendar, {
 	CalendarOptions,
 	DateSelectArg,
-	EventApi,
 	EventClickArg,
 	EventContentArg,
 } from '@fullcalendar/react'
@@ -9,10 +8,9 @@ import dayGridPlugin from '@fullcalendar/daygrid'
 import timeGridPlugin from '@fullcalendar/timegrid'
 import interactionPlugin from '@fullcalendar/interaction'
 import 'dayjs/locale/ru'
-import React, { FC, useState } from 'react'
 import { createEventId, INITIAL_EVENTS } from './components/event-utils'
 
-const FullCalendar: FC = (props: CalendarOptions) => {
+const FullCalendar = (props: CalendarOptions) => {
 	return (
 		<>
 			{/* стартовая страница - календарь сотрудника, время работы подтягивается 
@@ -23,40 +21,20 @@ const FullCalendar: FC = (props: CalendarOptions) => {
 				{...props}
 				plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
 				headerToolbar={{
-					left: 'prev,next today myCustomButton',
+					left: 'prev,next today',
 					center: 'title',
 					right: 'dayGridMonth,timeGridWeek,timeGridDay',
 				}}
-				customButtons={{
-					myCustomButton: {
-						text: 'Создать событие',
-						click: function () {
-							const dateStr = prompt('Введите дату в формате ГГГГ-ММ-ДД')
-							// var userName = prompt('Введите имя сотрудника')
-							const date = new Date(dateStr + 'T00:00:00')
-
-							if (!isNaN(date.valueOf())) {
-								// FullCalendar.addEvent({
-								// 	title: 'dynamic event',
-								// 	start: date,
-								// 	allDay: true,
-								// })
-								alert('Great. Now, update your database...')
-							} else {
-								alert('Invalid date.')
-							}
-						},
-					},
+				buttonText={{
+					today: 'Сегодня',
+					month: 'Месяц',
+					week: 'Неделя',
+					day: 'День',
 				}}
-				initialView="timeGridWeek"
+				// initialView="timeGridWeek"
 				selectable={true}
 				scrollTime="08:00"
 				locale="ru"
-				// headerToolbar={{
-				//   left: 'prev,next today',
-				//   center: 'title',
-				//   right: 'dayGridMonth,timeGridWeek,timeGridDay',
-				// }}
 				nowIndicator={true}
 				editable={true}
 				initialEvents={INITIAL_EVENTS}
@@ -87,6 +65,7 @@ const FullCalendar: FC = (props: CalendarOptions) => {
 					second: '2-digit',
 					hour12: false,
 				}}
+				firstDay={1}
 			/>
 		</>
 	)

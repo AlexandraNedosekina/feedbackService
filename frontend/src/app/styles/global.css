@@ -7,3 +7,14 @@
 a {
 	text-decoration: none;
 }
+
+:root {
+	/* https://github.com/fullcalendar/fullcalendar/blob/main/packages/core/src/styles/vars.css */
+	--fc-button-text-color: #fff;
+	--fc-button-bg-color: var(--mantine-color-brand-5);
+	--fc-button-border-color: var(--mantine-color-brand-5);
+	--fc-button-hover-bg-color: var(--mantine-color-brand-6);
+	--fc-button-hover-border-color: var(--mantine-color-brand-6);
+	--fc-button-active-bg-color: var(--mantine-color-brand-7);
+	--fc-button-active-border-color: var(--mantine-color-brand-7);
+}

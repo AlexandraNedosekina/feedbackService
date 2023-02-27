@@ -1,3 +1,4 @@
+import { Container } from '@mantine/core'
 import dynamic from 'next/dynamic'
 import styles from './styles.module.sass'
 
@@ -7,7 +8,7 @@ const FullCalendar = dynamic(() => import('widgets/fullcalendar'), {
 
 export default () => {
 	return (
-		<div className={styles.wrapper}>
+		<Container size="xl" py="lg">
 			{/* <Grid columns={4} mt="md"> */}
 			{/* <Grid.Col span={1} h={'100%'} py={0}>
 						<Stack spacing='md'>
@@ -19,6 +20,6 @@ export default () => {
 			<FullCalendar />
 			{/* </Grid.Col> */}
 			{/* </Grid> */}
-		</div>
+		</Container>
 	)
 }
