@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, Response
+from fastapi import APIRouter, Depends, HTTPException, Response, status
 from pydantic import parse_obj_as
 from sqlalchemy.orm import Session
 
@@ -43,6 +43,21 @@ async def update_event(
     event = crud.event.get(db, id)
     if not event:
         raise HTTPException(status_code=404, detail="Event does not exist")
+    
+
+    # If only 1 of the dates is changed. check with val in db
+    start = event_update.date_start
+    end = event_update.date_stop
+    if bool(start) != bool(end):
+        if (
+                (start and event.date_stop <= start.replace(tzinfo=None))
+                or (end and event.date_start >= end.replace(tzinfo=None))
+            ):
+            raise HTTPException(
+                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                detail="date_start cant cant be smaller or equal to date_end",
+            )
+
     return crud.event.update(db, db_obj=event, obj_in=event_update)
 
 
@@ -119,8 +134,11 @@ async def create_twoway_event(
     db: Session = Depends(get_db),
     _: models.User = Depends(get_admin_boss_manager),
 ):
-    event = crud.event.create(db=db, obj_in=event_create)
     user = crud.user.get(db=db, id=user_id)
+    if not user:
+        raise HTTPException(404, detail="User not found")
+    event = crud.event.create(db=db, obj_in=event_create)
+
     for colleague in user.colleagues:
         obj_in_user = schemas.FeedbackCreateEmpty(
             event_id=event.id, sender_id=user.id, receiver_id=colleague.colleague_id

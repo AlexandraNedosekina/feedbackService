@@ -1,6 +1,6 @@
-from typing import AsyncGenerator, Callable, Literal
+from typing import AsyncGenerator, Literal
 
-from fastapi import Depends, HTTPException
+from fastapi import Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
 from feedback import crud, models
@@ -25,7 +25,9 @@ async def get_current_user(
     token_payload = decode_token(token)
     user = crud.user.get_by_email(db, email=token_payload.email)
     if not user:
-        raise HTTPException(status_code=401, detail="User not found")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="User not found"
+        )
     return user
 
 
@@ -40,7 +42,9 @@ class GetUserWithRoles:
         for role in current_user_roles:
             if role in self.roles:
                 return current_user
-        raise HTTPException(status_code=401, detail="Not enough permissions")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Not enough permissions"
+        )
 
 
 def is_allowed(

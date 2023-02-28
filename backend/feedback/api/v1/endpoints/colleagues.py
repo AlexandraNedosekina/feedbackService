@@ -8,7 +8,11 @@ from feedback.api.deps import get_current_user, get_db
 router = APIRouter()
 
 
-@router.get("/", response_model=list[schemas.Colleagues])
+@router.get(
+    "/",
+    response_model=list[schemas.Colleagues],
+    dependencies=[Depends(get_current_user)],
+)
 async def get_all_colleagues(db: Session = Depends(get_db)):
     colleagues = db.query(models.Colleagues).all()
     return parse_obj_as(list[schemas.Colleagues], colleagues)
@@ -69,7 +73,7 @@ async def add_user_colleagues(
     return parse_obj_as(list[schemas.Colleagues], user.colleagues)
 
 
-@router.delete("/user_id", response_model=list[schemas.Colleagues])
+@router.delete("/{user_id}", response_model=list[schemas.Colleagues])
 async def delete_user_colleagues(
     user_id: int,
     colleagues_ids: schemas.ColleaguesIdList,

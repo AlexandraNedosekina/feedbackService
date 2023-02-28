@@ -1,4 +1,4 @@
-import datetime
+from datetime import date, time, datetime, timedelta
 import logging
 
 from fastapi import APIRouter, Body, Depends, HTTPException, Query, Response, status
@@ -16,7 +16,7 @@ get_admin_boss_manager_hr = GetUserWithRoles(["admin", "boss", "manager", "hr"])
 
 @router.get("/me", response_model=list[schemas.CalendarEvent])
 def get_calendar_events_for_current_user(
-    date: datetime.date = Query(..., example="2023-02-23", description="UTC Date"),
+    date: date = Query(..., example="2023-02-23", description="UTC Date"),
     format: schemas.CalendarFormat = Query(
         ..., description="Determines the range of return events"
     ),
@@ -86,6 +86,7 @@ def create_calendar_event(
             detail=f"You cant create event to yourself",
         )
 
+    # TODO: if user is trainee => he can create event to his mentor
     if curr_user.id not in user.get_colleagues_id and not is_allowed(
         curr_user, None, ["admin", "boss", "manager", "HR"]
     ):
@@ -118,8 +119,6 @@ def create_calendar_event(
             status_code=status.HTTP_400_BAD_REQUEST, detail="User has overlaping events"
         )
 
-    # TODO: Check users meeting readiness
-    # NOTE: Does 'work from home' have impact on logic
     event = crud.calendar.create(db, obj_in=cal_event_create, owner_id=curr_user.id)
     return event
 
@@ -152,26 +151,17 @@ def update_calendar_event(
             detail="You cant do that if event is accepted",
         )
 
+    # If only 1 of the dates is changed. check with val in db
     start = calendar_event_update.date_start
     end = calendar_event_update.date_end
-    # If only 1 of the dates is changed. check with val in db
     if bool(start) != bool(end):
-        if start and event.date_end <= start.replace(tzinfo=None):
-            logger.debug(
-                f"{start and event.date_end < start.replace(tzinfo=None)}. event_date_end={event.date_end}"
-            )
+        if (
+                (start and event.date_end <= start.replace(tzinfo=None))
+                or (end and event.date_start >= end.replace(tzinfo=None))
+            ):
             raise HTTPException(
                 status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
                 detail="date_start cant cant be smaller or equal to date_end",
-            )
-
-        if end and event.date_start >= end.replace(tzinfo=None):
-            logger.debug(
-                f"{end and event.date_start > end.replace(tzinfo=None)}. event_date_end={event.date_end}"
-            )
-            raise HTTPException(
-                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-                detail="date_end cant cant be bigger or equal to date_start",
             )
 
     event = crud.calendar.update(db, db_obj=event, obj_in=calendar_event_update)
@@ -215,7 +205,7 @@ def delete_calendar_event(
 )
 def get_calendar_events_by_user_id(
     user_id: int,
-    date: datetime.date = Query(..., example="2023-02-23", description="Date UTC"),
+    date: date = Query(..., example="2023-02-23", description="Date UTC"),
     format: schemas.CalendarFormat = Query(
         ..., description="Determines the range of return events"
     ),
@@ -343,8 +333,8 @@ def reshedule_calendar_event(
     return event
 
 
-def convert_time_to_utc(time: datetime.time, offset: int) -> datetime.time:
+def convert_time_to_utc(time: time, offset: int) -> time:
     return (
-        datetime.datetime.combine(datetime.date.today(), time)
-        - datetime.timedelta(hours=offset)
+        datetime.combine(datetime.date.today(), time)
+        - timedelta(hours=offset)
     ).time()

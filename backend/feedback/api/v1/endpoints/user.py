@@ -63,6 +63,10 @@ async def update_user(
     db: Session = Depends(get_db),
     curr_user: models.User = Depends(get_current_user),
 ) -> schemas.User:
+    """
+    Updates user.
+    User without "admin" role can update everythig except job_title, email, roles, full_name
+    """
     upd = user_update.dict(exclude_unset=True, exclude_none=True)
     upd_schemas_roles = (
         (schemas.UserUpdateSelf, ["self", "boss", "admin"]),

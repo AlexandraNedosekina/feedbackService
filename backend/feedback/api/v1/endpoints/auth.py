@@ -1,6 +1,6 @@
 import datetime
 
-from fastapi import APIRouter, Depends, HTTPException, Request, Response, responses
+from fastapi import APIRouter, Depends, HTTPException, Request, Response
 from fastapi.responses import RedirectResponse
 from httpx_oauth.oauth2 import GetAccessTokenError
 from sqlalchemy.orm import Session
@@ -12,6 +12,9 @@ from feedback.core.config import settings
 from feedback.core.OAuth2 import RequestError, gitlab
 
 router = APIRouter()
+
+# TODO: Move to cfg and add to .env and docker
+FRONTEND_URL = "http://localhost:3000" 
 
 
 async def register_user(token: schemas.OAuthToken, db: Session) -> models.User | None:
@@ -89,6 +92,7 @@ async def authorize_gitlab(
     except GetAccessTokenError:
         raise HTTPException(status_code=502, detail="Invalid code")
     user = crud.user.get_by_email(db, email=token.userinfo.email)
+
     if not user:
         user = await register_user(token, db)
         if not user:
@@ -98,7 +102,7 @@ async def authorize_gitlab(
     refresh_token = create_token(
         user, expires_in_minutes=settings.REFRESH_TOKEN_EXPIRES_IN_MINUTES
     )
-    response = RedirectResponse("http://localhost:3000", status_code=302)
+    response = RedirectResponse(FRONTEND_URL, status_code=302)
     set_cookie(response, "access-token", str(token))
     set_cookie(
         response,

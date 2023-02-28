@@ -60,6 +60,12 @@ class UserUpdateSelf(Base):
 
 
 class UserUpdateOther(Base):
+    work_hours_start: datetime.time | None = Field(
+        None, description="Start of work in Ekaterinburg time"
+    )
+    work_hours_end: datetime.time | None = Field(
+        None, description="End of work in Ekaterinburg time"
+    )
     job_title: str | None
     roles: list[
         Literal["employee", "trainee", "mentor", "manager", "hr", "boss"]
@@ -88,15 +94,6 @@ class UserInDB(UserUpdate):
 
 class User(UserInDB):
     pass
-
-
-class AddSkillPromts(Base):
-    name: list[str]
-
-
-class ShowSkillPromts(Base):
-    id: int
-    name: str
 
 
 class UserDetails(Base):

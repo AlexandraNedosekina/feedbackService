@@ -8,7 +8,6 @@ from feedback.models.user import (
     Expectations,
     Facts,
     Roles,
-    SkillPromts,
     Skills,
     User,
 )
