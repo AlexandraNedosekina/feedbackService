@@ -4,12 +4,12 @@ export * from './adapters'
 export * from './auth'
 export * from './axiosApi'
 export * from './career'
+export * from './calendar'
 export * from './colleagues'
 export * from './event'
 export * from './feedback'
 export * from './promts'
 export * from './queryKeys'
 export * from './user'
-export * from './calendar'
 
 export default api
