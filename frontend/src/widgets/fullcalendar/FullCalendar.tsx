@@ -90,6 +90,27 @@ const FullCalendar: FC = (props: CalendarOptions) => {
 			/>
 		</>
 	)
+
+	// function isCreateEventModalOpen(selectInfo) {
+	// 	const calendarApi = selectInfo.view.calendar;
+	// 	ModalWindow();
+
+	// 	const title = prompt("Please enter a new title for your event");
+	// 	calendarApi.unselect(); // clear date selection
+
+	// 	if (title) {
+	// 		calendarApi.addEvent(
+	// 			{
+	// 				title,
+	// 				start: selectInfo.startStr,
+	// 				end: selectInfo.endStr,
+	// 				allDay: selectInfo.allDay,
+	// 			},
+	// 			true
+	// 		)
+	// 	}
+	// }
+
 	function handleDateSelect(selectInfo: DateSelectArg) {
 		const title = prompt('Введите название события')
 		const calendarApi = selectInfo.view.calendar
