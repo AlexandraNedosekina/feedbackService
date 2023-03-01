@@ -10,6 +10,7 @@ interface IProps {
 	isFull?: boolean
 	iconProps?: Partial<IIconProps>
 	closeMenu?: () => void
+	notify?: boolean
 }
 
 const NavItem = ({
@@ -20,6 +21,7 @@ const NavItem = ({
 	text,
 	iconProps,
 	closeMenu,
+	notify,
 }: IProps) => {
 	const actionIconProps: ActionIconProps = {
 		variant: 'transparent',
@@ -27,8 +29,21 @@ const NavItem = ({
 		sx: theme => ({
 			color: 'white',
 			background: active ? theme.colors.brand[5] : 'transparent',
+			position: 'relative',
 			'&:hover': {
 				backgroundColor: theme.colors.brand[6],
+			},
+			'&::before': {
+				content: '""',
+				display: notify ? 'block' : 'none',
+				position: 'absolute',
+				width: '12px',
+				height: '12px',
+				backgroundColor: theme.colors.red[6],
+				borderRadius: '50%',
+				right: 0,
+				top: 0,
+				transform: 'translate(50%, -50%)',
 			},
 		}),
 	}
