@@ -10,34 +10,12 @@ const DateInput: FC = () => {
 		setValue(value)
 	}
 
+	function dateSelect() {}
+
 	return (
 		<>
 			<Stack spacing="md">
-				{/* <DatePicker
-          placeholder="Дата"
-          label="Выберете дату"
-          value={value}
-          onChange={setValue}
-          locale="ru"
-
-        />
-        <TimeRangeInput
-          clearable
-          label="Выберете время"
-          sx={() => ({
-            alignSelf: 'flex-start',
-          })}
-          value={value}
-          onChange={onChange}
-          styles={{
-            input: {
-              ['.mantine-Input-input']: {
-                border: 'none',
-              },
-            },
-          }}
-        /> */}
-				<Button>Записаться</Button>
+				<Button onClick={dateSelect}>Записаться</Button>
 			</Stack>
 		</>
 	)

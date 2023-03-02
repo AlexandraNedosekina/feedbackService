@@ -1,4 +1,5 @@
 import { Modal, Title } from '@mantine/core'
+import ModalWindowContent from './ModalWindowContent'
 
 interface IProps {
 	opened: boolean
@@ -14,7 +15,7 @@ const ModalWindow = ({ opened, onClose }: IProps) => {
 				onClose={onClose}
 				size="lg"
 			>
-				{/* Modal content */}
+				<ModalWindowContent onClose={onClose} />
 			</Modal>
 		</>
 	)
