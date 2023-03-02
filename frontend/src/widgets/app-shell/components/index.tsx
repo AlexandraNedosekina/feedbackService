@@ -8,20 +8,20 @@ interface IProps {
 }
 
 export default ({ children }: IProps) => {
-	const [isMenuOpen, setIsMenuOpen] = useState(false)
+	const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
 	return (
 		<AppShell
 			navbar={
 				<Navbar
-					isOpen={isMenuOpen}
-					closeMenu={() => setIsMenuOpen(false)}
+					isMobileMenuOpen={isMobileMenuOpen}
+					closeMobileMenu={() => setIsMobileMenuOpen(false)}
 				/>
 			}
 			header={
 				<Header
-					isOpen={isMenuOpen}
-					openMenu={() => setIsMenuOpen(state => !state)}
+					isMobileMenuOpen={isMobileMenuOpen}
+					toggleMobileMenu={() => setIsMobileMenuOpen(state => !state)}
 				/>
 			}
 			padding={0}

@@ -1,28 +1,25 @@
 import { Icon, IIconProps, TIcons } from 'shared/ui'
 import { ActionIcon, ActionIconProps, Button, ButtonProps } from '@mantine/core'
 import Link from 'next/link'
+import { useNavbarContext } from '../utils'
 
 interface IProps {
 	icon: TIcons
 	href: string
 	active?: boolean
 	text?: string
-	isFull?: boolean
 	iconProps?: Partial<IIconProps>
-	closeMenu?: () => void
 	notify?: boolean
 }
 
-const NavItem = ({
-	icon,
-	href,
-	active,
-	isFull,
-	text,
-	iconProps,
-	closeMenu,
-	notify,
-}: IProps) => {
+const NavItem = ({ icon, href, active, text, iconProps, notify }: IProps) => {
+	const {
+		closeMobileMenu,
+		isFull: isFullContext,
+		isMobile,
+	} = useNavbarContext()
+	const isFull = isMobile ? true : isFullContext
+
 	const actionIconProps: ActionIconProps = {
 		variant: 'transparent',
 		size: 'lg',
@@ -68,7 +65,7 @@ const NavItem = ({
 				component={Link}
 				href={href}
 				{...buttonProps}
-				onClick={closeMenu}
+				onClick={closeMobileMenu}
 			>
 				{text}
 			</Button>
@@ -80,7 +77,7 @@ const NavItem = ({
 			component={Link}
 			href={href}
 			{...actionIconProps}
-			onClick={closeMenu}
+			onClick={closeMobileMenu}
 		>
 			<Icon icon={icon} size={24} {...iconProps} />
 		</ActionIcon>

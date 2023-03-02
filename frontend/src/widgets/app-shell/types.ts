@@ -9,3 +9,9 @@ export interface INavItem {
 }
 
 export type TNavPages = 'feedback' | 'career' | 'calendar'
+
+export interface INavbarContext {
+	isFull: boolean
+	closeMobileMenu: () => void
+	isMobile: boolean
+}

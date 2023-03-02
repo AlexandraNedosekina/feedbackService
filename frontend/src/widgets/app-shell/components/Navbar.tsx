@@ -13,35 +13,19 @@ import { useMutation } from '@tanstack/react-query'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import { signOut } from 'shared/api'
-import { Icon, TIcons, useBaseWrapperContext } from 'shared/ui'
+import { Icon, useBaseWrapperContext } from 'shared/ui'
 import { ERoles } from 'shared/types'
 import { useUser } from 'entities/user'
 import NavItem from 'widgets/app-shell/components/NavItem'
-
-const navItems: { icon: TIcons; href: string; text: string }[] = [
-	{
-		icon: 'star',
-		href: '/feedback',
-		text: 'Обратная связь',
-	},
-	{
-		icon: 'trending_up',
-		href: '/career',
-		text: 'Карьерный рост',
-	},
-	{
-		icon: 'calendar_month',
-		href: '/calendar',
-		text: 'Календарь встреч',
-	},
-]
+import { NavbarContext } from '../utils'
+import NavItemMapper from './NavItemMapper'
 
 interface IProps {
-	isOpen: boolean
-	closeMenu: () => void
+	isMobileMenuOpen: boolean
+	closeMobileMenu: () => void
 }
 
-const Navbar = ({ isOpen, closeMenu }: IProps) => {
+const Navbar = ({ isMobileMenuOpen, closeMobileMenu }: IProps) => {
 	const router = useRouter()
 	const { isEdit, setIsEdit } = useBaseWrapperContext()
 	const { user } = useUser()
@@ -90,133 +74,129 @@ const Navbar = ({ isOpen, closeMenu }: IProps) => {
 	}, [])
 
 	return (
-		<NavbarMantine
-			width={{ sm: isFull ? 270 : 60 }}
-			sx={theme => ({
-				backgroundColor: theme.colors.brand[7],
-			})}
-			withBorder={false}
-			px="lg"
-			hiddenBreakpoint="sm"
-			hidden={!isOpen}
+		<NavbarContext.Provider
+			value={{
+				isFull,
+				closeMobileMenu,
+				isMobile,
+			}}
 		>
-			<Stack
-				justify="space-between"
-				align="center"
-				py="xl"
-				sx={() => ({ height: '100%' })}
+			<NavbarMantine
+				width={{ sm: isFull ? 270 : 60 }}
+				sx={theme => ({
+					backgroundColor: theme.colors.brand[7],
+				})}
+				withBorder={false}
+				px="lg"
+				hiddenBreakpoint="sm"
+				hidden={!isMobileMenuOpen}
 			>
 				<Stack
-					sx={theme => ({
-						[`@media (max-width: ${theme.breakpoints.sm}px)`]: {
-							width: '100%',
-						},
-					})}
+					justify="space-between"
+					align="center"
+					py="xl"
+					sx={() => ({ height: '100%' })}
 				>
-					<Box
+					<Stack
 						sx={theme => ({
-							display: 'none',
 							[`@media (max-width: ${theme.breakpoints.sm}px)`]: {
-								display: 'block',
-								a: {
-									width: '100%',
+								width: '100%',
+							},
+						})}
+					>
+						<Box
+							sx={theme => ({
+								display: 'none',
+								[`@media (max-width: ${theme.breakpoints.sm}px)`]: {
+									display: 'block',
+									a: {
+										width: '100%',
+									},
 								},
-							},
-						})}
-					>
-						<NavItem
-							icon={'account_circle'}
-							href="/profile"
-							text="Профиль"
-							isFull={true}
-							active={router.pathname === '/profile'}
-							closeMenu={closeMenu}
-						/>
-					</Box>
-					{isEdit && user?.roles.includes(ERoles.admin) && (
-						<NavItem
-							icon={'home'}
-							href={'/events'}
-							text={'Сбор обратной связи'}
-							isFull={isMobile ? true : isFull}
-							active={router.pathname.split('/')[1] === 'events'}
-							closeMenu={closeMenu}
-						/>
-					)}
-					{navItems.map((item, i) => (
-						<NavItem
-							key={i}
-							icon={item.icon}
-							href={item.href}
-							text={item.text}
-							isFull={isMobile ? true : isFull}
-							iconProps={
-								item.icon === 'star'
-									? {
-											filled: true,
-									  }
-									: undefined
-							}
-							active={
-								router.pathname.split('/')[1] ===
-								item.href.split('/')[1]
-							}
-							closeMenu={closeMenu}
-						/>
-					))}
-					<MediaQuery largerThan="sm" styles={{ display: 'none' }}>
-						<Box>
-							{user?.roles.includes(ERoles.admin) ? (
-								isEdit ? (
-									<Text onClick={deactivateEdit} ml="sm" color="white">
-										Выйти из режима управления
-									</Text>
-								) : (
-									<Text onClick={activateEdit} ml="sm" color="white">
-										Управление
-									</Text>
-								)
-							) : null}
-							<UnstyledButton
-								sx={theme => ({
-									color: 'white',
-									fontSize: theme.fontSizes.sm,
-								})}
-								ml="sm"
-								onClick={() => {
-									signOutMutate()
-									router.push('/')
-								}}
-							>
-								Выйти
-							</UnstyledButton>
+							})}
+						>
+							<NavItem
+								icon={'account_circle'}
+								href="/profile"
+								text="Профиль"
+								active={router.pathname === '/profile'}
+							/>
 						</Box>
-					</MediaQuery>
-				</Stack>
+						{isEdit && user?.roles.includes(ERoles.admin) && (
+							<NavItem
+								icon={'home'}
+								href={'/events'}
+								text={'Сбор обратной связи'}
+								active={router.pathname.split('/')[1] === 'events'}
+							/>
+						)}
 
-				<Box
-					sx={() => ({
-						width: '100%',
-						display: isMobile ? 'none' : 'flex',
-						justifyContent: isFull ? 'flex-end' : 'center',
-					})}
-				>
-					<ActionIcon
-						onClick={toggleFull}
-						variant="transparent"
-						sx={theme => ({
-							color: 'white',
-							transform: isFull ? 'rotate(180deg)' : 'rotate(0deg)',
-							'&:hover': {
-								backgroundColor: theme.colors.brand[6],
-							},
+						<NavItemMapper name="feedback" />
+						<NavItemMapper name="career" />
+						<NavItemMapper name="calendar" />
+
+						<MediaQuery largerThan="sm" styles={{ display: 'none' }}>
+							<Box>
+								{user?.roles.includes(ERoles.admin) ? (
+									isEdit ? (
+										<Text
+											onClick={deactivateEdit}
+											ml="sm"
+											color="white"
+										>
+											Выйти из режима управления
+										</Text>
+									) : (
+										<Text
+											onClick={activateEdit}
+											ml="sm"
+											color="white"
+										>
+											Управление
+										</Text>
+									)
+								) : null}
+								<UnstyledButton
+									sx={theme => ({
+										color: 'white',
+										fontSize: theme.fontSizes.sm,
+									})}
+									ml="sm"
+									onClick={() => {
+										signOutMutate()
+										router.push('/')
+									}}
+								>
+									Выйти
+								</UnstyledButton>
+							</Box>
+						</MediaQuery>
+					</Stack>
+
+					<Box
+						sx={() => ({
+							width: '100%',
+							display: isMobile ? 'none' : 'flex',
+							justifyContent: isFull ? 'flex-end' : 'center',
 						})}
 					>
-						<Icon icon="double_arrow" />
-					</ActionIcon>
-				</Box>
-			</Stack>
-		</NavbarMantine>
+						<ActionIcon
+							onClick={toggleFull}
+							variant="transparent"
+							sx={theme => ({
+								color: 'white',
+								transform: isFull ? 'rotate(180deg)' : 'rotate(0deg)',
+								'&:hover': {
+									backgroundColor: theme.colors.brand[6],
+								},
+							})}
+						>
+							<Icon icon="double_arrow" />
+						</ActionIcon>
+					</Box>
+				</Stack>
+			</NavbarMantine>
+		</NavbarContext.Provider>
 	)
 }
 

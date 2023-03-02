@@ -1,5 +1,3 @@
-import { useMantineTheme } from '@mantine/core'
-import { useMediaQuery } from '@mantine/hooks'
 import { useRouter } from 'next/router'
 import React from 'react'
 import { INavItem, TNavPages } from '../types'
@@ -7,13 +5,13 @@ import CalendarItem from './CalendarItem'
 import NavItem from './NavItem'
 
 const mapper: Record<TNavPages, INavItem> = {
-	career: {
+	feedback: {
 		type: 'base',
 		icon: 'star',
 		href: '/feedback',
 		text: 'Обратная связь',
 	},
-	feedback: {
+	career: {
 		type: 'base',
 		icon: 'trending_up',
 		href: '/career',
@@ -27,15 +25,11 @@ const mapper: Record<TNavPages, INavItem> = {
 
 interface IProps {
 	name: TNavPages
-	isFull: boolean
-	closeMenu: () => void
 }
 
-export default ({ name, isFull, closeMenu }: IProps) => {
+export default ({ name }: IProps) => {
 	const item = mapper[name]
 
-	const theme = useMantineTheme()
-	const isMobile = useMediaQuery(`(max-width: ${theme.breakpoints.sm}px)`)
 	const router = useRouter()
 
 	if (item.type === 'component') {
@@ -52,7 +46,6 @@ export default ({ name, isFull, closeMenu }: IProps) => {
 			icon={item.icon}
 			href={item.href}
 			text={item.text}
-			isFull={isMobile ? true : isFull}
 			iconProps={
 				item.icon === 'star'
 					? {
@@ -61,7 +54,6 @@ export default ({ name, isFull, closeMenu }: IProps) => {
 					: undefined
 			}
 			active={router.pathname.split('/')[1] === item.href.split('/')[1]}
-			closeMenu={closeMenu}
 		/>
 	)
 }
