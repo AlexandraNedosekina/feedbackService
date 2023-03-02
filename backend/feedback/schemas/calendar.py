@@ -95,7 +95,6 @@ class CalendarEventUpdate(Base):
     _check_start_after_current_date = validator("date_start", allow_reuse=True)(
         is_date_after_currnet_date
     )
-    # FIX: if only one date is provided throws error
     _check_end_after_start = root_validator(allow_reuse=True)(is_end_after_start)
 
 

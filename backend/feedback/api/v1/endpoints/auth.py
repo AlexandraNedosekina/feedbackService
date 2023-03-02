@@ -13,9 +13,6 @@ from feedback.core.OAuth2 import RequestError, gitlab
 
 router = APIRouter()
 
-# TODO: Move to cfg and add to .env and docker
-FRONTEND_URL = "http://localhost:3000" 
-
 
 async def register_user(token: schemas.OAuthToken, db: Session) -> models.User | None:
     try:
@@ -102,7 +99,7 @@ async def authorize_gitlab(
     refresh_token = create_token(
         user, expires_in_minutes=settings.REFRESH_TOKEN_EXPIRES_IN_MINUTES
     )
-    response = RedirectResponse(FRONTEND_URL, status_code=302)
+    response = RedirectResponse(settings.FRONTEND_URL, status_code=302)
     set_cookie(response, "access-token", str(token))
     set_cookie(
         response,

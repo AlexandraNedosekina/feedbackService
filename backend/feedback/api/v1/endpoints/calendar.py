@@ -1,11 +1,21 @@
-from datetime import date, time, datetime, timedelta
 import logging
+from datetime import date, datetime, time, timedelta
 
-from fastapi import APIRouter, Body, Depends, HTTPException, Query, Response, status
+from fastapi import (
+    APIRouter,
+    BackgroundTasks,
+    Body,
+    Depends,
+    HTTPException,
+    Query,
+    Response,
+    status,
+)
 from sqlalchemy.orm import Session
 
 from feedback import crud, models, schemas
 from feedback.api.deps import GetUserWithRoles, get_current_user, get_db, is_allowed
+from feedback.notifications.notifiers import web_notifier
 
 EKB_UTC_OFFSET = 5
 
@@ -60,6 +70,7 @@ def get_calendar_event_by_id(
 @router.post("/", response_model=schemas.CalendarEvent)
 def create_calendar_event(
     cal_event_create: schemas.CalendarEventCreate,
+    background_tasks: BackgroundTasks,
     db: Session = Depends(get_db),
     curr_user=Depends(get_current_user),
 ):
@@ -120,6 +131,13 @@ def create_calendar_event(
         )
 
     event = crud.calendar.create(db, obj_in=cal_event_create, owner_id=curr_user.id)
+    background_tasks.add_task(
+        web_notifier.send,
+        event.user_id,
+        f"{event.owner.full_name.title()} created new meeting",
+        "calendar.create",
+        db,
+    )
     return event
 
 
@@ -155,10 +173,9 @@ def update_calendar_event(
     start = calendar_event_update.date_start
     end = calendar_event_update.date_end
     if bool(start) != bool(end):
-        if (
-                (start and event.date_end <= start.replace(tzinfo=None))
-                or (end and event.date_start >= end.replace(tzinfo=None))
-            ):
+        if (start and event.date_end <= start.replace(tzinfo=None)) or (
+            end and event.date_start >= end.replace(tzinfo=None)
+        ):
             raise HTTPException(
                 status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
                 detail="date_start cant cant be smaller or equal to date_end",
@@ -225,7 +242,10 @@ def get_calendar_events_by_user_id(
 
 @router.post("/{calendar_id}/accept", response_model=schemas.CalendarEvent)
 def accept_calendar_event(
-    calendar_id: int, db: Session = Depends(get_db), curr_user=Depends(get_current_user)
+    calendar_id: int,
+    background_tasks: BackgroundTasks,
+    db: Session = Depends(get_db),
+    curr_user=Depends(get_current_user),
 ):
     event = crud.calendar.get(db, id=calendar_id)
     if not event:
@@ -247,13 +267,20 @@ def accept_calendar_event(
         db, db_obj=event, status=schemas.CalendarEventStatus.ACCEPTED
     )
 
-    # TODO: Send notification to event owner
+    background_tasks.add_task(
+        web_notifier.send,
+        event.owner_id,
+        f"{event.user.full_name.title()} accepted your meeting",
+        "calendar.accept",
+        db,
+    )
     return event
 
 
 @router.post("/{calendar_id}/reject", response_model=schemas.CalendarEvent)
 def reject_calendar_event(
     calendar_id: int,
+    background_tasks: BackgroundTasks,
     rejection_cause: str = Body("", embed=True),
     db: Session = Depends(get_db),
     curr_user=Depends(get_current_user),
@@ -276,7 +303,13 @@ def reject_calendar_event(
 
     event = crud.calendar.reject(db, db_obj=event, rejection_cause=rejection_cause)
 
-    # TODO: Send notification to event owner
+    background_tasks.add_task(
+        web_notifier.send,
+        event.owner_id,
+        f"{event.user.full_name.title()} rejected your meeting",
+        "calendar.reject",
+        db,
+    )
     return event
 
 
@@ -284,6 +317,7 @@ def reject_calendar_event(
 def reshedule_calendar_event(
     calendar_id: int,
     resheduled_event: schemas.CalendarEventReshedule,
+    background_tasks: BackgroundTasks,
     db: Session = Depends(get_db),
     curr_user=Depends(get_current_user),
 ):
@@ -329,12 +363,17 @@ def reshedule_calendar_event(
 
     event = crud.calendar.reshedule(db, db_obj=event, resheduled=resheduled_event)
 
-    # TODO: Send notification to event owner (prev owner)
+    background_tasks.add_task(
+        web_notifier.send,
+        event.user_id,
+        f"{event.owner.full_name.title()} resheduled your meeting",
+        "calendar.reshedule",
+        db,
+    )
     return event
 
 
 def convert_time_to_utc(time: time, offset: int) -> time:
     return (
-        datetime.combine(datetime.date.today(), time)
-        - timedelta(hours=offset)
+        datetime.combine(datetime.date.today(), time) - timedelta(hours=offset)
     ).time()

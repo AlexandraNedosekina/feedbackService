@@ -9,6 +9,7 @@ from feedback.api.v1.endpoints import (
     event,
     feedback,
     for_tests,
+    notificaions,
     promts,
     user,
 )
@@ -32,6 +33,9 @@ api_router.include_router(feedback.router, prefix="/feedback", tags=["feedback"]
 api_router.include_router(career.router, prefix="/career", tags=["career"])
 api_router.include_router(calendar.router, prefix="/calendar", tags=["calendar"])
 
+api_router.include_router(
+    notificaions.router, prefix="/notificaions", tags=["notifications"]
+)
 
 # Remove
 api_router.include_router(for_tests.router, prefix="/tests", tags=["Tests"])

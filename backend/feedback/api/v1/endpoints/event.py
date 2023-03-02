@@ -43,16 +43,14 @@ async def update_event(
     event = crud.event.get(db, id)
     if not event:
         raise HTTPException(status_code=404, detail="Event does not exist")
-    
 
     # If only 1 of the dates is changed. check with val in db
     start = event_update.date_start
     end = event_update.date_stop
     if bool(start) != bool(end):
-        if (
-                (start and event.date_stop <= start.replace(tzinfo=None))
-                or (end and event.date_start >= end.replace(tzinfo=None))
-            ):
+        if (start and event.date_stop <= start.replace(tzinfo=None)) or (
+            end and event.date_start >= end.replace(tzinfo=None)
+        ):
             raise HTTPException(
                 status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
                 detail="date_start cant cant be smaller or equal to date_end",

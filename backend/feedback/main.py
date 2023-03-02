@@ -1,5 +1,6 @@
 import logging
 
+import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -30,7 +31,4 @@ app.add_middleware(
 
 models.Base.metadata.create_all(bind=engine)
 
-
-@app.get("/")
-async def root():
-    return {"message": "Ok dude"}
+uvicorn.run(app, host="0.0.0.0", port=settings.APP_PORT)
