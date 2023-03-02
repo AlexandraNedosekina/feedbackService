@@ -1,13 +1,22 @@
-import ModalWindow from './ModalWindow'
+import { Modal, Title } from '@mantine/core'
+import ModalWindowContent from './ModalWindowContent'
 
 interface IProps {
-	onCancel?: () => void
+	opened: boolean
+	onClose: () => void
 }
 
-export default ({ onCancel }: IProps) => {
+export default function ({ opened, onClose }: IProps) {
 	return (
 		<>
-			<ModalWindow />
+			<Modal
+				title={<Title order={3}>Создание встречи</Title>}
+				opened={opened}
+				onClose={onClose}
+				size="lg"
+			>
+				<ModalWindowContent onClose={onClose} />
+			</Modal>
 		</>
 	)
 }

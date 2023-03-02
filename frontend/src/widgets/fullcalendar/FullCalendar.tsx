@@ -12,6 +12,7 @@ import 'dayjs/locale/ru'
 import React, { FC, useState } from 'react'
 import { createEventId, INITIAL_EVENTS } from './components/event-utils'
 import { Button, Group, Modal } from '@mantine/core'
+import { CreateMeeting } from 'widgets/create-meeting'
 
 const FullCalendar: FC = (props: CalendarOptions) => {
 	const [opened, setOpened] = useState(false)
@@ -33,20 +34,21 @@ const FullCalendar: FC = (props: CalendarOptions) => {
 					myCustomButton: {
 						text: 'Создать событие',
 						click: function () {
-							const dateStr = prompt('Введите дату в формате ГГГГ-ММ-ДД')
-							// var userName = prompt('Введите имя сотрудника')
-							const date = new Date(dateStr + 'T00:00:00')
+							setOpened(true)
+							//const dateStr = prompt('Введите дату в формате ГГГГ-ММ-ДД')
+							//// var userName = prompt('Введите имя сотрудника')
+							//const date = new Date(dateStr + 'T00:00:00')
 
-							if (!isNaN(date.valueOf())) {
-								// FullCalendar.addEvent({
-								// 	title: 'dynamic event',
-								// 	start: date,
-								// 	allDay: true,
-								// })
-								alert('Great. Now, update your database...')
-							} else {
-								alert('Invalid date.')
-							}
+							//if (!isNaN(date.valueOf())) {
+							//// FullCalendar.addEvent({
+							//// 	title: 'dynamic event',
+							//// 	start: date,
+							//// 	allDay: true,
+							//// })
+							//alert('Great. Now, update your database...')
+							//} else {
+							//alert('Invalid date.')
+							//}
 						},
 					},
 				}}
@@ -90,6 +92,7 @@ const FullCalendar: FC = (props: CalendarOptions) => {
 					hour12: false,
 				}}
 			/>
+			<CreateMeeting opened={opened} onClose={() => setOpened(false)} />
 		</>
 	)
 
