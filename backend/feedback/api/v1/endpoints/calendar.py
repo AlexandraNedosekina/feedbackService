@@ -14,8 +14,14 @@ from fastapi import (
 from sqlalchemy.orm import Session
 
 from feedback import crud, models, schemas
-from feedback.api.deps import GetUserWithRoles, get_current_user, get_db, is_allowed
-from feedback.notifications.notifiers import web_notifier
+from feedback.api.deps import (
+    GetUserWithRoles,
+    get_current_user,
+    get_db,
+    get_notifiers,
+    is_allowed,
+)
+from feedback.notifications.notifiers import AbstractNotifier
 
 EKB_UTC_OFFSET = 5
 
@@ -73,6 +79,7 @@ def create_calendar_event(
     background_tasks: BackgroundTasks,
     db: Session = Depends(get_db),
     curr_user=Depends(get_current_user),
+    notifiers: AbstractNotifier = Depends(get_notifiers),
 ):
     """
     Creates calendar event.
@@ -82,8 +89,6 @@ def create_calendar_event(
     - **date_start**: Event end datetime in UTC with timezone. Example: UTC: `2023-02-26T12:30:00Z`, EKB: `2023-02-26T15:00:00+05:00`
     - **date_end**: Event end datetime in UTC with timezone. Example: UTC: `2023-02-26T12:30:00Z`, EKB: `2023-02-26T15:00:00+05:00`
     """
-    logger.debug(cal_event_create)
-
     user = crud.user.get(db, cal_event_create.user_id)
     if not user:
         raise HTTPException(
@@ -132,11 +137,11 @@ def create_calendar_event(
 
     event = crud.calendar.create(db, obj_in=cal_event_create, owner_id=curr_user.id)
     background_tasks.add_task(
-        web_notifier.send,
+        notifiers.send,
         event.user_id,
         f"{event.owner.full_name.title()} created new meeting",
         "calendar.create",
-        db,
+        db=db,
     )
     return event
 
@@ -246,6 +251,7 @@ def accept_calendar_event(
     background_tasks: BackgroundTasks,
     db: Session = Depends(get_db),
     curr_user=Depends(get_current_user),
+    notifiers: AbstractNotifier = Depends(get_notifiers),
 ):
     event = crud.calendar.get(db, id=calendar_id)
     if not event:
@@ -268,11 +274,11 @@ def accept_calendar_event(
     )
 
     background_tasks.add_task(
-        web_notifier.send,
+        notifiers.send,
         event.owner_id,
         f"{event.user.full_name.title()} accepted your meeting",
         "calendar.accept",
-        db,
+        db=db,
     )
     return event
 
@@ -284,6 +290,7 @@ def reject_calendar_event(
     rejection_cause: str = Body("", embed=True),
     db: Session = Depends(get_db),
     curr_user=Depends(get_current_user),
+    notifiers: AbstractNotifier = Depends(get_notifiers),
 ):
     event = crud.calendar.get(db, id=calendar_id)
     if not event:
@@ -304,11 +311,11 @@ def reject_calendar_event(
     event = crud.calendar.reject(db, db_obj=event, rejection_cause=rejection_cause)
 
     background_tasks.add_task(
-        web_notifier.send,
+        notifiers.send,
         event.owner_id,
         f"{event.user.full_name.title()} rejected your meeting",
         "calendar.reject",
-        db,
+        db=db,
     )
     return event
 
@@ -320,6 +327,7 @@ def reshedule_calendar_event(
     background_tasks: BackgroundTasks,
     db: Session = Depends(get_db),
     curr_user=Depends(get_current_user),
+    notifiers: AbstractNotifier = Depends(get_notifiers),
 ):
     event = crud.calendar.get(db, id=calendar_id)
     if not event:
@@ -364,16 +372,14 @@ def reshedule_calendar_event(
     event = crud.calendar.reshedule(db, db_obj=event, resheduled=resheduled_event)
 
     background_tasks.add_task(
-        web_notifier.send,
+        notifiers.send,
         event.user_id,
         f"{event.owner.full_name.title()} resheduled your meeting",
         "calendar.reshedule",
-        db,
+        db=db,
     )
     return event
 
 
 def convert_time_to_utc(time: time, offset: int) -> time:
-    return (
-        datetime.combine(datetime.date.today(), time) - timedelta(hours=offset)
-    ).time()
+    return (datetime.combine(date.today(), time) - timedelta(hours=offset)).time()

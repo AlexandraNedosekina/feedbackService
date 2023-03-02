@@ -66,3 +66,16 @@ def is_allowed(
         if current_user.id == target_user_id:
             return True
     return False
+
+
+from feedback.notifications.notifiers import (
+    LoggerNotifier,
+    Notifiers,
+    PersistentNotifier,
+)
+
+notifiers = Notifiers(PersistentNotifier(crud.notification), LoggerNotifier())
+
+
+def get_notifiers():
+    return notifiers
