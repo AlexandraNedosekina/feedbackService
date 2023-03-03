@@ -11,8 +11,9 @@ import 'dayjs/locale/ru'
 import { createEventId, INITIAL_EVENTS } from './components/event-utils'
 import { Button, Group, Modal } from '@mantine/core'
 import { CreateMeeting } from 'widgets/create-meeting'
+import { useState } from 'react'
 
-const FullCalendar: FC = (props: CalendarOptions) => {
+const FullCalendar = (props: CalendarOptions) => {
 	const [opened, setOpened] = useState(false)
 	return (
 		<>
@@ -24,7 +25,7 @@ const FullCalendar: FC = (props: CalendarOptions) => {
 				{...props}
 				plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
 				headerToolbar={{
-					left: 'prev,next today',
+					left: 'prev,next today createEventButton',
 					center: 'title',
 					right: 'dayGridMonth,timeGridWeek,timeGridDay',
 				}}
@@ -35,25 +36,9 @@ const FullCalendar: FC = (props: CalendarOptions) => {
 					day: 'День',
 				}}
 				customButtons={{
-					myCustomButton: {
+					createEventButton: {
 						text: 'Создать событие',
-						click: function () {
-							setOpened(true)
-							//const dateStr = prompt('Введите дату в формате ГГГГ-ММ-ДД')
-							//// var userName = prompt('Введите имя сотрудника')
-							//const date = new Date(dateStr + 'T00:00:00')
-
-							//if (!isNaN(date.valueOf())) {
-							//// FullCalendar.addEvent({
-							//// 	title: 'dynamic event',
-							//// 	start: date,
-							//// 	allDay: true,
-							//// })
-							//alert('Great. Now, update your database...')
-							//} else {
-							//alert('Invalid date.')
-							//}
-						},
+						click: () => setOpened(true),
 					},
 				}}
 				// initialView="timeGridWeek"
