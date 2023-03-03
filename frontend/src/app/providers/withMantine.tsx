@@ -1,5 +1,5 @@
 import { MantineProvider } from '@mantine/core'
-import { NotificationsProvider } from '@mantine/notifications'
+import { Notifications } from '@mantine/notifications'
 import { mantineTheme } from '../styles/mantineTheme'
 
 export const withMantine =
@@ -12,8 +12,8 @@ export const withMantine =
 				withNormalizeCSS
 				theme={mantineTheme}
 			>
-				<NotificationsProvider>
+				<Notifications>
 					<Component {...props} />
-				</NotificationsProvider>
+				</Notifications>
 			</MantineProvider>
 		)
