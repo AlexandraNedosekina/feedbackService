@@ -9,8 +9,11 @@ import timeGridPlugin from '@fullcalendar/timegrid'
 import interactionPlugin from '@fullcalendar/interaction'
 import 'dayjs/locale/ru'
 import { createEventId, INITIAL_EVENTS } from './components/event-utils'
+import { Button, Group, Modal } from '@mantine/core'
+import { CreateMeeting } from 'widgets/create-meeting'
 
-const FullCalendar = (props: CalendarOptions) => {
+const FullCalendar: FC = (props: CalendarOptions) => {
+	const [opened, setOpened] = useState(false)
 	return (
 		<>
 			{/* стартовая страница - календарь сотрудника, время работы подтягивается 
@@ -30,6 +33,28 @@ const FullCalendar = (props: CalendarOptions) => {
 					month: 'Месяц',
 					week: 'Неделя',
 					day: 'День',
+				}}
+				customButtons={{
+					myCustomButton: {
+						text: 'Создать событие',
+						click: function () {
+							setOpened(true)
+							//const dateStr = prompt('Введите дату в формате ГГГГ-ММ-ДД')
+							//// var userName = prompt('Введите имя сотрудника')
+							//const date = new Date(dateStr + 'T00:00:00')
+
+							//if (!isNaN(date.valueOf())) {
+							//// FullCalendar.addEvent({
+							//// 	title: 'dynamic event',
+							//// 	start: date,
+							//// 	allDay: true,
+							//// })
+							//alert('Great. Now, update your database...')
+							//} else {
+							//alert('Invalid date.')
+							//}
+						},
+					},
 				}}
 				// initialView="timeGridWeek"
 				selectable={true}
@@ -67,8 +92,30 @@ const FullCalendar = (props: CalendarOptions) => {
 				}}
 				firstDay={1}
 			/>
+			<CreateMeeting opened={opened} onClose={() => setOpened(false)} />
 		</>
 	)
+
+	// function isCreateEventModalOpen(selectInfo) {
+	// 	const calendarApi = selectInfo.view.calendar;
+	// 	ModalWindow();
+
+	// 	const title = prompt("Please enter a new title for your event");
+	// 	calendarApi.unselect(); // clear date selection
+
+	// 	if (title) {
+	// 		calendarApi.addEvent(
+	// 			{
+	// 				title,
+	// 				start: selectInfo.startStr,
+	// 				end: selectInfo.endStr,
+	// 				allDay: selectInfo.allDay,
+	// 			},
+	// 			true
+	// 		)
+	// 	}
+	// }
+
 	function handleDateSelect(selectInfo: DateSelectArg) {
 		const title = prompt('Введите название события')
 		const calendarApi = selectInfo.view.calendar
@@ -87,7 +134,7 @@ const FullCalendar = (props: CalendarOptions) => {
 	}
 
 	function handleEventCreate() {
-		const dateStr = prompt('Введите ваду в формате ГГГГ-ММ-ДД')
+		const dateStr = prompt('Введите дату в формате ГГГГ-ММ-ДД')
 		const date = new Date(dateStr + 'T00:00:00')
 		if (!isNaN(date.valueOf())) {
 			// FullCalendar.bind({
