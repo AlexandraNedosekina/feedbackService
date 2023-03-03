@@ -11,10 +11,40 @@ import 'dayjs/locale/ru'
 import { createEventId, INITIAL_EVENTS } from './components/event-utils'
 import { Button, Group, Modal } from '@mantine/core'
 import { CreateMeeting } from 'widgets/create-meeting'
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
+import { useQuery } from '@tanstack/react-query'
+import { myCalendar, QueryKeys } from 'shared/api'
+import dayjs from 'dayjs'
+import { CalendarFormat } from 'shared/api/generatedTypes'
+import { EditEventModal } from './components'
 
 const FullCalendar = (props: CalendarOptions) => {
 	const [opened, setOpened] = useState(false)
+	const [isEditOpen, setIsEditOpen] = useState(false)
+
+	const { data } = useQuery({
+		queryKey: [QueryKeys.CALENDAR],
+		queryFn: () =>
+			myCalendar(
+				dayjs(Date.now()).format('YYYY-MM-DD'),
+				CalendarFormat.Month
+			),
+	})
+	const mappedData = useMemo(
+		() =>
+			data?.map(item => ({
+				title: item.title,
+				start: item.date_start,
+				end: item.date_end,
+			})),
+		[data]
+	)
+
+	function handleEventClick(clickInfo: EventClickArg) {
+		console.log(clickInfo.event.title)
+		setIsEditOpen(true)
+	}
+
 	return (
 		<>
 			{/* стартовая страница - календарь сотрудника, время работы подтягивается 
@@ -62,13 +92,7 @@ const FullCalendar = (props: CalendarOptions) => {
 					startTime: '10:00',
 					endTime: '18:00',
 				}}
-				events={[
-					{
-						title: 'My Event',
-						start: '2010-01-01T14:30:00',
-						allDay: false,
-					},
-				]}
+				events={mappedData}
 				eventTimeFormat={{
 					hour: '2-digit',
 					minute: '2-digit',
@@ -78,6 +102,10 @@ const FullCalendar = (props: CalendarOptions) => {
 				firstDay={1}
 			/>
 			<CreateMeeting opened={opened} onClose={() => setOpened(false)} />
+			<EditEventModal
+				isOpen={isEditOpen}
+				onClose={() => setIsEditOpen(false)}
+			/>
 		</>
 	)
 
@@ -131,16 +159,6 @@ const FullCalendar = (props: CalendarOptions) => {
 		} else {
 			alert('Invalid date.')
 		}
-	}
-}
-
-function handleEventClick(clickInfo: EventClickArg) {
-	if (
-		confirm(
-			`Вы действительно хотите удалить это событие?'${clickInfo.event.title}'`
-		)
-	) {
-		clickInfo.event.remove()
 	}
 }
 
