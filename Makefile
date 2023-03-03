@@ -1,14 +1,14 @@
 up:
-	docker-compose up -d
+	docker-compose --env-file ./backend/.env up -d
 up-build:
-	docker-compose up -d --build
+	docker-compose --env-file ./backend/.env up -d --build
 up-backend:
-	docker-compose up -d backend
+	docker-compose --env-file ./backend/.env up -d backend
 up-backend-build:
-	docker-compose up -d --build backend
+	docker-compose --env-file ./backend/.env up -d --build backend
 up-frontend:
-	docker-compose up -d frontend
+	docker-compose --env-file ./backend/.env up -d frontend
 up-frontend-build:
-	docker-compose up -d --build frontend
+	docker-compose --env-file ./backend/.env up -d --build frontend
 down:
 	docker-compose down
