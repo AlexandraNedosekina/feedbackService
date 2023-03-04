@@ -17,11 +17,14 @@ import dayjs from 'dayjs'
 import { CalendarFormat } from 'shared/api/generatedTypes'
 import { EditEventModal } from './components'
 import { Box, Text } from '@mantine/core'
+import { useFullcalendarStore } from './model'
 
 const FullCalendar = (props: CalendarOptions) => {
 	const [opened, setOpened] = useState(false)
 	const [isEditOpen, setIsEditOpen] = useState(false)
 	const [eventForEdit, setEventForEdit] = useState<Record<any, any>>()
+
+	const update = useFullcalendarStore(state => state.update)
 
 	const { data } = useQuery({
 		queryKey: [QueryKeys.CALENDAR],
@@ -39,16 +42,20 @@ const FullCalendar = (props: CalendarOptions) => {
 				end: item.date_end + '+0000',
 				extendedProps: {
 					id: item.id,
+					user: item.user,
 				},
 			})) ?? [],
 		[data]
 	)
 
 	function handleEventClick(clickInfo: EventClickArg) {
-		setEventForEdit({
-			id: clickInfo.event.extendedProps.id,
-			start: clickInfo.event.startStr,
-			end: clickInfo.event.endStr,
+		update({
+			eventForEdit: {
+				id: clickInfo.event.extendedProps.id,
+				start: clickInfo.event.start,
+				end: clickInfo.event.end,
+				user: clickInfo.event.extendedProps.user,
+			},
 		})
 		setIsEditOpen(true)
 	}
@@ -113,7 +120,6 @@ const FullCalendar = (props: CalendarOptions) => {
 			<EditEventModal
 				isOpen={isEditOpen}
 				onClose={() => setIsEditOpen(false)}
-				event={eventForEdit}
 			/>
 		</>
 	)
