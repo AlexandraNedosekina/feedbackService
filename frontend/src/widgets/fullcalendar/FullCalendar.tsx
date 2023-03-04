@@ -9,7 +9,6 @@ import timeGridPlugin from '@fullcalendar/timegrid'
 import interactionPlugin from '@fullcalendar/interaction'
 import 'dayjs/locale/ru'
 import { createEventId, INITIAL_EVENTS } from './components/event-utils'
-import { Button, Group, Modal } from '@mantine/core'
 import { CreateMeeting } from 'widgets/create-meeting'
 import { useState, useMemo } from 'react'
 import { useQuery } from '@tanstack/react-query'
@@ -17,10 +16,12 @@ import { myCalendar, QueryKeys } from 'shared/api'
 import dayjs from 'dayjs'
 import { CalendarFormat } from 'shared/api/generatedTypes'
 import { EditEventModal } from './components'
+import { Box, Text } from '@mantine/core'
 
 const FullCalendar = (props: CalendarOptions) => {
 	const [opened, setOpened] = useState(false)
 	const [isEditOpen, setIsEditOpen] = useState(false)
+	const [eventForEdit, setEventForEdit] = useState<Record<any, any>>()
 
 	const { data } = useQuery({
 		queryKey: [QueryKeys.CALENDAR],
@@ -34,14 +35,21 @@ const FullCalendar = (props: CalendarOptions) => {
 		() =>
 			data?.map(item => ({
 				title: item.title,
-				start: item.date_start,
-				end: item.date_end,
-			})),
+				start: item.date_start + '+0000',
+				end: item.date_end + '+0000',
+				extendedProps: {
+					id: item.id,
+				},
+			})) ?? [],
 		[data]
 	)
 
 	function handleEventClick(clickInfo: EventClickArg) {
-		console.log(clickInfo.event.title)
+		setEventForEdit({
+			id: clickInfo.event.extendedProps.id,
+			start: clickInfo.event.startStr,
+			end: clickInfo.event.endStr,
+		})
 		setIsEditOpen(true)
 	}
 
@@ -78,7 +86,7 @@ const FullCalendar = (props: CalendarOptions) => {
 				nowIndicator={true}
 				editable={true}
 				initialEvents={INITIAL_EVENTS}
-				select={handleDateSelect}
+				select={() => setOpened(true)}
 				eventContent={renderEventContent}
 				eventClick={handleEventClick}
 				// eventsSet={handleEvents}
@@ -105,6 +113,7 @@ const FullCalendar = (props: CalendarOptions) => {
 			<EditEventModal
 				isOpen={isEditOpen}
 				onClose={() => setIsEditOpen(false)}
+				event={eventForEdit}
 			/>
 		</>
 	)
@@ -164,10 +173,10 @@ const FullCalendar = (props: CalendarOptions) => {
 
 function renderEventContent(eventContent: EventContentArg) {
 	return (
-		<>
-			<b>{eventContent.timeText}</b>
-			<i>{eventContent.event.title}</i>
-		</>
+		<Box>
+			<Text weight="bolder">{eventContent.timeText}</Text>
+			<Text>{eventContent.event.title}</Text>
+		</Box>
 	)
 }
 export default FullCalendar
