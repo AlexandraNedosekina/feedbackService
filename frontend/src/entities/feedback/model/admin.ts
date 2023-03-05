@@ -1,3 +1,4 @@
+import { UpdateAction } from 'shared/types'
 import create from 'zustand'
 import { devtools } from 'zustand/middleware'
 import { immer } from 'zustand/middleware/immer'
@@ -7,11 +8,7 @@ type State = {
 	eventId: string
 }
 
-type Actions = {
-	update: (value: {
-		[key in keyof State]?: State[key]
-	}) => void
-}
+type Actions = {} & UpdateAction<State>
 
 export const useAdminFeedbackStore = create(
 	devtools(
