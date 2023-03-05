@@ -21,6 +21,7 @@ const EditEventModal = ({ isOpen, onClose }: IProps) => {
 	//queryFn: () => getCalendarById(event!.id),
 	//enabled: !!event?.id,
 	//})
+	
 	//console.log(data)
 
 	//const { mutate } = useMutation({

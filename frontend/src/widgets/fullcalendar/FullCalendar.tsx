@@ -22,7 +22,6 @@ import { useFullcalendarStore } from './model'
 const FullCalendar = (props: CalendarOptions) => {
 	const [opened, setOpened] = useState(false)
 	const [isEditOpen, setIsEditOpen] = useState(false)
-	const [eventForEdit, setEventForEdit] = useState<Record<any, any>>()
 
 	const update = useFullcalendarStore(state => state.update)
 
@@ -52,8 +51,8 @@ const FullCalendar = (props: CalendarOptions) => {
 		update({
 			eventForEdit: {
 				id: clickInfo.event.extendedProps.id,
-				start: clickInfo.event.start,
-				end: clickInfo.event.end,
+				start: clickInfo.event.start || new Date(),
+				end: clickInfo.event.end || new Date(),
 				user: clickInfo.event.extendedProps.user,
 			},
 		})
