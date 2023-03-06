@@ -21,6 +21,7 @@ export type TIcons =
 	| 'remove'
 	| 'arrow_back_ios_new'
 	| 'question_mark'
+	| 'schedule'
 type TIconType = 'outlined' | 'rounded' | 'sharp'
 
 export interface IIconProps {
