@@ -12,8 +12,7 @@ export const withMantine =
 				withNormalizeCSS
 				theme={mantineTheme}
 			>
-				<Notifications>
-					<Component {...props} />
-				</Notifications>
+				<Notifications />
+				<Component {...props} />
 			</MantineProvider>
 		)
