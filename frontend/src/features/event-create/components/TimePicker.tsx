@@ -1,5 +1,5 @@
 import { Box, Group, Text } from '@mantine/core'
-import { DatePicker, TimeInput } from '@mantine/dates'
+import { DatePicker, DatePickerInput, TimeInput } from '@mantine/dates'
 import shallow from 'zustand/shallow'
 import { useCreateEventStore } from '../model'
 
@@ -38,8 +38,11 @@ const TimePicker = () => {
 				<Text>Начало</Text>
 				<Group align="start">
 					<TimeInput
-						defaultValue={startTime}
-						onChange={value => update({ startTime: value })}
+						//defaultValue={startTime}
+						onChange={value => {
+							console.log(value.target.value)
+							//update({ startTime: value })
+						}}
 						maw={'min-content'}
 						error={
 							getIsStartDateSame() && !getIsStartTimeAfterNow()
@@ -47,8 +50,7 @@ const TimePicker = () => {
 								: ''
 						}
 					/>
-					<DatePicker
-						locale="ru"
+					<DatePickerInput
 						placeholder="Выберите дату"
 						defaultValue={startDate}
 						onChange={value => update({ startDate: value })}
@@ -73,8 +75,7 @@ const TimePicker = () => {
 								: ''
 						}
 					/>
-					<DatePicker
-						locale="ru"
+					<DatePickerInput
 						placeholder="Выберите дату"
 						defaultValue={endDate}
 						onChange={value => update({ endDate: value })}
