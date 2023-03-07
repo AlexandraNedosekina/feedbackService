@@ -4,14 +4,20 @@ import { Icon, TIcons } from 'shared/ui'
 type TProps = {
 	icon: TIcons
 	tooltipText?: string
+	onClick?: () => void
 } & ActionIconProps
 
-export default function ({ icon, tooltipText, ...actionIconProps }: TProps) {
+export default function ({
+	icon,
+	tooltipText,
+	onClick,
+	...actionIconProps
+}: TProps) {
 	const props: ActionIconProps = { variant: 'filled', ...actionIconProps }
 
 	if (!tooltipText) {
 		return (
-			<ActionIcon {...props}>
+			<ActionIcon {...props} onClick={onClick}>
 				<Icon icon={icon} weight={600} />
 			</ActionIcon>
 		)
@@ -19,7 +25,7 @@ export default function ({ icon, tooltipText, ...actionIconProps }: TProps) {
 
 	return (
 		<Tooltip label={tooltipText} withArrow openDelay={200}>
-			<ActionIcon {...props}>
+			<ActionIcon {...props} onClick={onClick}>
 				<Icon icon={icon} weight={600} />
 			</ActionIcon>
 		</Tooltip>

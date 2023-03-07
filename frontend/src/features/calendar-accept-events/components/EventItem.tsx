@@ -49,7 +49,7 @@ export default function EventItem({ event }: IProps) {
 						<Text color="gray.6" size="sm" span>
 							Описание:
 						</Text>{' '}
-						{!event.description ? (
+						{event.description ? (
 							event.description
 						) : (
 							<Text color="gray.6" size="sm" span>
