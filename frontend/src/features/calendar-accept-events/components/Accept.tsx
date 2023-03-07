@@ -23,6 +23,7 @@ export default function ({ eventId }: IProps) {
 
 	return (
 		<ActionTemplate
+			onClick={() => mutate()}
 			icon="done"
 			color="green"
 			loading={isLoading}
