@@ -1,4 +1,4 @@
-import api from '..'
+import api, { myCalendarAdapter } from '..'
 import { errorHandler } from '../errorHandler'
 import {
 	CalendarEvent,
@@ -20,7 +20,7 @@ async function myCalendar(
 			},
 		})
 
-		return res.data
+		return myCalendarAdapter(res.data)
 	} catch (error: any) {
 		return errorHandler(error)
 	}

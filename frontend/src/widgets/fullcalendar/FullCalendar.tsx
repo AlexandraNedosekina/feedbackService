@@ -37,8 +37,8 @@ const FullCalendar = (props: CalendarOptions) => {
 		() =>
 			data?.map(item => ({
 				title: item.title,
-				start: item.date_start + '+0000',
-				end: item.date_end + '+0000',
+				start: item.date_start,
+				end: item.date_end,
 				extendedProps: {
 					id: item.id,
 					user: item.user,
