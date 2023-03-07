@@ -1,4 +1,4 @@
-import { Box, Flex, Text } from '@mantine/core'
+import { Flex, Text } from '@mantine/core'
 import dayjs from 'dayjs'
 import { Icon } from 'shared/ui'
 
@@ -18,6 +18,7 @@ export default function ({ end, start }: IProps) {
 			gap={5}
 			sx={theme => ({
 				color: theme.colors.brand[5],
+				width: 'max-content',
 			})}
 		>
 			<Icon icon="calendar_month" />
