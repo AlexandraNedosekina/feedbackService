@@ -1,5 +1,5 @@
 import { Flex, Select, Text } from '@mantine/core'
-import { TimeRangeInput } from '@mantine/dates'
+//import { TimeRangeInput } from '@mantine/dates'
 import dayjs from 'dayjs'
 import { useState } from 'react'
 
@@ -22,13 +22,14 @@ const ModalWindowContent = ({ onClose }: IProps) => {
 			/>
 			<Flex justify={'center'}>
 				<Text fz="md">Время</Text>
+				{/*
 				<TimeRangeInput
 					label="Время"
 					value={value}
 					onChange={setValue}
 					clearable
 				/>
-				;
+	*/}
 			</Flex>
 		</>
 	)

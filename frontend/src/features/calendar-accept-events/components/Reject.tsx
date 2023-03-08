@@ -41,6 +41,7 @@ export default function ({ eventId }: IProps) {
 				opened={isOpen}
 				onClose={modalHandlers.close}
 				title="Вы действительно хотите отклонить встречу?"
+				zIndex={500}
 			>
 				<TextInput
 					value={rejectionCause}

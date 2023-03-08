@@ -1,6 +1,6 @@
 import 'dayjs/locale/ru'
 import { Button, Flex, Modal, Title } from '@mantine/core'
-import { DatePicker, TimeRangeInput } from '@mantine/dates'
+import { DatePicker } from '@mantine/dates'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { getCalendarById, QueryKeys, updateCalendarById } from 'shared/api'
 import { useFullcalendarStore } from '../model'
@@ -21,7 +21,7 @@ const EditEventModal = ({ isOpen, onClose }: IProps) => {
 	//queryFn: () => getCalendarById(event!.id),
 	//enabled: !!event?.id,
 	//})
-	
+
 	//console.log(data)
 
 	//const { mutate } = useMutation({
@@ -44,8 +44,9 @@ const EditEventModal = ({ isOpen, onClose }: IProps) => {
 				name={event.user.full_name}
 				jobTitle={event.user.job_title}
 				avatar={event.user.avatar?.thumbnail_url}
-				variant='sm'
+				variant="sm"
 			/>
+			{/*
 			<DatePicker
 				locale="ru"
 				label="Дата"
@@ -74,8 +75,11 @@ const EditEventModal = ({ isOpen, onClose }: IProps) => {
 					},
 				}}
 			/>
-			<Flex justify={'end'} gap='md' mt='xl'>
-				<Button color='red' variant='outline'>Удалить</Button>
+	*/}{' '}
+			<Flex justify={'end'} gap="md" mt="xl">
+				<Button color="red" variant="outline">
+					Удалить
+				</Button>
 				<Button>Сохранить</Button>
 			</Flex>
 		</Modal>
