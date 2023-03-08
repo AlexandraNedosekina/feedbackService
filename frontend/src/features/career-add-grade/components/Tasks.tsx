@@ -5,6 +5,7 @@ import {
 	Input,
 	Text,
 	TextInput,
+	getStylesRef,
 } from '@mantine/core'
 import { useClickOutside, useFocusTrap } from '@mantine/hooks'
 import { useState } from 'react'
@@ -14,15 +15,15 @@ import { Icon } from 'shared/ui'
 import { ICareerGradeFormValues } from 'entities/career'
 import AddItem from './AddItem'
 
-const useStyles = createStyles((_theme, _params, getRef) => ({
+const useStyles = createStyles(() => ({
 	actionIcon: {
-		ref: getRef('actionIcon'),
+		ref: getStylesRef('actionIcon'),
 		opacity: '0',
 		transition: 'opacity 0.2s',
 	},
 	root: {
 		'&:hover': {
-			[`.${getRef('actionIcon')}`]: {
+			[`.${getStylesRef('actionIcon')}`]: {
 				opacity: '1',
 			},
 		},

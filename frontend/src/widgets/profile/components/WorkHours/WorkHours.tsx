@@ -1,26 +1,29 @@
-import { Stack, Title } from '@mantine/core'
-import { TimeRangeInput } from '@mantine/dates'
+import { ActionIcon, Flex, Stack, Text, Title } from '@mantine/core'
+import { TimeInput } from '@mantine/dates'
 import { useDebouncedValue } from '@mantine/hooks'
 import { showNotification } from '@mantine/notifications'
 import { useMutation } from '@tanstack/react-query'
 import { useUser } from 'entities/user'
-import { useEffect, useState } from 'react'
+import { ChangeEvent, useEffect, useRef, useState } from 'react'
 import { updateUser } from 'shared/api'
+import { Icon } from 'shared/ui'
 
 const WorkHours = () => {
 	const { user } = useUser()
 
-	const [value, setValue] = useState<[Date | null, Date | null]>([
-		user?.work_hours_start,
-		user?.work_hours_end,
-	])
-	const [debouncedValue] = useDebouncedValue(value, 1200)
+	const startRef = useRef<HTMLInputElement>(null)
+	const endRef = useRef<HTMLInputElement>(null)
+
+	const [start, setStart] = useState<string | null>(user?.work_hours_start)
+	const [end, setEnd] = useState<string | null>(user.work_hours_end)
+	const [debouncedStart] = useDebouncedValue(start, 1200)
+	const [debouncedEnd] = useDebouncedValue(end, 1200)
 
 	const { mutate } = useMutation({
-		mutationFn: (data: [Date | null, Date | null]) =>
+		mutationFn: (data: { start: string | null; end: string | null }) =>
 			updateUser(user?.id, {
-				work_hours_start: data[0]?.toTimeString().split(' ')[0] || null,
-				work_hours_end: data[1]?.toTimeString().split(' ')[0] || null,
+				work_hours_start: data.start || null,
+				work_hours_end: data.end || null,
 			}),
 		onError(error) {
 			if (error instanceof Error) {
@@ -30,42 +33,54 @@ const WorkHours = () => {
 					color: 'red',
 				})
 			}
-			setValue([user?.work_hours_start, user?.work_hours_end])
+			setStart(user.work_hours_start)
+			setEnd(user.work_hours_end)
 		},
 	})
 
-	function onChange(value: [Date, Date]) {
-		setValue(value)
+	function onChange(type: 'start' | 'end') {
+		return ({ target: { value } }: ChangeEvent<HTMLInputElement>) => {
+			if (type === 'start') setStart(value)
+			else setEnd(value)
+		}
 	}
 
 	useEffect(() => {
 		if (
-			debouncedValue[0] !== user?.work_hours_start &&
-			debouncedValue[1] !== user?.work_hours_end
+			debouncedStart !== user.work_hours_start ||
+			debouncedEnd !== user.work_hours_end
 		) {
-			mutate(debouncedValue)
+			mutate({ start: debouncedStart, end: debouncedEnd })
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [debouncedValue])
+	}, [debouncedStart, debouncedEnd])
 
 	return (
 		<Stack spacing="xs">
 			<Title order={2}>График работы</Title>
-			<TimeRangeInput
-				clearable
-				sx={() => ({
-					alignSelf: 'flex-start',
-				})}
-				value={value}
-				onChange={onChange}
-				styles={{
-					input: {
-						['.mantine-Input-input']: {
-							border: 'none',
-						},
-					},
-				}}
-			/>
+			<Flex gap="sm" align="center">
+				<TimeInput
+					ref={startRef}
+					value={start || undefined}
+					onChange={onChange('start')}
+					rightSection={
+						<ActionIcon onClick={() => startRef.current?.showPicker()}>
+							<Icon icon="schedule" />
+						</ActionIcon>
+					}
+				/>
+				<Text>-</Text>
+				<TimeInput
+					ref={endRef}
+					value={end || undefined}
+					onChange={onChange('end')}
+					rightSection={
+						<ActionIcon onClick={() => endRef.current?.showPicker()}>
+							<Icon icon="schedule" />
+						</ActionIcon>
+					}
+				/>
+			</Flex>
 		</Stack>
 	)
 }

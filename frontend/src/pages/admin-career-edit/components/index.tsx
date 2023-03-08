@@ -3,7 +3,7 @@ import { AdminCareerEdit } from 'widgets/admin-career-edit'
 
 export default () => {
 	return (
-		<Container pt="lg">
+		<Container py="lg">
 			<AdminCareerEdit />
 		</Container>
 	)

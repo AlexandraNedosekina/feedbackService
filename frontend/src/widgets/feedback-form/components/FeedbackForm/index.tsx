@@ -1,6 +1,6 @@
 import { Form } from 'react-final-form'
 import { IFormValues } from '../../types'
-import { Flex, LoadingOverlay, ScrollArea, Stack, Text } from '@mantine/core'
+import { Flex, LoadingOverlay, ScrollArea, Space, Stack, Text } from '@mantine/core'
 import { CompletedBadge } from '../CompletedBadge'
 import { UserRatingsByCategory } from 'features/user-ratings-by-category'
 import { Textarea } from '../Textarea'
@@ -129,6 +129,8 @@ const FeedbackForm = () => {
 
 							{data.completed ? <CompletedBadge /> : null}
 
+							<Space h='xl' />
+
 							<UserRatingsByCategory
 								formNames={{
 									'Выполнение задач': 'taskCompletion',
@@ -137,6 +139,8 @@ const FeedbackForm = () => {
 									'Взаимодействие с командой': 'interaction',
 								}}
 							/>
+
+							<Space h='xl' />
 
 							<Stack maw={'400px'} pb={1}>
 								<Textarea

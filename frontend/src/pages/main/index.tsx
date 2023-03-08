@@ -36,7 +36,6 @@ export const MainPage = () => {
 			<Head>
 				<title>Главная</title>
 			</Head>
-
 			<div className={styles.hero}>
 				<Group position="apart" className={styles.hero_header}>
 					<Image

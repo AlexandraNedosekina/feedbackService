@@ -1,10 +1,10 @@
 import { Icon } from 'shared/ui'
 import {
 	BadgeProps,
-	BadgeStylesParams,
 	ButtonProps,
 	ButtonStylesParams,
 	MantineThemeOverride,
+	rem,
 	ScrollAreaProps,
 	SelectProps,
 } from '@mantine/core'
@@ -45,33 +45,33 @@ export const mantineTheme: MantineThemeOverride = {
 		fontWeight: 700,
 		sizes: {
 			h1: {
-				fontSize: 32,
+				fontSize: rem(32),
 			},
 			h2: {
-				fontSize: 24,
+				fontSize: rem(24),
 			},
 			h3: {
-				fontSize: 19,
+				fontSize: rem(19),
 			},
 			h4: {
-				fontSize: 16,
+				fontSize: rem(16),
 			},
 			h5: {
-				fontSize: 14,
+				fontSize: rem(14),
 			},
 			h6: {
-				fontSize: 13,
+				fontSize: rem(13),
 			},
 		},
 	},
 	components: {
 		Button: {
 			defaultProps: ButtonDefaultProps,
-			styles: (theme, params: ButtonStylesParams) => ({
+			styles: (theme, params: ButtonStylesParams, { variant }) => ({
 				root: {
 					borderRadius: '4px',
 					boxShadow:
-						params.variant === 'filled'
+						variant === 'filled'
 							? `inset 0px -2px 0px ${
 									theme.colors[params.color ?? 'brand'][
 										+theme.primaryShade + 2
@@ -86,10 +86,21 @@ export const mantineTheme: MantineThemeOverride = {
 					},
 				},
 			}),
+			variants: {
+				filled: (theme, params) => ({
+					root: {
+						boxShadow: `inset 0px -2px 0px ${
+							theme.colors[params.color ?? 'brand'][
+								+theme.primaryShade + 2
+							]
+						}`,
+					},
+				}),
+			},
 		},
 		Badge: {
 			defaultProps: BadgeDefaultProps,
-			styles: (theme, params: BadgeStylesParams) => ({
+			styles: () => ({
 				root: {
 					fontWeight: 'normal',
 					textTransform: 'none',
@@ -131,7 +142,7 @@ export const mantineTheme: MantineThemeOverride = {
 			}),
 		},
 		InputWrapper: {
-			styles: theme => ({
+			styles: () => ({
 				label: {
 					fontFamily: 'Montserrat, sans-serif',
 					fontWeight: 700,
