@@ -1,5 +1,6 @@
 import { Box, Group, Text } from '@mantine/core'
-import { DatePicker, DatePickerInput, TimeInput } from '@mantine/dates'
+import { DatePickerInput, TimeInput } from '@mantine/dates'
+import dayjs from 'dayjs'
 import shallow from 'zustand/shallow'
 import { useCreateEventStore } from '../model'
 
@@ -38,10 +39,15 @@ const TimePicker = () => {
 				<Text>Начало</Text>
 				<Group align="start">
 					<TimeInput
-						//defaultValue={startTime}
-						onChange={value => {
-							console.log(value.target.value)
-							//update({ startTime: value })
+						defaultValue={dayjs(startTime).format('hh:mm')}
+						onChange={({ target: { value } }) => {
+							const [hours, minutes] = value.split(':')
+							update({
+								startTime: dayjs()
+									.set('hours', +hours)
+									.set('minutes', +minutes)
+									.toDate(),
+							})
 						}}
 						maw={'min-content'}
 						error={
@@ -53,6 +59,8 @@ const TimePicker = () => {
 					<DatePickerInput
 						placeholder="Выберите дату"
 						defaultValue={startDate}
+						dropdownType="modal"
+						modalProps={{ zIndex: 500 }}
 						onChange={value => update({ startDate: value })}
 						error={
 							!getIsStartDateAfterNow() && !getIsStartDateSame()
@@ -66,8 +74,16 @@ const TimePicker = () => {
 				<Text>Окончание</Text>
 				<Group align="start">
 					<TimeInput
-						defaultValue={endTime}
-						onChange={value => update({ endTime: value })}
+						defaultValue={dayjs(endTime).format('hh:mm')}
+						onChange={({ target: { value } }) => {
+							const [hours, minutes] = value.split(':')
+							update({
+								endTime: dayjs()
+									.set('hours', +hours)
+									.set('minutes', +minutes)
+									.toDate(),
+							})
+						}}
 						maw={'min-content'}
 						error={
 							!getIsEndTimeAfter() && getIsSameDates()
@@ -78,6 +94,8 @@ const TimePicker = () => {
 					<DatePickerInput
 						placeholder="Выберите дату"
 						defaultValue={endDate}
+						dropdownType="modal"
+						modalProps={{ zIndex: 500 }}
 						onChange={value => update({ endDate: value })}
 						error={
 							!getIsEndDateAfter() && !getIsSameDates()
