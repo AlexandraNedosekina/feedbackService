@@ -1,5 +1,6 @@
-import { Flex, Select, Text } from '@mantine/core'
-import { TimeRangeInput } from '@mantine/dates'
+import { Button, Flex, Select } from '@mantine/core'
+import { TimeRangeInput, DatePickerInput } from '@mantine/dates'
+
 import dayjs from 'dayjs'
 import { useState } from 'react'
 
@@ -10,7 +11,7 @@ interface IProps {
 const ModalWindowContent = ({ onClose }: IProps) => {
 	const now = new Date()
 	const then = dayjs(now).add(30, 'minutes').toDate()
-	const [value, setValue] = useState<[Date, Date]>([now, then])
+	const [value, setValue] = useState<[Date, Date | null]>([now, then])
 	return (
 		<>
 			<Select
@@ -21,14 +22,21 @@ const ModalWindowContent = ({ onClose }: IProps) => {
 				]}
 			/>
 			<Flex justify={'center'}>
-				<Text fz="md">Время</Text>
 				<TimeRangeInput
 					label="Время"
 					value={value}
 					onChange={setValue}
 					clearable
 				/>
-				;
+				<DatePickerInput
+					label="Pick date"
+					placeholder="Pick date"
+					value={value}
+					onChange={setValue}
+					mx="auto"
+					maw={400}
+				/>
+				<Button>Создать</Button>
 			</Flex>
 		</>
 	)

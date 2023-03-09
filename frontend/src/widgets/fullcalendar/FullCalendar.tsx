@@ -35,20 +35,6 @@ const FullCalendar: FC = (props: CalendarOptions) => {
 						text: 'Создать событие',
 						click: function () {
 							setOpened(true)
-							//const dateStr = prompt('Введите дату в формате ГГГГ-ММ-ДД')
-							//// var userName = prompt('Введите имя сотрудника')
-							//const date = new Date(dateStr + 'T00:00:00')
-
-							//if (!isNaN(date.valueOf())) {
-							//// FullCalendar.addEvent({
-							//// 	title: 'dynamic event',
-							//// 	start: date,
-							//// 	allDay: true,
-							//// })
-							//alert('Great. Now, update your database...')
-							//} else {
-							//alert('Invalid date.')
-							//}
 						},
 					},
 				}}
