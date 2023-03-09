@@ -15,7 +15,7 @@ export const withMantine =
 				theme={mantineTheme}
 			>
 				<DatesProvider settings={{ locale: 'ru' }}>
-					<Notifications />
+					<Notifications zIndex={1000} />
 					<Component {...props} />
 				</DatesProvider>
 			</MantineProvider>
