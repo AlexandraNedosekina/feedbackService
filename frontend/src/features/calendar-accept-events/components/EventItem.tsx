@@ -24,7 +24,7 @@ export default function EventItem({ event }: IProps) {
 			<div>
 				<UserCard
 					name={event.owner.full_name}
-					jobTitle={'Frontend'}
+					jobTitle={event.owner.job_title}
 					avatar={event.owner.avatar?.thumbnail_url}
 					variant="sm"
 				/>
@@ -61,7 +61,11 @@ export default function EventItem({ event }: IProps) {
 			</div>
 			<Flex direction={'column'} justify="space-between" gap="md">
 				<Time start={event.date_start} end={event.date_end} />
-				<Actions eventId={event.id} />
+				<Actions
+					eventId={event.id}
+					start={event.date_start}
+					end={event.date_end}
+				/>
 			</Flex>
 		</Flex>
 	)

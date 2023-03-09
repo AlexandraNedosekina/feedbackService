@@ -1,4 +1,4 @@
-import { Button, Flex } from '@mantine/core'
+import { Space } from '@mantine/core'
 import { Container } from '@mantine/core'
 import { CalendarAcceptEvents } from 'features/calendar-accept-events'
 import dynamic from 'next/dynamic'
@@ -12,6 +12,7 @@ export default () => {
 	return (
 		<Container size="xl" py="lg">
 			<CalendarAcceptEvents />
+			<Space h="md" />
 			<FullCalendar />
 		</Container>
 	)
