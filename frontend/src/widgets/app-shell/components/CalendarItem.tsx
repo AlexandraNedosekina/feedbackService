@@ -23,6 +23,7 @@ export default () => {
 				status: item.status,
 				userId: item.user_id,
 			})),
+		refetchInterval: 1000 * 3,
 	})
 	const notify = useMemo(() => {
 		return data?.some(

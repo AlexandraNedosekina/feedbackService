@@ -19,6 +19,7 @@ export default function () {
 				dayjs(Date.now()).format('YYYY-MM-DD'),
 				CalendarFormat.Month
 			),
+		refetchInterval: 1000 * 3,
 	})
 	const pendingEvents = useMemo(() => {
 		return data?.filter(
