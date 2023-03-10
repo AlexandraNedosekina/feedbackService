@@ -7,7 +7,6 @@ import dayjs from 'dayjs'
 import { Reducer, useReducer } from 'react'
 import { QueryKeys, rescheduleCalendarEvent } from 'shared/api'
 import { CalendarEventReshedule } from 'shared/api/generatedTypes'
-import { modalResetOverflow } from 'shared/lib'
 import ActionTemplate from './ActionTemplate'
 
 interface IProps {
@@ -88,9 +87,10 @@ export default function ({ eventId, end, start }: IProps) {
 				onClose={modalHandlers.close}
 				title={<Title order={4}>Редактирование времени</Title>}
 				zIndex={500}
-				styles={theme => ({
-					...modalResetOverflow(theme),
-				})}
+
+				//styles={theme => ({
+				//...modalResetOverflow(theme),
+				//})}
 			>
 				<DatePickerInput
 					label="Дата"
@@ -100,6 +100,7 @@ export default function ({ eventId, end, start }: IProps) {
 						updateDates({ date: new Date(value.toISOString()) })
 					}}
 					sx={() => ({ width: 'max-content', minWidth: '120px' })}
+					popoverProps={{ withinPortal: true, zIndex: 501 }}
 				/>
 
 				<Flex gap="md" align="center" my="md">
