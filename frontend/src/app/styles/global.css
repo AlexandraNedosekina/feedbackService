@@ -18,3 +18,7 @@ a {
 	--fc-button-active-bg-color: var(--mantine-color-brand-7);
 	--fc-button-active-border-color: var(--mantine-color-brand-7);
 }
+
+.fc-v-event {
+	background-color: white;
+}
