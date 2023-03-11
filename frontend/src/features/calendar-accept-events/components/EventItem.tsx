@@ -35,7 +35,7 @@ export default function EventItem({ event }: IProps) {
 					{event.title}
 				</Title>
 				<Spoiler
-					maxHeight={120}
+					maxHeight={140}
 					showLabel="Показать полностью"
 					hideLabel="Скрыть"
 					sx={theme => ({
@@ -61,11 +61,13 @@ export default function EventItem({ event }: IProps) {
 			</div>
 			<Flex direction={'column'} justify="space-between" gap="md">
 				<Time start={event.date_start} end={event.date_end} />
-				<Actions
-					eventId={event.id}
-					start={event.date_start}
-					end={event.date_end}
-				/>
+				<Flex gap="sm" justify={'end'}>
+					<Actions
+						eventId={event.id}
+						start={event.date_start}
+						end={event.date_end}
+					/>
+				</Flex>
 			</Flex>
 		</Flex>
 	)
