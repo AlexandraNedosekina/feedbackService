@@ -1,10 +1,10 @@
-import Calendar, { EventClickArg } from '@fullcalendar/react'
+import Calendar from '@fullcalendar/react'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import timeGridPlugin from '@fullcalendar/timegrid'
 import interactionPlugin from '@fullcalendar/interaction'
 import 'dayjs/locale/ru'
 import { CreateMeeting } from 'widgets/create-meeting'
-import { useState, useMemo, useRef, useEffect } from 'react'
+import { useState, useMemo, useRef } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { myCalendar, QueryKeys } from 'shared/api'
 import dayjs from 'dayjs'
@@ -37,6 +37,7 @@ const FullCalendar = () => {
 				end: item.date_end,
 				extendedProps: {
 					id: item.id,
+					ownerId: item.owner_id,
 					user: item.user,
 					status: item.status,
 					desc: item.description,
@@ -44,23 +45,6 @@ const FullCalendar = () => {
 			})) ?? [],
 		[data]
 	)
-
-	function handleEventClick(clickInfo: EventClickArg) {
-		update({
-			eventForEdit: {
-				id: clickInfo.event.extendedProps.id,
-				start: clickInfo.event.start || new Date(),
-				end: clickInfo.event.end || new Date(),
-				user: clickInfo.event.extendedProps.user,
-			},
-		})
-		setIsEditOpen(true)
-	}
-
-	useEffect(() => {
-		console.log('hey')
-		setDate(calendarRef.current?.getApi().getDate())
-	}, [])
 
 	return (
 		<>
@@ -90,8 +74,7 @@ const FullCalendar = () => {
 				nowIndicator={true}
 				editable={true}
 				select={() => setOpened(true)}
-				eventContent={Event}
-				//eventClick={handleEventClick}
+				eventContent={props => <Event {...props} />}
 				businessHours={{
 					daysOfWeek: [1, 2, 3, 4, 5, 6, 0],
 					//minTime: '10:00:00',

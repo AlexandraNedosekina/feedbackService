@@ -2,15 +2,20 @@ import { EventContentArg } from '@fullcalendar/react'
 import {
 	ActionIcon,
 	Badge,
-	Box,
+	CloseButton,
 	Flex,
 	Popover,
+	Spoiler,
 	Text,
 	Title,
 } from '@mantine/core'
+import { useDisclosure } from '@mantine/hooks'
 import dayjs from 'dayjs'
+import { useUser } from 'entities/user'
+import { CalendarEventActions } from 'features/calendar-accept-events'
 import { CalendarEventStatus } from 'shared/api/generatedTypes'
 import { Icon } from 'shared/ui'
+import DeleteEventModal from './DeleteEventModal'
 
 const colors: Record<
 	CalendarEventStatus,
@@ -22,62 +27,135 @@ const colors: Record<
 	resheduled: 'orange',
 }
 
+const words: Record<
+	CalendarEventStatus,
+	'Подтверждено' | 'Отклонено' | 'Ожидает подтверждения' | 'Время изменено'
+> = {
+	pending: 'Ожидает подтверждения',
+	accepted: 'Подтверждено',
+	rejected: 'Отклонено',
+	resheduled: 'Время изменено',
+}
+
 interface IProps extends EventContentArg {}
 
 export default function ({
 	timeText,
 	event: { title, extendedProps },
 	event,
+	view,
 }: IProps) {
+	console.log(view.type)
+	const { user } = useUser()
+	const [isDeleteModalOpen, deleteModalHandlers] = useDisclosure(false)
+	const [isOpen, { open, close }] = useDisclosure(false)
+
 	const color = colors[extendedProps.status as CalendarEventStatus]
+	const status = words[extendedProps.status as CalendarEventStatus]
 
-	console.log(event.startStr)
 	return (
-		<Popover withArrow position="right" shadow="md" width={400}>
-			<Popover.Target>
-				<Badge
-					variant="dot"
-					size="lg"
-					color={color}
-					w={'100%'}
-					h={'100%'}
-					sx={() => ({
-						border: 'none',
-						justifyContent: 'start',
-						paddingInline: '0',
-						paddingLeft: '2px',
-					})}
-					title={timeText}
-				>
-					{title}
-				</Badge>
-			</Popover.Target>
-			<Popover.Dropdown bg="white">
-				<Title order={5}>{title}</Title>
+		<>
+			<Popover
+				opened={isOpen}
+				onClose={close}
+				closeOnClickOutside={
+					status === 'Ожидает подтверждения' ? false : true
+				}
+				withArrow
+				position={view.type === 'timeGridDay' ? 'bottom' : 'right'}
+				shadow="md"
+				width={400}
+				withinPortal
+			>
+				<Popover.Target>
+					<Badge
+						onClick={open}
+						variant="dot"
+						size="lg"
+						color={color}
+						w={'100%'}
+						h={'100%'}
+						sx={() => ({
+							border: 'none',
+							justifyContent: 'start',
+							paddingInline: '0',
+							paddingLeft: '2px',
+						})}
+						title={timeText}
+					>
+						{title}
+					</Badge>
+				</Popover.Target>
+				<Popover.Dropdown bg="white" sx={() => ({ zIndex: 1000 })}>
+					<Flex justify={'space-between'} align="center">
+						<Title order={5}>{title}</Title>
+						<CloseButton onClick={close} />
+					</Flex>
 
-				{extendedProps.desc ? (
-					<Text py="md" sx={() => ({ whiteSpace: 'normal' })}>
-						{extendedProps.desc}
-					</Text>
-				) : null}
+					{extendedProps.desc ? (
+						<Spoiler
+							maxHeight={140}
+							showLabel="Показать полностью"
+							hideLabel="Скрыть"
+						>
+							<Text pt="md" sx={() => ({ whiteSpace: 'normal' })}>
+								{extendedProps.desc}
+							</Text>
+						</Spoiler>
+					) : null}
 
-				<Flex gap="md">
-					<Text color="dimmed">Время и дата</Text>
-					<Text>
-						{dayjs(event.startStr).format('D MMMM, hh:mm')} -{' '}
-						{dayjs(event.endStr).format('D MMMM, hh:mm')}
-					</Text>
-				</Flex>
+					<Flex gap="md" pt="md">
+						<Text color="dimmed">Время и дата</Text>
+						<Text>
+							{dayjs(event.startStr).format('D MMMM, hh:mm')} -{' '}
+							{dayjs(event.endStr).format('D MMMM, hh:mm')}
+						</Text>
+					</Flex>
 
-				<Flex justify={'end'} mt="sm">
-					<ActionIcon color={'brand'}>
-						<Icon icon="delete" />
-					</ActionIcon>
-					<ActionIcon color="brand">
-						<Icon icon="edit" />
-					</ActionIcon>
-				</Flex>
-			</Popover.Dropdown>
-		</Popover>
+					<Flex align="center" gap="xs" pt="xs">
+						<Badge variant={'dot'} color={color} size="lg">
+							{status}
+						</Badge>
+						{status === 'Ожидает подтверждения' ? (
+							<CalendarEventActions
+								eventId={extendedProps.id}
+								start={event.startStr}
+								end={event.endStr}
+							/>
+						) : null}
+					</Flex>
+
+					<Flex justify={'end'} mt="sm" gap="xs">
+						{extendedProps.ownerId === user.id ? (
+							<ActionIcon
+								onClick={deleteModalHandlers.open}
+								color={'brand'}
+								size="md"
+								variant={'outline'}
+								title="Удалить"
+							>
+								<Icon icon="delete" size={18} />
+							</ActionIcon>
+						) : null}
+						{extendedProps.status !== 'accepted' &&
+						extendedProps.ownerId === user.id ? (
+							<ActionIcon
+								color="brand"
+								size="md"
+								variant="outline"
+								title="Редактировать"
+							>
+								<Icon icon="edit" size={18} />
+							</ActionIcon>
+						) : null}
+					</Flex>
+				</Popover.Dropdown>
+			</Popover>
+			<DeleteEventModal
+				isOpen={isDeleteModalOpen}
+				onClose={deleteModalHandlers.close}
+				id={extendedProps.id}
+			/>
+		</>
 	)
 }
