@@ -27,6 +27,7 @@ export const ModalWindowContent = ({ onClose }: IProps) => {
 					placeholder="Pick date and time"
 					maw={400}
 					mx="auto"
+					popoverProps={{ withinPortal: true }}
 				/>
 				<Button>Создать</Button>
 			</Flex>

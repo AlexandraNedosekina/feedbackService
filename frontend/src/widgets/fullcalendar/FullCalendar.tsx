@@ -1,156 +1,122 @@
-import Calendar, {
-	CalendarOptions,
-	DateSelectArg,
-	EventApi,
-	EventClickArg,
-	EventContentArg,
-} from '@fullcalendar/react'
+import Calendar, { EventClickArg } from '@fullcalendar/react'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import timeGridPlugin from '@fullcalendar/timegrid'
 import interactionPlugin from '@fullcalendar/interaction'
 import 'dayjs/locale/ru'
-import React, { FC, useState } from 'react'
-import { createEventId, INITIAL_EVENTS } from './components/event-utils'
-import { Button, Group, Modal } from '@mantine/core'
 import { CreateMeeting } from 'widgets/create-meeting'
+import { useState, useMemo, useRef, useEffect } from 'react'
+import { useQuery } from '@tanstack/react-query'
+import { myCalendar, QueryKeys } from 'shared/api'
+import dayjs from 'dayjs'
+import { CalendarFormat } from 'shared/api/generatedTypes'
+import { EditEventModal } from './components'
+import { useFullcalendarStore } from './model'
+import Event from './components/Event'
 
-const FullCalendar: FC = (props: CalendarOptions) => {
+const FullCalendar = () => {
 	const [opened, setOpened] = useState(false)
+	const [isEditOpen, setIsEditOpen] = useState(false)
+	const calendarRef = useRef<Calendar>(null)
+	const [date, setDate] = useState(calendarRef.current?.getApi().getDate())
+
+	const update = useFullcalendarStore(state => state.update)
+
+	const { data } = useQuery({
+		queryKey: [QueryKeys.CALENDAR],
+		queryFn: () =>
+			myCalendar(
+				dayjs(Date.now()).format('YYYY-MM-DD'),
+				CalendarFormat.Month
+			),
+	})
+	const mappedData = useMemo(
+		() =>
+			data?.map(item => ({
+				title: item.title,
+				start: item.date_start,
+				end: item.date_end,
+				extendedProps: {
+					id: item.id,
+					user: item.user,
+					status: item.status,
+					desc: item.description,
+				},
+			})) ?? [],
+		[data]
+	)
+
+	function handleEventClick(clickInfo: EventClickArg) {
+		update({
+			eventForEdit: {
+				id: clickInfo.event.extendedProps.id,
+				start: clickInfo.event.start || new Date(),
+				end: clickInfo.event.end || new Date(),
+				user: clickInfo.event.extendedProps.user,
+			},
+		})
+		setIsEditOpen(true)
+	}
+
+	useEffect(() => {
+		console.log('hey')
+		setDate(calendarRef.current?.getApi().getDate())
+	}, [])
+
 	return (
 		<>
-			{/* стартовая страница - календарь сотрудника, время работы подтягивается 
-			с профиля, выбирает сотрудника/сотрудников, ставим время, 
-			"пуш" уходит выбранным коллегам, они у себя в календаре видят встречу 
-			и могут либо "Согласовать", либо "Отклонить", либо "Назначить другое время" */}
 			<Calendar
-				{...props}
+				ref={calendarRef}
 				plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
 				headerToolbar={{
-					left: 'prev,next today myCustomButton',
+					left: 'prev,next today createEventButton',
 					center: 'title',
 					right: 'dayGridMonth,timeGridWeek,timeGridDay',
 				}}
+				buttonText={{
+					today: 'Сегодня',
+					month: 'Месяц',
+					week: 'Неделя',
+					day: 'День',
+				}}
 				customButtons={{
-					myCustomButton: {
+					createEventButton: {
 						text: 'Создать событие',
 						click: function () {
 							setOpened(true)
 						},
 					},
 				}}
-				initialView="timeGridWeek"
 				selectable={true}
 				scrollTime="08:00"
 				locale="ru"
-				// headerToolbar={{
-				//   left: 'prev,next today',
-				//   center: 'title',
-				//   right: 'dayGridMonth,timeGridWeek,timeGridDay',
-				// }}
 				nowIndicator={true}
 				editable={true}
-				initialEvents={INITIAL_EVENTS}
-				select={handleDateSelect}
-				eventContent={renderEventContent}
-				eventClick={handleEventClick}
-				// eventsSet={handleEvents}
-				// eventAdd={function(){}}
-				// eventChange={function(){}}
-				// eventRemove={function(){}}
+				select={() => setOpened(true)}
+				eventContent={Event}
+				//eventClick={handleEventClick}
 				businessHours={{
-					daysOfWeek: [1, 2, 3, 4, 5],
-					minTime: '10:00:00',
-					maxTime: '23:00:00',
-					startTime: '10:00',
-					endTime: '18:00',
+					daysOfWeek: [1, 2, 3, 4, 5, 6, 0],
+					//minTime: '10:00:00',
+					//maxTime: '23:00:00',
+					//startTime: '10:00',
+					//endTime: '18:00',
 				}}
-				events={[
-					{
-						title: 'My Event',
-						start: '2010-01-01T14:30:00',
-						allDay: false,
-					},
-				]}
+				events={mappedData}
 				eventTimeFormat={{
 					hour: '2-digit',
 					minute: '2-digit',
-					second: '2-digit',
 					hour12: false,
 				}}
+				firstDay={1}
+				height="100%"
 			/>
 			<CreateMeeting opened={opened} onClose={() => setOpened(false)} />
-		</>
-	)
-
-	// function isCreateEventModalOpen(selectInfo) {
-	// 	const calendarApi = selectInfo.view.calendar;
-	// 	ModalWindow();
-
-	// 	const title = prompt("Please enter a new title for your event");
-	// 	calendarApi.unselect(); // clear date selection
-
-	// 	if (title) {
-	// 		calendarApi.addEvent(
-	// 			{
-	// 				title,
-	// 				start: selectInfo.startStr,
-	// 				end: selectInfo.endStr,
-	// 				allDay: selectInfo.allDay,
-	// 			},
-	// 			true
-	// 		)
-	// 	}
-	// }
-
-	function handleDateSelect(selectInfo: DateSelectArg) {
-		const title = prompt('Введите название события')
-		const calendarApi = selectInfo.view.calendar
-
-		calendarApi.unselect()
-
-		if (title) {
-			calendarApi.addEvent({
-				id: createEventId(),
-				title,
-				start: selectInfo.startStr,
-				end: selectInfo.endStr,
-				allDay: selectInfo.allDay,
-			})
-		}
-	}
-
-	function handleEventCreate() {
-		const dateStr = prompt('Введите дату в формате ГГГГ-ММ-ДД')
-		const date = new Date(dateStr + 'T00:00:00')
-		if (!isNaN(date.valueOf())) {
-			// FullCalendar.bind({
-			// 	title: title,
-			// 	start: date,
-			// 	allDay: true,
-			// })
-			alert('Great. Now, update your database...')
-		} else {
-			alert('Invalid date.')
-		}
-	}
-}
-
-function handleEventClick(clickInfo: EventClickArg) {
-	if (
-		confirm(
-			`Вы действительно хотите удалить это событие?'${clickInfo.event.title}'`
-		)
-	) {
-		clickInfo.event.remove()
-	}
-}
-
-function renderEventContent(eventContent: EventContentArg) {
-	return (
-		<>
-			<b>{eventContent.timeText}</b>
-			<i>{eventContent.event.title}</i>
+			<EditEventModal
+				isOpen={isEditOpen}
+				onClose={() => setIsEditOpen(false)}
+			/>
 		</>
 	)
 }
+
 export default FullCalendar

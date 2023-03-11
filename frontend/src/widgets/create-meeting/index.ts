@@ -1,1 +1,1 @@
-export * as CreateMeeting from './components'
+export { default as CreateMeeting } from './components'

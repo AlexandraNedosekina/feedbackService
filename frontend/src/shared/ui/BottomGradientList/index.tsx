@@ -12,6 +12,7 @@ export const BottomGradientList = () => {
 				left: 0,
 				right: 0,
 				height: '40px',
+				pointerEvents: 'none',
 			})}
 		></Box>
 	)

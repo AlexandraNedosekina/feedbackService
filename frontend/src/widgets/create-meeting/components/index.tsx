@@ -1,5 +1,5 @@
 import { Modal, Title } from '@mantine/core'
-import ModalWindowContent from './ModalWindowContent'
+import { ModalWindowContent } from './ModalWindowContent'
 
 interface IProps {
 	opened: boolean

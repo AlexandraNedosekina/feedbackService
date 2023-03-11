@@ -29,17 +29,16 @@ function UserRatingsByCategory(props: {
 			sx={() => ({
 				maxWidth: 'max-content',
 			})}
-			my={40}
 		>
 			{readOnly && values
 				? Object.entries(values).map(([key, value], i) => (
-						<RatingReadonly key={i} title={key} rating={value} />
-				  ))
+					<RatingReadonly key={i} title={key} rating={value} />
+				))
 				: !readOnly && formNames
-				? Object.entries(formNames).map(([key, value], i) => (
+					? Object.entries(formNames).map(([key, value], i) => (
 						<Rating key={i} title={key} name={value} />
-				  ))
-				: null}
+					))
+					: null}
 		</Stack>
 	)
 }
