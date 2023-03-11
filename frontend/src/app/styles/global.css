@@ -22,3 +22,7 @@ a {
 .fc-v-event {
 	background-color: white;
 }
+
+.fc-daygrid-dot-event {
+	padding: 0;
+}
