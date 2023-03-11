@@ -4,9 +4,12 @@ import { HTTPValidationError } from './generatedTypes'
 /**
  * @throws {Error}
  */
-export const errorHandler = (error: any): never => {
+export const errorHandler = (error: any) => {
 	if (error instanceof AxiosError) {
+		if (error.response?.status === 404) return
+
 		const errorData = error.response?.data
+
 		if (httpValidationErrorGuard(errorData)) {
 			if (Array.isArray(errorData.detail) && errorData.detail.length > 0) {
 				throw new Error(errorData.detail[0].msg, {
