@@ -3,7 +3,6 @@ import dayGridPlugin from '@fullcalendar/daygrid'
 import timeGridPlugin from '@fullcalendar/timegrid'
 import interactionPlugin from '@fullcalendar/interaction'
 import 'dayjs/locale/ru'
-import { CreateMeeting } from 'widgets/create-meeting'
 import { useState, useMemo, useRef } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { myCalendar, QueryKeys } from 'shared/api'
@@ -12,6 +11,7 @@ import { CalendarFormat } from 'shared/api/generatedTypes'
 import { EditEventModal } from './components'
 import { useFullcalendarStore } from './model'
 import Event from './components/Event'
+import CreateEventModal from './components/CreateEventModal'
 
 const FullCalendar = () => {
 	const [opened, setOpened] = useState(false)
@@ -65,7 +65,7 @@ const FullCalendar = () => {
 				customButtons={{
 					createEventButton: {
 						text: 'Создать событие',
-						click: function () {
+						click: function() {
 							setOpened(true)
 						},
 					},
@@ -93,7 +93,7 @@ const FullCalendar = () => {
 				firstDay={1}
 				height="100%"
 			/>
-			<CreateMeeting opened={opened} onClose={() => setOpened(false)} />
+			<CreateEventModal opened={opened} onClose={() => setOpened(false)} />
 			<EditEventModal
 				isOpen={isEditOpen}
 				onClose={() => setIsEditOpen(false)}
