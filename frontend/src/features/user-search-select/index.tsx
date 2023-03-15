@@ -98,6 +98,7 @@ export const UserSearchSelect = ({
 			}
 			searchable
 			clearable
+			withinPortal
 		/>
 	)
 }

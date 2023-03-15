@@ -37,16 +37,16 @@ const words: Record<
 	resheduled: 'Время изменено',
 }
 
-interface IProps extends EventContentArg {}
+interface IProps extends EventContentArg { }
 
-export default function ({
+export default function({
 	timeText,
 	event: { title, extendedProps },
 	event,
 	view,
 }: IProps) {
-	console.log(view.type)
 	const { user } = useUser()
+	const isUsersEvent = extendedProps.ownerId === user.id
 	const [isDeleteModalOpen, deleteModalHandlers] = useDisclosure(false)
 	const [isOpen, { open, close }] = useDisclosure(false)
 
@@ -59,7 +59,7 @@ export default function ({
 				opened={isOpen}
 				onClose={close}
 				closeOnClickOutside={
-					status === 'Ожидает подтверждения' ? false : true
+					status === 'Ожидает подтверждения' && !isUsersEvent ? false : true
 				}
 				withArrow
 				position={view.type === 'timeGridDay' ? 'bottom' : 'right'}
@@ -116,7 +116,8 @@ export default function ({
 						<Badge variant={'dot'} color={color} size="lg">
 							{status}
 						</Badge>
-						{status === 'Ожидает подтверждения' ? (
+						{status === 'Ожидает подтверждения' &&
+							!isUsersEvent ? (
 							<CalendarEventActions
 								eventId={extendedProps.id}
 								start={event.startStr}
@@ -126,7 +127,7 @@ export default function ({
 					</Flex>
 
 					<Flex justify={'end'} mt="sm" gap="xs">
-						{extendedProps.ownerId === user.id ? (
+						{isUsersEvent ? (
 							<ActionIcon
 								onClick={deleteModalHandlers.open}
 								color={'brand'}
@@ -138,7 +139,7 @@ export default function ({
 							</ActionIcon>
 						) : null}
 						{extendedProps.status !== 'accepted' &&
-						extendedProps.ownerId === user.id ? (
+							isUsersEvent ? (
 							<ActionIcon
 								color="brand"
 								size="md"
