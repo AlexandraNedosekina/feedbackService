@@ -65,7 +65,9 @@ const FullCalendar = () => {
 				customButtons={{
 					createEventButton: {
 						text: 'Создать событие',
-						click: () => setOpened(true),
+						click: function () {
+							setOpened(true)
+						},
 					},
 				}}
 				selectable={true}
