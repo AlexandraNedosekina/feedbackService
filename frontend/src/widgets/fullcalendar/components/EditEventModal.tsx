@@ -7,9 +7,8 @@ import { UserSearchSelect } from 'features/user-search-select'
 import { SubmissionErrors } from 'final-form'
 import { useState } from 'react'
 import { Field, Form, FormSpy } from 'react-final-form'
-import { createCalendarEvent, updateCalendarById } from 'shared/api'
+import { updateCalendarById } from 'shared/api'
 import {
-	CalendarEventCreate,
 	CalendarEventUpdate,
 } from 'shared/api/generatedTypes'
 import { FormInput, FormTextarea, Icon, required } from 'shared/ui'
@@ -22,7 +21,7 @@ interface IProps {
 	event: EventApi
 }
 
-export default function ({ opened, onClose, event }: IProps) {
+export default function({ opened, onClose, event }: IProps) {
 	const [isDesc, setIsDesc] = useState<boolean>(
 		event?.extendedProps?.desc ? true : false
 	)

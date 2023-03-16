@@ -9,7 +9,6 @@ import { myCalendar, QueryKeys } from 'shared/api'
 import dayjs from 'dayjs'
 import { CalendarFormat } from 'shared/api/generatedTypes'
 import { EditEventModal } from './components'
-import { useFullcalendarStore } from './model'
 import Event from './components/Event'
 import CreateEventModal from './components/CreateEventModal'
 
@@ -17,9 +16,6 @@ const FullCalendar = () => {
 	const [opened, setOpened] = useState(false)
 	const [isEditOpen, setIsEditOpen] = useState(false)
 	const calendarRef = useRef<Calendar>(null)
-	const [date, setDate] = useState(calendarRef.current?.getApi().getDate())
-
-	const update = useFullcalendarStore(state => state.update)
 
 	const { data } = useQuery({
 		queryKey: [QueryKeys.CALENDAR],
@@ -65,7 +61,7 @@ const FullCalendar = () => {
 				customButtons={{
 					createEventButton: {
 						text: 'Создать событие',
-						click: function() {
+						click: function () {
 							setOpened(true)
 						},
 					},

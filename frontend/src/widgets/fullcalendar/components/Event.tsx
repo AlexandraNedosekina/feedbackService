@@ -46,25 +46,26 @@ export default function ({
 	event,
 	view,
 }: IProps) {
+	const color = colors[extendedProps.status as CalendarEventStatus]
+	const status = words[extendedProps.status as CalendarEventStatus]
+
 	const { user } = useUser()
+
 	const isUsersEvent = extendedProps.ownerId === user.id
+	const canEdit = extendedProps.status !== 'accepted' && isUsersEvent
+	const canDelete = isUsersEvent
+	const canAccept = status === 'Ожидает подтверждения' && !isUsersEvent
+
 	const [isDeleteModalOpen, deleteModalHandlers] = useDisclosure(false)
 	const [isEditModalOpen, editModalHandlers] = useDisclosure(false)
 	const [isOpen, { open, close }] = useDisclosure(false)
-
-	const color = colors[extendedProps.status as CalendarEventStatus]
-	const status = words[extendedProps.status as CalendarEventStatus]
 
 	return (
 		<>
 			<Popover
 				opened={isOpen}
 				onClose={close}
-				closeOnClickOutside={
-					status === 'Ожидает подтверждения' && !isUsersEvent
-						? false
-						: true
-				}
+				closeOnClickOutside={canAccept ? false : true}
 				withArrow
 				position={view.type === 'timeGridDay' ? 'bottom' : 'right'}
 				shadow="md"
@@ -120,7 +121,7 @@ export default function ({
 						<Badge variant={'dot'} color={color} size="lg">
 							{status}
 						</Badge>
-						{status === 'Ожидает подтверждения' && !isUsersEvent ? (
+						{canAccept ? (
 							<CalendarEventActions
 								eventId={extendedProps.id}
 								start={event.startStr}
@@ -130,7 +131,7 @@ export default function ({
 					</Flex>
 
 					<Flex justify={'end'} mt="sm" gap="xs">
-						{isUsersEvent ? (
+						{canDelete ? (
 							<ActionIcon
 								onClick={deleteModalHandlers.open}
 								color={'brand'}
@@ -141,7 +142,7 @@ export default function ({
 								<Icon icon="delete" size={18} />
 							</ActionIcon>
 						) : null}
-						{extendedProps.status !== 'accepted' && isUsersEvent ? (
+						{canEdit ? (
 							<ActionIcon
 								color="brand"
 								size="md"
@@ -155,16 +156,20 @@ export default function ({
 					</Flex>
 				</Popover.Dropdown>
 			</Popover>
-			<DeleteEventModal
-				isOpen={isDeleteModalOpen}
-				onClose={deleteModalHandlers.close}
-				id={extendedProps.id}
-			/>
-			<EditEventModal
-				opened={isEditModalOpen}
-				onClose={editModalHandlers.close}
-				event={event}
-			/>
+			{canDelete ? (
+				<DeleteEventModal
+					isOpen={isDeleteModalOpen}
+					onClose={deleteModalHandlers.close}
+					id={extendedProps.id}
+				/>
+			) : null}
+			{canEdit ? (
+				<EditEventModal
+					opened={isEditModalOpen}
+					onClose={editModalHandlers.close}
+					event={event}
+				/>
+			) : null}
 		</>
 	)
 }
