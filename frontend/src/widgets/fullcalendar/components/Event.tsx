@@ -16,6 +16,7 @@ import { CalendarEventActions } from 'features/calendar-accept-events'
 import { CalendarEventStatus } from 'shared/api/generatedTypes'
 import { Icon } from 'shared/ui'
 import DeleteEventModal from './DeleteEventModal'
+import EditEventModal from './EditEventModal'
 
 const colors: Record<
 	CalendarEventStatus,
@@ -37,9 +38,9 @@ const words: Record<
 	resheduled: 'Время изменено',
 }
 
-interface IProps extends EventContentArg { }
+interface IProps extends EventContentArg {}
 
-export default function({
+export default function ({
 	timeText,
 	event: { title, extendedProps },
 	event,
@@ -48,6 +49,7 @@ export default function({
 	const { user } = useUser()
 	const isUsersEvent = extendedProps.ownerId === user.id
 	const [isDeleteModalOpen, deleteModalHandlers] = useDisclosure(false)
+	const [isEditModalOpen, editModalHandlers] = useDisclosure(false)
 	const [isOpen, { open, close }] = useDisclosure(false)
 
 	const color = colors[extendedProps.status as CalendarEventStatus]
@@ -59,7 +61,9 @@ export default function({
 				opened={isOpen}
 				onClose={close}
 				closeOnClickOutside={
-					status === 'Ожидает подтверждения' && !isUsersEvent ? false : true
+					status === 'Ожидает подтверждения' && !isUsersEvent
+						? false
+						: true
 				}
 				withArrow
 				position={view.type === 'timeGridDay' ? 'bottom' : 'right'}
@@ -116,8 +120,7 @@ export default function({
 						<Badge variant={'dot'} color={color} size="lg">
 							{status}
 						</Badge>
-						{status === 'Ожидает подтверждения' &&
-							!isUsersEvent ? (
+						{status === 'Ожидает подтверждения' && !isUsersEvent ? (
 							<CalendarEventActions
 								eventId={extendedProps.id}
 								start={event.startStr}
@@ -138,13 +141,13 @@ export default function({
 								<Icon icon="delete" size={18} />
 							</ActionIcon>
 						) : null}
-						{extendedProps.status !== 'accepted' &&
-							isUsersEvent ? (
+						{extendedProps.status !== 'accepted' && isUsersEvent ? (
 							<ActionIcon
 								color="brand"
 								size="md"
 								variant="outline"
 								title="Редактировать"
+								onClick={editModalHandlers.open}
 							>
 								<Icon icon="edit" size={18} />
 							</ActionIcon>
@@ -156,6 +159,11 @@ export default function({
 				isOpen={isDeleteModalOpen}
 				onClose={deleteModalHandlers.close}
 				id={extendedProps.id}
+			/>
+			<EditEventModal
+				opened={isEditModalOpen}
+				onClose={editModalHandlers.close}
+				event={event}
 			/>
 		</>
 	)

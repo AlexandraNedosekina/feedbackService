@@ -1,89 +1,233 @@
-import 'dayjs/locale/ru'
-import { Button, Flex, Modal, Title } from '@mantine/core'
-import { DatePicker } from '@mantine/dates'
-import { useMutation, useQuery } from '@tanstack/react-query'
-import { getCalendarById, QueryKeys, updateCalendarById } from 'shared/api'
-import { useFullcalendarStore } from '../model'
-import { UserCard } from 'entities/user'
+import { Button, Grid, Group, Modal, Text, Title } from '@mantine/core'
+import { DateTimePicker } from '@mantine/dates'
+import { showNotification } from '@mantine/notifications'
+import { useMutation } from '@tanstack/react-query'
+import dayjs from 'dayjs'
+import { UserSearchSelect } from 'features/user-search-select'
+import { SubmissionErrors } from 'final-form'
+import { useState } from 'react'
+import { Field, Form, FormSpy } from 'react-final-form'
+import { createCalendarEvent, updateCalendarById } from 'shared/api'
+import {
+	CalendarEventCreate,
+	CalendarEventUpdate,
+} from 'shared/api/generatedTypes'
+import { FormInput, FormTextarea, Icon, required } from 'shared/ui'
+import { ICreateEventForm } from '../types'
+import { EventApi } from '@fullcalendar/react'
 
 interface IProps {
-	isOpen: boolean
+	opened: boolean
 	onClose: () => void
+	event: EventApi
 }
 
-const EditEventModal = ({ isOpen, onClose }: IProps) => {
-	const { event, update } = useFullcalendarStore(store => ({
-		update: store.update,
-		event: store.eventForEdit,
-	}))
-	//const { data } = useQuery({
-	//queryKey: [QueryKeys.CALENDAR_BY_ID],
-	//queryFn: () => getCalendarById(event!.id),
-	//enabled: !!event?.id,
-	//})
+export default function ({ opened, onClose, event }: IProps) {
+	const [isDesc, setIsDesc] = useState<boolean>(
+		event?.extendedProps?.desc ? true : false
+	)
 
-	//console.log(data)
+	const { mutate, isLoading } = useMutation({
+		mutationFn: (data: CalendarEventUpdate) =>
+			updateCalendarById(event?.extendedProps.id, data),
+		onSuccess: () => {
+			onCloseHandler()
+			showNotification({
+				message: 'Успешно',
+				color: 'green',
+			})
+		},
+	})
 
-	//const { mutate } = useMutation({
-	//mutationFn: () => updateCalendarById(event?.id, {
-	//date_start: '',
-	//date_end: '',
-	//})
-	//})
-	//
-	if (!event) return null
+	function onCloseHandler() {
+		onClose()
+	}
+
+	function submitHandler(
+		values: ICreateEventForm
+	): void | SubmissionErrors | Promise<SubmissionErrors> {
+		mutate({
+			title: values.title,
+			description: values.desc,
+			user_id: +values.userId,
+			date_end: values.endTime,
+			date_start: values.startTime,
+		})
+	}
 
 	return (
-		<Modal
-			opened={isOpen}
-			onClose={onClose}
-			size="md"
-			title={<Title order={4}>Редактирование встречи</Title>}
-		>
-			<UserCard
-				name={event.user.full_name}
-				jobTitle={event.user.job_title}
-				avatar={event.user.avatar?.thumbnail_url}
-				variant="sm"
-			/>
-			{/*
-			<DatePicker
-				locale="ru"
-				label="Дата"
-				placeholder="Выберите дату встречи"
-				value={event.start}
-				onChange={value => {
-					if (!value) return
-					update({
-						eventForEdit: {
-							...event,
-							start: value,
-						},
-					})
-				}}
-				mt='sm'
-			/>
-			<TimeRangeInput
-				value={[event.start, event.end]}
-				label="Время"
-				mt={'sm'}
-				styles={{
-					input: {
-						['.mantine-Input-input']: {
-							border: 'none',
-						},
-					},
-				}}
-			/>
-	*/}{' '}
-			<Flex justify={'end'} gap="md" mt="xl">
-				<Button color="red" variant="outline">
-					Удалить
-				</Button>
-				<Button>Сохранить</Button>
-			</Flex>
-		</Modal>
+		<>
+			<Modal
+				title={<Title order={4}>Редактирование встречи</Title>}
+				opened={opened}
+				onClose={onCloseHandler}
+				size="lg"
+				closeOnEscape={false}
+				zIndex={500}
+				withinPortal
+			>
+				<Form<ICreateEventForm>
+					onSubmit={submitHandler}
+					validate={values => {
+						if (dayjs(values.endTime).isBefore(values.startTime)) {
+							return {
+								endTime: 'Окончание не может быть раньше начала',
+							}
+						}
+
+						return undefined
+					}}
+					initialValues={{
+						title: event?.title,
+						desc: event?.extendedProps?.desc,
+						//@ts-expect-error default value in Date
+						endTime: event?.end,
+						//@ts-expect-error default value in Date
+						startTime: event?.start,
+						userId: String(event?.extendedProps?.user.id),
+					}}
+				>
+					{({ handleSubmit }) => (
+						<>
+							<Grid columns={4}>
+								<Grid.Col span={1}>
+									<Text>Название</Text>
+								</Grid.Col>
+								<Grid.Col span={3}>
+									<FormInput name="title" validate={required} />
+								</Grid.Col>
+							</Grid>
+
+							<Grid columns={4} mt="sm">
+								{isDesc ? (
+									<>
+										<Grid.Col span={1}>
+											<Text>Описание</Text>
+										</Grid.Col>
+										<Grid.Col span={3}>
+											<FormTextarea name="desc" minRows={3} />
+										</Grid.Col>
+									</>
+								) : (
+									<Grid.Col offset={1} span={3}>
+										<Button
+											variant="outline"
+											leftIcon={<Icon icon="add" size={18} />}
+											onClick={() => setIsDesc(true)}
+										>
+											Описание
+										</Button>
+									</Grid.Col>
+								)}
+							</Grid>
+
+							<Grid columns={4} mt="sm">
+								<Grid.Col span={1}>
+									<Text>Дата и время</Text>
+								</Grid.Col>
+								<Grid.Col span={3}>
+									<Group align="start">
+										<Field name="startTime" validate={required}>
+											{props => (
+												<DateTimePicker
+													placeholder="Выберите начало"
+													name={props.input.name}
+													value={props.input.value}
+													onChange={props.input.onChange}
+													popoverProps={{
+														withinPortal: true,
+														zIndex: 501,
+													}}
+													error={
+														props.meta.error && props.meta.dirty
+															? props.meta.error
+															: null
+													}
+												/>
+											)}
+										</Field>
+										<Text color="brand" mt={5}>
+											-
+										</Text>
+										<Field name="endTime" validate={required}>
+											{props => (
+												<DateTimePicker
+													placeholder="Выберите окончание"
+													name={props.input.name}
+													value={props.input.value}
+													onChange={props.input.onChange}
+													popoverProps={{
+														withinPortal: true,
+														zIndex: 501,
+													}}
+													error={
+														props.meta.error && props.meta.dirty
+															? props.meta.error
+															: null
+													}
+												/>
+											)}
+										</Field>
+									</Group>
+								</Grid.Col>
+							</Grid>
+
+							<Grid columns={4} mt="sm">
+								<Grid.Col span={1}>
+									<Text>Сотрудник</Text>
+								</Grid.Col>
+								<Grid.Col span={2}>
+									<Field name="userId" validate={required}>
+										{props => (
+											<UserSearchSelect
+												value={props.input.value}
+												onChange={props.input.onChange}
+												defaultValue={
+													event?.extendedProps?.user.full_name
+												}
+												defaultData={[
+													{
+														value: String(
+															event?.extendedProps?.user.id
+														),
+														full_name:
+															event?.extendedProps?.user
+																.full_name,
+														email: event?.extendedProps?.user
+															.email,
+														label: event?.extendedProps?.user
+															.full_name,
+														original: event?.extendedProps.user,
+														job_title:
+															event?.extendedProps.user
+																.job_title,
+													},
+												]}
+											/>
+										)}
+									</Field>
+								</Grid.Col>
+							</Grid>
+
+							<FormSpy>
+								{({ valid, dirty }) => (
+									<>
+										<Group position="right" mt="xl">
+											<Button
+												disabled={!valid || !dirty}
+												onClick={handleSubmit}
+												loading={isLoading}
+											>
+												Сохранить
+											</Button>
+										</Group>
+									</>
+								)}
+							</FormSpy>
+						</>
+					)}
+				</Form>
+			</Modal>
+		</>
 	)
 }
-
-export default EditEventModal

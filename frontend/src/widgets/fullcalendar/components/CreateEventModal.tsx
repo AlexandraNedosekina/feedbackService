@@ -17,7 +17,7 @@ interface IProps {
 	onClose: () => void
 }
 
-export default function({ opened, onClose }: IProps) {
+export default function ({ opened, onClose }: IProps) {
 	const [isDesc, setIsDesc] = useState<boolean>(false)
 
 	const { mutate, isLoading } = useMutation({
@@ -169,8 +169,9 @@ export default function({ opened, onClose }: IProps) {
 									<>
 										<Group position="right" mt="xl">
 											<Button
-												disabled={!valid || isLoading}
+												disabled={!valid}
 												onClick={handleSubmit}
+												loading={isLoading}
 											>
 												Создать
 											</Button>
