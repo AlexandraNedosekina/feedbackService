@@ -40,9 +40,9 @@ const words: Record<
 	resheduled: 'Время изменено',
 }
 
-interface IProps extends EventContentArg {}
+interface IProps extends EventContentArg { }
 
-export default function ({
+export default function({
 	timeText,
 	event: { title, extendedProps },
 	event,
@@ -122,6 +122,7 @@ export default function ({
 									src={participant.avatar?.thumbnail_url}
 									mr={5}
 									size={24}
+									radius="xl"
 								/>
 							}
 							pl={0}
