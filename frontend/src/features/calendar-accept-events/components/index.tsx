@@ -19,11 +19,14 @@ export default function () {
 				dayjs(Date.now()).format('YYYY-MM-DD'),
 				CalendarFormat.Month
 			),
-		refetchInterval: 1000 * 3,
+		refetchInterval: 1000 * 60 * 3, // 3 minutes
 	})
 	const pendingEvents = useMemo(() => {
 		return data?.filter(
-			i => i.status === CalendarEventStatus.Pending && i.user_id === user.id
+			i =>
+				(i.status === CalendarEventStatus.Pending ||
+					i.status === CalendarEventStatus.Resheduled) &&
+				i.user_id === user.id
 		)
 	}, [data, user.id])
 
