@@ -1,12 +1,13 @@
 import { Button, Flex, Modal, Title } from '@mantine/core'
-import { DatePickerInput, TimeInput } from '@mantine/dates'
+import { DateTimePicker } from '@mantine/dates'
 import { useDisclosure } from '@mantine/hooks'
 import { showNotification } from '@mantine/notifications'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import dayjs from 'dayjs'
-import { Reducer, useReducer } from 'react'
+import { Field, Form, FormSpy } from 'react-final-form'
 import { QueryKeys, rescheduleCalendarEvent } from 'shared/api'
 import { CalendarEventReshedule } from 'shared/api/generatedTypes'
+import { required } from 'shared/ui'
 import ActionTemplate from './ActionTemplate'
 
 interface IProps {
@@ -15,31 +16,13 @@ interface IProps {
 	end: string
 }
 
-interface IReducerData {
-	date: Date
-	startTime: string
-	endTime: string
-}
-
-function setInitialReducerState(start: string, end: string): IReducerData {
-	return {
-		date: new Date(start),
-		startTime: dayjs(start).format('hh:mm'),
-		endTime: dayjs(end).format('hh:mm'),
-	}
+interface IFormData {
+	start: Date
+	end: Date
 }
 
 export default function ({ eventId, end, start }: IProps) {
-	const [dates, updateDates] = useReducer<
-		Reducer<IReducerData, Partial<IReducerData>>
-	>((prev, next) => {
-		return { ...prev, ...next }
-	}, setInitialReducerState(start, end))
-	const [isOpen, modalHandlers] = useDisclosure(false, {
-		onClose() {
-			updateDates(setInitialReducerState(start, end))
-		},
-	})
+	const [isOpen, modalHandlers] = useDisclosure(false)
 
 	const queryClient = useQueryClient()
 	const { mutate, isLoading } = useMutation({
@@ -56,20 +39,10 @@ export default function ({ eventId, end, start }: IProps) {
 		},
 	})
 
-	function handleSubmit() {
-		const [startHours, startMinutes] = dates.startTime.split(':')
-		const [endHours, endMinutes] = dates.endTime.split(':')
-		const dateStart = dayjs(dates.date)
-			.set('hour', +startHours)
-			.set('minute', +startMinutes)
-			.toISOString()
-		const dateEnd = dayjs(dates.date)
-			.set('hour', +endHours)
-			.set('minute', +endMinutes)
-			.toISOString()
+	function handleSubmit(values: IFormData) {
 		mutate({
-			date_start: dateStart,
-			date_end: dateEnd,
+			date_start: values.start.toISOString(),
+			date_end: values.end.toISOString(),
 		})
 	}
 
@@ -87,44 +60,83 @@ export default function ({ eventId, end, start }: IProps) {
 				onClose={modalHandlers.close}
 				title={<Title order={4}>Редактирование времени</Title>}
 				zIndex={500}
-
-				//styles={theme => ({
-				//...modalResetOverflow(theme),
-				//})}
 			>
-				<DatePickerInput
-					label="Дата"
-					defaultValue={dates.date}
-					onChange={value => {
-						if (!value) return
-						updateDates({ date: new Date(value.toISOString()) })
+				<Form<IFormData>
+					onSubmit={handleSubmit}
+					initialValues={{
+						start: new Date(start),
+						end: new Date(end),
 					}}
-					sx={() => ({ width: 'max-content', minWidth: '120px' })}
-					popoverProps={{ withinPortal: true, zIndex: 501 }}
-				/>
-
-				<Flex gap="md" align="center" my="md">
-					<TimeInput
-						label="Начало"
-						defaultValue={dates.startTime}
-						onChange={({ target: { value } }) =>
-							updateDates({ startTime: value })
+					validate={values => {
+						if (dayjs(values.end).isBefore(values.start)) {
+							return {
+								end: 'Окончание не может быть раньше начала',
+							}
 						}
-					/>
-					<TimeInput
-						label="Окончание"
-						defaultValue={dates.endTime}
-						onChange={({ target: { value } }) =>
-							updateDates({ endTime: value })
-						}
-					/>
-				</Flex>
 
-				<Flex justify={'end'}>
-					<Button loading={isLoading} onClick={() => handleSubmit()}>
-						Изменить время
-					</Button>
-				</Flex>
+						return undefined
+					}}
+				>
+					{({ handleSubmit }) => (
+						<>
+							<Field name="start" validate={required}>
+								{props => (
+									<DateTimePicker
+										placeholder="Выберите начало"
+										name={props.input.name}
+										value={props.input.value}
+										onChange={props.input.onChange}
+										popoverProps={{
+											withinPortal: true,
+											zIndex: 501,
+										}}
+										error={
+											props.meta.error && props.meta.dirty
+												? props.meta.error
+												: null
+										}
+										label="Начало"
+									/>
+								)}
+							</Field>
+							<Field name="end" validate={required}>
+								{props => (
+									<DateTimePicker
+										placeholder="Выберите окончание"
+										name={props.input.name}
+										value={props.input.value}
+										onChange={props.input.onChange}
+										popoverProps={{
+											withinPortal: true,
+											zIndex: 501,
+										}}
+										error={
+											props.meta.error && props.meta.dirty
+												? props.meta.error
+												: null
+										}
+										mt="sm"
+										mb="lg"
+										label="Окончание"
+									/>
+								)}
+							</Field>
+							<FormSpy>
+								{({ valid, dirty }) => (
+									<Flex justify={'end'}>
+										<Button
+											disabled={!valid || !dirty}
+											loading={isLoading}
+											onClick={handleSubmit}
+										>
+											Изменить время
+										</Button>
+									</Flex>
+								)}
+							</FormSpy>
+						</>
+					)}
+				</Form>
 			</Modal>
 		</>
 	)
