@@ -54,7 +54,9 @@ export default function ({
 	const isUsersEvent = extendedProps.ownerId === user.id
 	const canEdit = extendedProps.status !== 'accepted' && isUsersEvent
 	const canDelete = isUsersEvent
-	const canAccept = status === 'Ожидает подтверждения' && !isUsersEvent
+	const canAccept =
+		(status === 'Ожидает подтверждения' || status === 'Время изменено') &&
+		!isUsersEvent
 
 	const [isDeleteModalOpen, deleteModalHandlers] = useDisclosure(false)
 	const [isEditModalOpen, editModalHandlers] = useDisclosure(false)
@@ -129,6 +131,15 @@ export default function ({
 							/>
 						) : null}
 					</Flex>
+
+					{status === 'Отклонено' && event?.extendedProps.cause ? (
+						<Text pt="sm">
+							<Text span color="dimmed">
+								Причина:
+							</Text>{' '}
+							{event?.extendedProps.cause}
+						</Text>
+					) : null}
 
 					<Flex justify={'end'} mt="sm" gap="xs">
 						{canDelete ? (

@@ -37,6 +37,7 @@ const FullCalendar = () => {
 					user: item.user,
 					status: item.status,
 					desc: item.description,
+					cause: item.rejection_cause,
 				},
 			})) ?? [],
 		[data]
