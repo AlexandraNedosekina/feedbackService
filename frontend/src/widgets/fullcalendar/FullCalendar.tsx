@@ -34,6 +34,7 @@ const FullCalendar = () => {
 				extendedProps: {
 					id: item.id,
 					ownerId: item.owner_id,
+					owner: item.owner,
 					user: item.user,
 					status: item.status,
 					desc: item.description,

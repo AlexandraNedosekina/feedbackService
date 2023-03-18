@@ -1,11 +1,13 @@
 import { EventContentArg } from '@fullcalendar/react'
 import {
 	ActionIcon,
+	Avatar,
 	Badge,
 	CloseButton,
 	Flex,
 	Popover,
 	Spoiler,
+	Stack,
 	Text,
 	Title,
 } from '@mantine/core'
@@ -13,7 +15,7 @@ import { useDisclosure } from '@mantine/hooks'
 import dayjs from 'dayjs'
 import { useUser } from 'entities/user'
 import { CalendarEventActions } from 'features/calendar-accept-events'
-import { CalendarEventStatus } from 'shared/api/generatedTypes'
+import { CalendarEventStatus, UserDetails } from 'shared/api/generatedTypes'
 import { Icon } from 'shared/ui'
 import DeleteEventModal from './DeleteEventModal'
 import EditEventModal from './EditEventModal'
@@ -58,6 +60,10 @@ export default function ({
 		(status === 'Ожидает подтверждения' || status === 'Время изменено') &&
 		!isUsersEvent
 
+	const participant: UserDetails = isUsersEvent
+		? extendedProps.user
+		: extendedProps.owner
+
 	const [isDeleteModalOpen, deleteModalHandlers] = useDisclosure(false)
 	const [isEditModalOpen, editModalHandlers] = useDisclosure(false)
 	const [isOpen, { open, close }] = useDisclosure(false)
@@ -94,77 +100,88 @@ export default function ({
 					</Badge>
 				</Popover.Target>
 				<Popover.Dropdown bg="white" sx={() => ({ zIndex: 1000 })}>
-					<Flex justify={'space-between'} align="center">
-						<Title order={5}>{title}</Title>
-						<CloseButton onClick={close} />
-					</Flex>
-
-					{extendedProps.desc ? (
-						<Spoiler
-							maxHeight={140}
-							showLabel="Показать полностью"
-							hideLabel="Скрыть"
+					<Stack align="start" spacing={'sm'}>
+						<Flex justify={'space-between'} align="center" w={'100%'}>
+							<Title order={5}>{title}</Title>
+							<CloseButton onClick={close} />
+						</Flex>
+						{extendedProps.desc ? (
+							<Spoiler
+								maxHeight={140}
+								showLabel="Показать полностью"
+								hideLabel="Скрыть"
+							>
+								<Text py="xs" sx={() => ({ whiteSpace: 'normal' })}>
+									{extendedProps.desc}
+								</Text>
+							</Spoiler>
+						) : null}
+						<Badge
+							leftSection={
+								<Avatar
+									src={participant.avatar?.thumbnail_url}
+									mr={5}
+									size={24}
+								/>
+							}
+							pl={0}
+							size="lg"
+							radius={'xl'}
 						>
-							<Text pt="md" sx={() => ({ whiteSpace: 'normal' })}>
-								{extendedProps.desc}
-							</Text>
-						</Spoiler>
-					) : null}
-
-					<Flex gap="md" pt="md">
-						<Text color="dimmed">Время и дата</Text>
-						<Text>
-							{dayjs(event.startStr).format('D MMMM, hh:mm')} -{' '}
-							{dayjs(event.endStr).format('D MMMM, hh:mm')}
-						</Text>
-					</Flex>
-
-					<Flex align="center" gap="xs" pt="xs">
-						<Badge variant={'dot'} color={color} size="lg">
-							{status}
+							{participant.full_name}
 						</Badge>
-						{canAccept ? (
-							<CalendarEventActions
-								eventId={extendedProps.id}
-								start={event.startStr}
-								end={event.endStr}
-							/>
+						<Flex gap="md">
+							<Text color="dimmed">Время и дата</Text>
+							<Text>
+								{dayjs(event.startStr).format('D MMMM, hh:mm')} -{' '}
+								{dayjs(event.endStr).format('D MMMM, hh:mm')}
+							</Text>
+						</Flex>
+						<Flex align="center" gap="xs">
+							<Badge variant={'dot'} color={color} size="lg">
+								{status}
+							</Badge>
+							{canAccept ? (
+								<CalendarEventActions
+									eventId={extendedProps.id}
+									start={event.startStr}
+									end={event.endStr}
+								/>
+							) : null}
+						</Flex>
+						{status === 'Отклонено' && extendedProps.cause ? (
+							<Text>
+								<Text span color="dimmed">
+									Причина:
+								</Text>{' '}
+								{extendedProps.cause}
+							</Text>
 						) : null}
-					</Flex>
-
-					{status === 'Отклонено' && event?.extendedProps.cause ? (
-						<Text pt="sm">
-							<Text span color="dimmed">
-								Причина:
-							</Text>{' '}
-							{event?.extendedProps.cause}
-						</Text>
-					) : null}
-
-					<Flex justify={'end'} mt="sm" gap="xs">
-						{canDelete ? (
-							<ActionIcon
-								onClick={deleteModalHandlers.open}
-								color={'brand'}
-								size="md"
-								variant={'outline'}
-								title="Удалить"
-							>
-								<Icon icon="delete" size={18} />
-							</ActionIcon>
-						) : null}
-						{canEdit ? (
-							<ActionIcon
-								color="brand"
-								size="md"
-								variant="outline"
-								title="Редактировать"
-								onClick={editModalHandlers.open}
-							>
-								<Icon icon="edit" size={18} />
-							</ActionIcon>
-						) : null}
-					</Flex>
+						<Flex justify={'end'} gap="xs" w="100%">
+							{canDelete ? (
+								<ActionIcon
+									onClick={deleteModalHandlers.open}
+									color={'brand'}
+									size="md"
+									variant={'outline'}
+									title="Удалить"
+								>
+									<Icon icon="delete" size={18} />
+								</ActionIcon>
+							) : null}
+							{canEdit ? (
+								<ActionIcon
+									color="brand"
+									size="md"
+									variant="outline"
+									title="Редактировать"
+									onClick={editModalHandlers.open}
+								>
+									<Icon icon="edit" size={18} />
+								</ActionIcon>
+							) : null}
+						</Flex>
+					</Stack>
 				</Popover.Dropdown>
 			</Popover>
 			{canDelete ? (
