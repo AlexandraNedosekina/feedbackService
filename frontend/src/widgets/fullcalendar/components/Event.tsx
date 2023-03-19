@@ -40,9 +40,9 @@ const words: Record<
 	resheduled: 'Время изменено',
 }
 
-interface IProps extends EventContentArg { }
+interface IProps extends EventContentArg {}
 
-export default function({
+export default function ({
 	timeText,
 	event: { title, extendedProps },
 	event,
@@ -131,7 +131,7 @@ export default function({
 						>
 							{participant.full_name}
 						</Badge>
-						<Flex gap="md">
+						<Flex gap="sm">
 							<Text color="dimmed">Время и дата</Text>
 							<Text>
 								{dayjs(event.startStr).format('D MMMM, hh:mm')} -{' '}
