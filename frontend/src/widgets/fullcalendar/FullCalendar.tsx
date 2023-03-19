@@ -8,13 +8,10 @@ import { useQuery } from '@tanstack/react-query'
 import { myCalendar, QueryKeys } from 'shared/api'
 import dayjs from 'dayjs'
 import { CalendarFormat } from 'shared/api/generatedTypes'
-import { EditEventModal } from './components'
-import Event from './components/Event'
-import CreateEventModal from './components/CreateEventModal'
+import { CreateEventModal, Event } from './components'
 
 const FullCalendar = () => {
 	const [opened, setOpened] = useState(false)
-	const [isEditOpen, setIsEditOpen] = useState(false)
 	const calendarRef = useRef<Calendar>(null)
 
 	const { data } = useQuery({
@@ -92,10 +89,6 @@ const FullCalendar = () => {
 				height="100%"
 			/>
 			<CreateEventModal opened={opened} onClose={() => setOpened(false)} />
-			<EditEventModal
-				isOpen={isEditOpen}
-				onClose={() => setIsEditOpen(false)}
-			/>
 		</>
 	)
 }
