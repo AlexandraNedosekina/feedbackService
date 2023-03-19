@@ -7,6 +7,9 @@ import '@fullcalendar/daygrid/main.css'
 import '@fullcalendar/timegrid/main.css'
 import 'app/styles/global.css'
 import { withProviders } from 'app/providers'
+import dayjs from 'dayjs'
+
+dayjs.locale('ru')
 
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
 	getLayout?: (page: ReactElement) => ReactNode
