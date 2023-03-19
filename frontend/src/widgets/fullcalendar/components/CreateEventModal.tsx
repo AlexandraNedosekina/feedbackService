@@ -2,12 +2,13 @@ import { Button, Grid, Group, Modal, Text, Title } from '@mantine/core'
 import { DateTimePicker } from '@mantine/dates'
 import { showNotification } from '@mantine/notifications'
 import { useMutation } from '@tanstack/react-query'
+import { useQueryClient } from '@tanstack/react-query'
 import dayjs from 'dayjs'
 import { UserSearchSelect } from 'features/user-search-select'
 import { SubmissionErrors } from 'final-form'
 import { useState } from 'react'
 import { Field, Form, FormSpy } from 'react-final-form'
-import { createCalendarEvent } from 'shared/api'
+import { createCalendarEvent, QueryKeys } from 'shared/api'
 import { CalendarEventCreate } from 'shared/api/generatedTypes'
 import { FormInput, FormTextarea, Icon, required } from 'shared/ui'
 import { ICreateEventForm } from '../types'
@@ -19,6 +20,7 @@ interface IProps {
 
 export default function ({ opened, onClose }: IProps) {
 	const [isDesc, setIsDesc] = useState<boolean>(false)
+	const queryClient = useQueryClient()
 
 	const { mutate, isLoading } = useMutation({
 		mutationFn: (data: CalendarEventCreate) => createCalendarEvent(data),
@@ -28,6 +30,7 @@ export default function ({ opened, onClose }: IProps) {
 				message: 'Успешно',
 				color: 'green',
 			})
+			queryClient.refetchQueries([QueryKeys.CALENDAR])
 		},
 	})
 

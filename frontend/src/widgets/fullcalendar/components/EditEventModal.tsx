@@ -7,13 +7,12 @@ import { UserSearchSelect } from 'features/user-search-select'
 import { SubmissionErrors } from 'final-form'
 import { useState } from 'react'
 import { Field, Form, FormSpy } from 'react-final-form'
-import { updateCalendarById } from 'shared/api'
-import {
-	CalendarEventUpdate,
-} from 'shared/api/generatedTypes'
+import { QueryKeys, updateCalendarById } from 'shared/api'
+import { CalendarEventUpdate } from 'shared/api/generatedTypes'
 import { FormInput, FormTextarea, Icon, required } from 'shared/ui'
 import { ICreateEventForm } from '../types'
 import { EventApi } from '@fullcalendar/react'
+import { useQueryClient } from '@tanstack/react-query'
 
 interface IProps {
 	opened: boolean
@@ -21,10 +20,11 @@ interface IProps {
 	event: EventApi
 }
 
-export default function({ opened, onClose, event }: IProps) {
+export default function ({ opened, onClose, event }: IProps) {
 	const [isDesc, setIsDesc] = useState<boolean>(
 		event?.extendedProps?.desc ? true : false
 	)
+	const queryClient = useQueryClient()
 
 	const { mutate, isLoading } = useMutation({
 		mutationFn: (data: CalendarEventUpdate) =>
@@ -35,6 +35,7 @@ export default function({ opened, onClose, event }: IProps) {
 				message: 'Успешно',
 				color: 'green',
 			})
+			queryClient.refetchQueries([QueryKeys.CALENDAR])
 		},
 	})
 
