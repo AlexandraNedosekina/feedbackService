@@ -26,7 +26,7 @@ class Settings(BaseSettings):
     GITLAB_AUTHORIZE_URL: str = GITLAB_HOST_URL + "oauth/authorize"
     GITLAB_TOKEN_URL: str = GITLAB_HOST_URL + "oauth/token"
     GITLAB_API_URL: str = GITLAB_HOST_URL + "api/v4/"
-    GITLAB_CALLBACK_URL: str = "" #"/auth/authorize-gitlab"
+    GITLAB_CALLBACK_URL: str = "" 
 
     @validator("CORS_ORIGINS", pre=True)
     def assemble_cors_origins(cls, v: str | list[str]) -> list[str] | str:
@@ -46,7 +46,6 @@ class Settings(BaseSettings):
 
 
 settings = Settings()
-print(settings)
 
 
 
