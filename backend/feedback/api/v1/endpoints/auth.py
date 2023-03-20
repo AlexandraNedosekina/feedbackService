@@ -36,13 +36,13 @@ def set_cookie(
     r: Response,
     key: str,
     val: str,
-    domain: AnyHttpUrl = settings.BACKEND_URL,
+    domain: AnyHttpUrl = settings.BACKEND_URL.host,
     max_age: int = 60 * 60 * 2,
 ):
-    domains = domain.host.split(".")
+    domains = domain.split(".")
     if len(domains) > 1:
         domain = ".".join([domains[-2], domains[-1]])
-    r.set_cookie(key=key, domain=domain.host, value=val, max_age=max_age, secure=True)
+    r.set_cookie(key=key, domain=domain, value=val, max_age=max_age, secure=True)
     return r
 
 
