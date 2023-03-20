@@ -38,7 +38,7 @@ class Settings(BaseSettings):
 
     @validator("GITLAB_CALLBACK_URL", pre=True)
     def assemble_callback_url(cls, v: str, values: dict) -> str:
-        return f"{values.get('BACKEND_URL')}/auth/aithorize-gitlab"
+        return f"{values.get('BACKEND_URL')}/auth/authorize-gitlab"
 
     class Config:
         case_sensitive = (True,)
