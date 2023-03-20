@@ -40,7 +40,8 @@ def set_cookie(
     max_age: int = 60 * 60 * 2,
 ):
     domains = domain.host.split(".")
-    domain = ".".join([domains[-2], domains[-1]])
+    if len(domains) > 1:
+        domain = ".".join([domains[-2], domains[-1]])
     r.set_cookie(key=key, domain=domain.host, value=val, max_age=max_age, secure=True)
     return r
 
