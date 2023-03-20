@@ -6,11 +6,10 @@
 python -m venv env
 
 source env/bin/activate # Для линукса
-env\Scripts\activate.ps1 # Для винды (1) или
-env\Scripts\activate.bat # Для винды (2)
+env\Scripts\activate # Для винды
 
 pip install -r requirements.txt
-uvicorn feedback.main:app
+python -m feedback.main
 ```
 
 ## В докере

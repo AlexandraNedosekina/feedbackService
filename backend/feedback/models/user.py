@@ -1,5 +1,4 @@
-from sqlalchemy import (Boolean, Column, Date, DateTime, ForeignKey, Integer,
-                        String, Time)
+from sqlalchemy import Boolean, Column, Date, ForeignKey, Integer, String, Time
 from sqlalchemy.orm import relationship
 
 from feedback.db.session import Base
@@ -55,6 +54,14 @@ class User(Base):
         foreign_keys="Colleagues.owner_id",
     )
 
+    @property
+    def get_roles(self) -> set[str]:
+        return {r.description for r in self.roles}
+
+    @property
+    def get_colleagues_id(self) -> set[int]:
+        return {c.colleague_id for c in self.colleagues}
+
 
 class Avatars(Base):
     __tablename__ = "avatars"
@@ -106,7 +113,8 @@ class Colleagues(Base):
     colleague = relationship("User", foreign_keys=[colleague_id])
 
 
-class SkillPromts(Base):
-    __tablename__ = "skillpromts"
-    id = Column(Integer, primary_key=True, index=True)
-    name = Column(String, index=True, unique=True)
+# TODO: Implement
+class MentorTrainee(Base):
+    __tablename__ = "mentor_trainee"
+    mentor_id = Column(Integer, ForeignKey("user.id"), primary_key=True)
+    trainee_id = Column(Integer, ForeignKey("user.id"), primary_key=True)

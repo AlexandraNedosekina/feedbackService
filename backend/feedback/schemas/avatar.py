@@ -4,10 +4,7 @@ from typing import Type
 from fastapi import Form
 from pydantic import BaseModel
 
-
-class Base(BaseModel):
-    class Config:
-        orm_mode = True
+from feedback.schemas.base import Base
 
 
 def as_form(cls: Type[BaseModel]):

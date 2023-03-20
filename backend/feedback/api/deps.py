@@ -1,6 +1,6 @@
-from typing import AsyncGenerator, Callable, Literal
+from typing import AsyncGenerator, Literal
 
-from fastapi import Depends, HTTPException
+from fastapi import Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
 from feedback import crud, models
@@ -25,7 +25,9 @@ async def get_current_user(
     token_payload = decode_token(token)
     user = crud.user.get_by_email(db, email=token_payload.email)
     if not user:
-        raise HTTPException(status_code=401, detail="User not found")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="User not found"
+        )
     return user
 
 
@@ -36,11 +38,13 @@ class GetUserWithRoles:
     def __call__(
         self, current_user: models.User = Depends(get_current_user)
     ) -> models.User:
-        current_user_roles = [r.description for r in current_user.roles]
+        current_user_roles = current_user.get_roles
         for role in current_user_roles:
             if role in self.roles:
                 return current_user
-        raise HTTPException(status_code=401, detail="Not enough permissions")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Not enough permissions"
+        )
 
 
 def is_allowed(
@@ -52,7 +56,7 @@ def is_allowed(
         ]
     ],
 ) -> bool:
-    current_user_roles = [r.description for r in current_user.roles]
+    current_user_roles = current_user.get_roles
 
     for role in current_user_roles:
         if role in permitted_roles:
@@ -62,3 +66,16 @@ def is_allowed(
         if current_user.id == target_user_id:
             return True
     return False
+
+
+from feedback.notifications.notifiers import (
+    LoggerNotifier,
+    Notifiers,
+    PersistentNotifier,
+)
+
+notifiers = Notifiers(PersistentNotifier(crud.notification), LoggerNotifier())
+
+
+def get_notifiers():
+    return notifiers

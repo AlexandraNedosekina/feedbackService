@@ -1,7 +1,9 @@
 import logging
 
+import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+
 # from fastapi_utils.timing import add_timing_middleware
 from starlette.middleware.sessions import SessionMiddleware
 
@@ -29,7 +31,4 @@ app.add_middleware(
 
 models.Base.metadata.create_all(bind=engine)
 
-
-@app.get("/")
-async def root():
-    return {"message": "Ok dude"}
+uvicorn.run(app, host="0.0.0.0", port=settings.APP_PORT)

@@ -1,14 +1,10 @@
 import datetime
 from typing import Literal
 
-from pydantic import BaseModel, validator
+from pydantic import Field, validator
 
 from feedback import schemas
-
-
-class Base(BaseModel):
-    class Config:
-        orm_mode = True
+from feedback.schemas.base import Base
 
 
 class BaseRel(Base):
@@ -45,8 +41,12 @@ class UserUpdateSelf(Base):
     skills: list[str] | None
     job_expectations: list[str] | None
     work_format: Literal["home", "office", "part"] | None
-    work_hours_start: datetime.time | None
-    work_hours_end: datetime.time | None
+    work_hours_start: datetime.time | None = Field(
+        None, description="Start of work in Ekaterinburg time"
+    )
+    work_hours_end: datetime.time | None = Field(
+        None, description="End of work in Ekaterinburg time"
+    )
     meeting_readiness: bool | None
     date_of_birth: datetime.date | None
 
@@ -60,6 +60,12 @@ class UserUpdateSelf(Base):
 
 
 class UserUpdateOther(Base):
+    work_hours_start: datetime.time | None = Field(
+        None, description="Start of work in Ekaterinburg time"
+    )
+    work_hours_end: datetime.time | None = Field(
+        None, description="End of work in Ekaterinburg time"
+    )
     job_title: str | None
     roles: list[
         Literal["employee", "trainee", "mentor", "manager", "hr", "boss"]
@@ -88,15 +94,6 @@ class UserInDB(UserUpdate):
 
 class User(UserInDB):
     pass
-
-
-class AddSkillPromts(Base):
-    name: list[str]
-
-
-class ShowSkillPromts(Base):
-    id: int
-    name: str
 
 
 class UserDetails(Base):

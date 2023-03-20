@@ -3,8 +3,7 @@ from pydantic import parse_obj_as
 from sqlalchemy.orm import Session
 
 from feedback import crud, models, schemas
-from feedback.api.deps import (GetUserWithRoles, get_current_user, get_db,
-                               is_allowed)
+from feedback.api.deps import GetUserWithRoles, get_current_user, get_db, is_allowed
 
 get_admin = GetUserWithRoles(["admin"])
 router = APIRouter()
@@ -51,7 +50,6 @@ async def get_user_by_id(
     db: Session = Depends(get_db),
     _: models.User = Depends(get_current_user),
 ) -> schemas.User:
-
     user = crud.user.get(db, user_id)
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
@@ -65,6 +63,10 @@ async def update_user(
     db: Session = Depends(get_db),
     curr_user: models.User = Depends(get_current_user),
 ) -> schemas.User:
+    """
+    Updates user.
+    User without "admin" role can update everythig except job_title, email, roles, full_name
+    """
     upd = user_update.dict(exclude_unset=True, exclude_none=True)
     upd_schemas_roles = (
         (schemas.UserUpdateSelf, ["self", "boss", "admin"]),

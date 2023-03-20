@@ -1,15 +1,14 @@
 import logging
 from datetime import datetime, timedelta, timezone
 
-from fastapi import APIRouter, Depends, HTTPException, Query, Response
+from fastapi import APIRouter, Depends, HTTPException, Response
 from fastapi_utils.tasks import repeat_every
 from pydantic import parse_obj_as
 from sqlalchemy import or_
 from sqlalchemy.orm import Session
 
 from feedback import crud, models, schemas
-from feedback.api.deps import (GetUserWithRoles, get_current_user, get_db,
-                               is_allowed)
+from feedback.api.deps import GetUserWithRoles, get_current_user, get_db, is_allowed
 
 logger = logging.getLogger(__name__)
 
@@ -30,9 +29,9 @@ async def send_feedback_out_of_turn(
     if not user:
         raise HTTPException(status_code=404, detail="User does not exist")
 
-    user_roles = [r.description for r in user.roles]
+    # NOTE: WTF
+    user_roles = user.get_roles
     can_send_feedback = True
-
     for el in ("manager", "hr", "boss", "admin"):
         if el in user_roles:
             can_send_feedback = False
@@ -145,7 +144,6 @@ async def get_all_feedback(
 async def show_current_user_feedback_list(
     curr_user: models.User = Depends(get_current_user), db: Session = Depends(get_db)
 ) -> list[schemas.Feedback]:
-
     events_ids = set()
     for val in (
         db.query(models.Event.id)
@@ -202,7 +200,7 @@ async def is_allowed_to_send_feedback(
     receiver = crud.user.get(db, feedback.receiver_id)
     if not receiver:
         raise HTTPException(status_code=404, detail="feedback receiver does not exist")
-    receiver_roles = [r.description for r in receiver.roles]
+    receiver_roles = receiver.get_roles
 
     # Boss, Manager, Admin can send feedback to anyone
     if is_allowed(curr_user, None, ["admin", "boss", "manager"]):
@@ -279,13 +277,13 @@ async def show_receiver_archive_feedback_list_by_user_id(
     return parse_obj_as(list[schemas.Feedback], feedbacks)
 
 
-@router.get("/stats/{user_id}")
+@router.get("/stats/{user_id}", response_model=schemas.FeedbackStat | None)
 async def get_user_rating(
     user_id: int,
     event_id: int | None = None,
     db: Session = Depends(get_db),
     _: models.User = Depends(get_admin_boss_manager_hr),
-) -> schemas.FeedbackStat:
+):
     user = crud.user.get(db, user_id)
     if not user:
         raise HTTPException(status_code=404, detail="User does not exist")
@@ -296,12 +294,6 @@ async def get_user_rating(
             raise HTTPException(status_code=404, detail="Event does not exist")
 
     return crud.feedback.get_user_avg_ratings(db, user=user, event_id=event_id)
-
-
-@router.delete("/")
-async def test_method_delete_all_feedback(db: Session = Depends(get_db)):
-    _ = crud.feedback.remove_all(db=db)
-    return Response(status_code=200)
 
 
 from feedback.db.session import engine
