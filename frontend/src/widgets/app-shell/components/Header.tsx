@@ -30,11 +30,11 @@ const useStyles = createStyles(theme => ({
 }))
 
 interface IProps {
-	openMenu: () => void
-	isOpen: boolean
+	toggleMobileMenu: () => void
+	isMobileMenuOpen: boolean
 }
 
-const Header = ({ openMenu, isOpen }: IProps) => {
+const Header = ({ toggleMobileMenu, isMobileMenuOpen }: IProps) => {
 	const { classes } = useStyles()
 	const { user } = useUser()
 	const router = useRouter()
@@ -86,9 +86,9 @@ const Header = ({ openMenu, isOpen }: IProps) => {
 							backgroundColor: theme.colors.brand[6],
 						},
 					})}
-					onClick={openMenu}
+					onClick={toggleMobileMenu}
 				>
-					<Icon icon={isOpen ? 'close' : 'menu'} size={20} />
+					<Icon icon={isMobileMenuOpen ? 'close' : 'menu'} size={20} />
 				</ActionIcon>
 			</MediaQuery>
 			<MediaQuery

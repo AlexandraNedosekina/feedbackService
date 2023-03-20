@@ -1,6 +1,8 @@
 import { MantineProvider } from '@mantine/core'
-import { NotificationsProvider } from '@mantine/notifications'
+import { DatesProvider } from '@mantine/dates'
+import { Notifications } from '@mantine/notifications'
 import { mantineTheme } from '../styles/mantineTheme'
+import 'dayjs/locale/ru'
 
 export const withMantine =
 	<T extends JSX.IntrinsicAttributes>(Component: React.FC<T>) =>
@@ -12,8 +14,9 @@ export const withMantine =
 				withNormalizeCSS
 				theme={mantineTheme}
 			>
-				<NotificationsProvider>
+				<DatesProvider settings={{ locale: 'ru' }}>
+					<Notifications zIndex={1000} />
 					<Component {...props} />
-				</NotificationsProvider>
+				</DatesProvider>
 			</MantineProvider>
 		)

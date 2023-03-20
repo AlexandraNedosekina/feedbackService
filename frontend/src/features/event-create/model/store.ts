@@ -1,4 +1,5 @@
 import dayjs from 'dayjs'
+import { UpdateAction } from 'shared/types'
 import create from 'zustand'
 import { devtools } from 'zustand/middleware'
 import { immer } from 'zustand/middleware/immer'
@@ -14,9 +15,6 @@ type State = {
 }
 
 type Actions = {
-	update: (value: {
-		[key in keyof State]?: State[key]
-	}) => void
 	getIsEndDateAfter: () => boolean
 	getIsEndTimeAfter: () => boolean
 	getIsSameDates: () => boolean
@@ -25,7 +23,7 @@ type Actions = {
 	getIsStartDateSame: () => boolean
 	getIsDisabled: () => boolean
 	restore: () => void
-}
+} & UpdateAction<State>
 
 const initialState: State = {
 	startDate: dayjs().toDate(),

@@ -9,12 +9,6 @@
  * ---------------------------------------------------------------
  */
 
-/** AddSkillPromts */
-export interface AddSkillPromts {
-	/** Name */
-	name: string[]
-}
-
 /** Avatar */
 export interface Avatar {
 	/** Id */
@@ -64,6 +58,126 @@ export interface BodyCreateAvaterUserUserIdAvatarPost {
 	x: number
 	/** Y */
 	y: number
+}
+
+/** Body_reject_calendar_event_calendar__calendar_id__reject_post */
+export interface BodyRejectCalendarEventCalendarCalendarIdRejectPost {
+	/**
+	 * Rejection Cause
+	 * @default ""
+	 */
+	rejection_cause?: string
+}
+
+/** CalendarEvent */
+export interface CalendarEvent {
+	/** Id */
+	id: number
+	/** Owner Id */
+	owner_id: number
+	owner: UserDetails
+	/** User Id */
+	user_id: number
+	user: UserDetails
+	/** Title */
+	title: string
+	/** Description */
+	description?: string
+	/**
+	 * Date Start
+	 * @format date-time
+	 */
+	date_start: string
+	/**
+	 * Date End
+	 * @format date-time
+	 */
+	date_end: string
+	/** An enumeration. */
+	status: CalendarEventStatus
+	/** Rejection Cause */
+	rejection_cause?: string
+}
+
+/** CalendarEventCreate */
+export interface CalendarEventCreate {
+	/** User Id */
+	user_id: number
+	/** Title */
+	title: string
+	/** Description */
+	description?: string
+	/**
+	 * Date Start
+	 * Event start datetime in UTC with timezone. Example: '2023-02-26T12:30:00Z'
+	 * @format date-time
+	 */
+	date_start: string
+	/**
+	 * Date End
+	 * Event end datetime in UTC with timezone. Example: '2023-02-26T12:30:00Z'
+	 * @format date-time
+	 */
+	date_end: string
+}
+
+/** CalendarEventReshedule */
+export interface CalendarEventReshedule {
+	/**
+	 * Date Start
+	 * Event start datetime in UTC
+	 * @format date-time
+	 */
+	date_start?: string
+	/**
+	 * Date End
+	 * Event end datetime in UTC
+	 * @format date-time
+	 */
+	date_end?: string
+}
+
+/**
+ * CalendarEventStatus
+ * An enumeration.
+ */
+export enum CalendarEventStatus {
+	Pending = 'pending',
+	Accepted = 'accepted',
+	Rejected = 'rejected',
+	Resheduled = 'resheduled',
+}
+
+/** CalendarEventUpdate */
+export interface CalendarEventUpdate {
+	/** User Id */
+	user_id?: number
+	/** Title */
+	title?: string
+	/** Description */
+	description?: string
+	/**
+	 * Date Start
+	 * Event start datetime in UTC
+	 * @format date-time
+	 */
+	date_start?: string
+	/**
+	 * Date End
+	 * Event end datetime in UTC
+	 * @format date-time
+	 */
+	date_end?: string
+}
+
+/**
+ * CalendarFormat
+ * An enumeration.
+ */
+export enum CalendarFormat {
+	Day = 'day',
+	Week = 'week',
+	Month = 'month',
 }
 
 /** CareerParam */
@@ -142,6 +256,15 @@ export interface CareerTrackUpdate {
 	is_current?: boolean
 	/** Params */
 	params?: CareerParamUpdate[]
+}
+
+/** ColleagueRating */
+export interface ColleagueRating {
+	/** Feedback Id */
+	feedback_id: number
+	colleague: UserDetails
+	/** Avg Rating */
+	avg_rating?: number
 }
 
 /** Colleagues */
@@ -277,6 +400,23 @@ export interface FeedbackFromUser {
 	comment?: string
 }
 
+/** FeedbackStat */
+export interface FeedbackStat {
+	user: UserDetails
+	/** Avg Rating */
+	avg_rating?: number
+	/** Task Completion Avg */
+	task_completion_avg?: number
+	/** Involvement Avg */
+	involvement_avg?: number
+	/** Motivation Avg */
+	motivation_avg?: number
+	/** Interaction Avg */
+	interaction_avg?: number
+	/** Colleagues Rating */
+	colleagues_rating?: ColleagueRating[]
+}
+
 /** HTTPValidationError */
 export interface HTTPValidationError {
 	/** Detail */
@@ -298,24 +438,9 @@ export interface Role {
 	/** Id */
 	id?: number
 	/** Description */
-	description:
-		| 'employee'
-		| 'trainee'
-		| 'mentor'
-		| 'manager'
-		| 'hr'
-		| 'boss'
-		| 'admin'
+	description: 'employee' | 'trainee' | 'mentor' | 'manager' | 'hr' | 'boss' | 'admin'
 	/** Owner Id */
 	owner_id?: number
-}
-
-/** ShowSkillPromts */
-export interface ShowSkillPromts {
-	/** Id */
-	id: number
-	/** Name */
-	name: string
 }
 
 /** Skill */
@@ -330,6 +455,18 @@ export interface Skill {
 
 /** User */
 export interface User {
+	/**
+	 * Work Hours Start
+	 * Start of work in Ekaterinburg time
+	 * @format time
+	 */
+	work_hours_start?: string
+	/**
+	 * Work Hours End
+	 * End of work in Ekaterinburg time
+	 * @format time
+	 */
+	work_hours_end?: string
 	/** Job Title */
 	job_title?: string
 	/** Roles */
@@ -342,16 +479,6 @@ export interface User {
 	job_expectations?: JobExpectation[]
 	/** Work Format */
 	work_format?: 'home' | 'office' | 'part'
-	/**
-	 * Work Hours Start
-	 * @format time
-	 */
-	work_hours_start?: string
-	/**
-	 * Work Hours End
-	 * @format time
-	 */
-	work_hours_end?: string
 	/** Meeting Readiness */
 	meeting_readiness?: boolean
 	/**
@@ -389,18 +516,22 @@ export interface UserDetails {
 
 /** UserUpdate */
 export interface UserUpdate {
+	/**
+	 * Work Hours Start
+	 * Start of work in Ekaterinburg time
+	 * @format time
+	 */
+	work_hours_start?: string
+	/**
+	 * Work Hours End
+	 * End of work in Ekaterinburg time
+	 * @format time
+	 */
+	work_hours_end?: string
 	/** Job Title */
 	job_title?: string
 	/** Roles */
-	roles?: (
-		| 'employee'
-		| 'trainee'
-		| 'mentor'
-		| 'manager'
-		| 'hr'
-		| 'boss'
-		| 'admin'
-	)[]
+	roles?: ('employee' | 'trainee' | 'mentor' | 'manager' | 'hr' | 'boss' | 'admin')[]
 	/** Facts */
 	facts?: string[]
 	/** Skills */
@@ -409,16 +540,6 @@ export interface UserUpdate {
 	job_expectations?: string[]
 	/** Work Format */
 	work_format?: 'home' | 'office' | 'part'
-	/**
-	 * Work Hours Start
-	 * @format time
-	 */
-	work_hours_start?: string
-	/**
-	 * Work Hours End
-	 * @format time
-	 */
-	work_hours_end?: string
 	/** Meeting Readiness */
 	meeting_readiness?: boolean
 	/**

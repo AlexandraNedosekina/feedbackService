@@ -1,7 +1,7 @@
 import { Select, SelectItem, Text } from '@mantine/core'
 import { useDebouncedValue } from '@mantine/hooks'
 import { useQuery } from '@tanstack/react-query'
-import { FC, forwardRef, useEffect, useState } from 'react'
+import { forwardRef, useEffect, useState } from 'react'
 import { QueryKeys, TSearchUserAdapter, searchUserByFullname } from 'shared/api'
 
 type ItemProps = React.ComponentPropsWithoutRef<'div'> & TSearchUserAdapter
@@ -22,12 +22,16 @@ interface IProps {
 	value?: string
 	onChange?: (value: string) => void
 	placeholder?: string | null
+	defaultValue?: string
+	defaultData?: TSearchUserAdapter[]
 }
 
 export const UserSearchSelect = ({
 	onChange,
 	placeholder,
 	value: controlledValue,
+	defaultValue,
+	defaultData = [],
 }: IProps) => {
 	const [value, setValue] = useState<string | null>(controlledValue || null)
 	const [searchValue, onSearchChange] = useState('')
@@ -72,10 +76,11 @@ export const UserSearchSelect = ({
 	return (
 		<Select
 			value={value}
+			defaultValue={defaultValue}
 			onChange={handleSelectChange}
 			onSearchChange={onSearchChange}
 			searchValue={searchValue}
-			data={data || []}
+			data={data || defaultData}
 			itemComponent={SelectItem}
 			filter={(value, item: SelectItem & TSearchUserAdapter) =>
 				item.label.toLowerCase().includes(value.toLowerCase().trim())
@@ -98,6 +103,8 @@ export const UserSearchSelect = ({
 			}
 			searchable
 			clearable
+			withinPortal
+			zIndex={1000}
 		/>
 	)
 }

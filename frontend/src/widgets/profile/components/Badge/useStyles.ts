@@ -1,17 +1,17 @@
-import { createStyles } from '@mantine/core'
+import { createStyles, getStylesRef } from '@mantine/core'
 
-export const useStyles = createStyles((theme, _params, getRef) => ({
+export const useStyles = createStyles(theme => ({
 	badge: {
 		position: 'relative',
 		overflow: 'visible',
 		'&:hover': {
-			[`.${getRef('badgeActionsCommon')}`]: {
+			[`.${getStylesRef('badgeActionsCommon')}`]: {
 				opacity: 1,
 			},
 		},
 	},
 	badgeActionsCommon: {
-		ref: getRef('badgeActionsCommon'),
+		ref: getStylesRef('badgeActionsCommon'),
 		position: 'absolute',
 		opacity: 0,
 		top: 0,
