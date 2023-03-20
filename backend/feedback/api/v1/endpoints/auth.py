@@ -32,7 +32,7 @@ def set_cookie(
     r: Response,
     key: str,
     val: str,
-    domain: str = settings.APP_HOST,
+    domain: str = settings.BACKEND_URL,
     max_age: int = 60 * 60 * 2,
 ):
     r.set_cookie(key=key, domain=domain, value=val, max_age=max_age)
