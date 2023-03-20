@@ -1,4 +1,4 @@
-version: '3.5'
+version: "3.5"
 
 services:
    backend:
@@ -7,13 +7,13 @@ services:
          context: ./backend
          dockerfile: Dockerfile
       ports:
-         - '8000:${APP_PORT}'
+         - "8000:${APP_PORT}"
    frontend:
       image: frontend
       build:
          context: ./frontend
          dockerfile: Dockerfile
          args:
-            BACKEND_URL: '${BACKEND_URL}'
+            BACKEND_URL: "${BACKEND_URL}"
       ports:
-         - '3000:3000'
+         - "80:3000"
