@@ -1,8 +1,10 @@
 import datetime
+import logging
 
 from fastapi import APIRouter, Depends, HTTPException, Request, Response
 from fastapi.responses import RedirectResponse
 from httpx_oauth.oauth2 import GetAccessTokenError
+from pydantic import AnyHttpUrl
 from sqlalchemy.orm import Session
 
 from feedback import crud, models, schemas
@@ -10,6 +12,8 @@ from feedback.api.deps import get_current_user, get_db
 from feedback.core import jwt
 from feedback.core.config import settings
 from feedback.core.OAuth2 import RequestError, gitlab
+
+log = logging.getLogger(__file__)
 
 router = APIRouter()
 
@@ -32,10 +36,10 @@ def set_cookie(
     r: Response,
     key: str,
     val: str,
-    domain: str = settings.BACKEND_URL,
+    domain: AnyHttpUrl = settings.BACKEND_URL,
     max_age: int = 60 * 60 * 2,
 ):
-    r.set_cookie(key=key, domain=domain, value=val, max_age=max_age)
+    r.set_cookie(key=key, domain=domain.host, value=val, max_age=max_age)
     return r
 
 
@@ -86,7 +90,8 @@ async def authorize_gitlab(
 
     try:
         token = await gitlab.get_access_token(code)
-    except GetAccessTokenError:
+    except GetAccessTokenError as exc:
+        log.debug(f"Error getting access token {exc}")
         raise HTTPException(status_code=502, detail="Invalid code")
     user = crud.user.get_by_email(db, email=token.userinfo.email)
 

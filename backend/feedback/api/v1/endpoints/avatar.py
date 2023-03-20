@@ -47,7 +47,7 @@ async def create_avater(
     thumbnail_path = f"{THUMBNAILS_DIR}{user.id}.{image_extension}"
     content = await file.read()
     await file.close()
-    if len(content) / 1024**2 > MAX_FILE_SIZE_IN_MB:
+    if len(content) / 1024 ** 2 > MAX_FILE_SIZE_IN_MB:
         raise HTTPException(
             status_code=400,
             detail=f"File size can not be more than {MAX_FILE_SIZE_IN_MB} MB",
