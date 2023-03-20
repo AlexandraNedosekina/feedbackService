@@ -8,7 +8,7 @@ async function getMyCareer() {
 
 		return getMyCareerAdapter(res.data)
 	} catch (error: any) {
-		return errorHandler(error)
+		throw errorHandler(error)
 	}
 }
 

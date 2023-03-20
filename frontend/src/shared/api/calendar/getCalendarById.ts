@@ -8,7 +8,7 @@ async function getCalendarById(calendarId: number) {
 
 		return res.data
 	} catch (error: any) {
-		return errorHandler(error)
+		throw errorHandler(error)
 	}
 }
 

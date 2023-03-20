@@ -9,9 +9,7 @@ async function signinGitlab() {
 
 		return res.data
 	} catch (error: any) {
-		console.error(error)
-
-		return errorHandler(error)
+		throw errorHandler(error)
 	}
 }
 

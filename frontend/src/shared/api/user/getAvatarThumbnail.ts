@@ -16,7 +16,7 @@ async function getAvatarThumbnail(userId: number): Promise<string | null> {
 
 		return URL.createObjectURL(res.data)
 	} catch (error: any) {
-		return errorHandler(error)
+		throw errorHandler(error)
 	}
 }
 

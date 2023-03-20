@@ -13,7 +13,7 @@ async function getAllUsers(skip = 0, limit = 100) {
 
 		return res.data
 	} catch (error: any) {
-		return errorHandler(error)
+		throw errorHandler(error)
 	}
 }
 

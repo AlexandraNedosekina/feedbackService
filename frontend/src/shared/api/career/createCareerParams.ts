@@ -1,11 +1,8 @@
 import api from '..'
 import { errorHandler } from '../errorHandler'
-import { CareerParamCreate, CareerTrack } from '../generatedTypes'
+import { CareerParamCreate } from '../generatedTypes'
 
-async function createCareerParams(
-	careerId: string,
-	data: CareerParamCreate[]
-): Promise<CareerTrack> {
+async function createCareerParams(careerId: string, data: CareerParamCreate[]) {
 	try {
 		const res = await api.post(`career/${careerId}/params`, data, {
 			headers: {
@@ -15,7 +12,7 @@ async function createCareerParams(
 
 		return res.data
 	} catch (error: any) {
-		return errorHandler(error)
+		throw errorHandler(error)
 	}
 }
 

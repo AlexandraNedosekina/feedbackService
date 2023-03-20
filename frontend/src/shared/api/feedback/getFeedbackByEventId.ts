@@ -8,7 +8,7 @@ async function getFeedbackByEventId(eventId: number) {
 
 		return res.data
 	} catch (error: any) {
-		return errorHandler(error)
+		throw errorHandler(error)
 	}
 }
 

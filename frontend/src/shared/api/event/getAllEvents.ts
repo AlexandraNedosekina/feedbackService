@@ -8,7 +8,7 @@ async function getAllEvents() {
 
 		return getAllEventsAdapter(res.data)
 	} catch (error: any) {
-		return errorHandler(error)
+		throw errorHandler(error)
 	}
 }
 

@@ -16,6 +16,6 @@ export default async function (calendarId: number, data: CalendarEventUpdate) {
 
 		return res.data
 	} catch (error: any) {
-		return errorHandler(error)
+		throw errorHandler(error)
 	}
 }

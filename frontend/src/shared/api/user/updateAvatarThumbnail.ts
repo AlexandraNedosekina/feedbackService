@@ -8,7 +8,7 @@ async function deleteAvatar(userId: number, data: AvatarUpdate) {
 
 		return res.data
 	} catch (error: any) {
-		return errorHandler(error)
+		throw errorHandler(error)
 	}
 }
 

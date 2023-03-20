@@ -12,6 +12,6 @@ export default async function (data: CalendarEventCreate) {
 
 		return res.data
 	} catch (error: any) {
-		return errorHandler(error)
+		throw errorHandler(error)
 	}
 }

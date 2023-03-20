@@ -21,7 +21,7 @@ async function updateUser(userId: number, data: TUpdateUser) {
 
 		return res.data
 	} catch (error: any) {
-		return errorHandler(error)
+		throw errorHandler(error)
 	}
 }
 
