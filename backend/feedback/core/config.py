@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import Literal
 
 from pydantic import AnyHttpUrl, BaseSettings, Field, validator
 
@@ -6,18 +7,23 @@ ENV_FILE_DIR = Path(__file__).absolute().parent.parent.parent
 
 
 class Settings(BaseSettings):
+    # App
+    LOG_LEVEL: Literal["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"] = "DEBUG"
     APP_PORT: int = 8000  # Current
     APP_HOST: str = "localhost"  # Current
     SECRET_KEY: str
-
     FRONTEND_URL: AnyHttpUrl = Field("http://localhost:3000")  # Gloabl url
     BACKEND_URL: AnyHttpUrl = "http://localhost:8000"  # Global url
-
     CORS_ORIGINS: list[AnyHttpUrl]
 
-    REFRESH_TOKEN_EXPIRES_IN_MINUTES: int = 60 * 60 * 720  # 30 days
-    ACCESS_TOKEN_EXPIRES_IN_MINUTES: int = 60 * 60 * 2  # 2 hours
+    # Jwt
+    REFRESH_TOKEN_EXPIRES_IN_SECONDS: int = 60 * 60 * 720  # 30 days
+    ACCESS_TOKEN_EXPIRES_IN_SECONDS: int = 60 * 60 * 2  # 2 hours
 
+    # Errors Monitoring
+    SENTRY_DSN: AnyHttpUrl | None = "https://f166f9262c3d4138be4f47962a16a4bb@o4504875728764928.ingest.sentry.io/4504875737546752"
+
+    # Gitlab Auth
     GITLAB_CLIENT_ID: str
     GITLAB_CLIENT_SECRET: str
     GITLAB_HOST_URL: AnyHttpUrl = "https://git.66bit.ru"

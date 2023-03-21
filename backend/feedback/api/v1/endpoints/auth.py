@@ -13,7 +13,7 @@ from feedback.core import jwt
 from feedback.core.config import settings
 from feedback.core.OAuth2 import RequestError, gitlab
 
-log = logging.getLogger(__file__)
+log = logging.getLogger(__name__)
 
 router = APIRouter()
 
@@ -43,12 +43,13 @@ def set_cookie(
     if len(domains) > 1:
         domain = ".".join([domains[-2], domains[-1]])
     r.set_cookie(key=key, domain=domain, value=val, max_age=max_age, secure=True)
+    log.debug(f"cookie is set to {key=} {val=} for {domain=}")
     return r
 
 
 def create_token(
     user: models.User,
-    expires_in_minutes: int = settings.ACCESS_TOKEN_EXPIRES_IN_MINUTES,
+    expires_in_minutes: int = settings.ACCESS_TOKEN_EXPIRES_IN_SECONDS,
 ):
     token_payload = jwt.TokenPayload(
         sub=user.id,
@@ -94,18 +95,19 @@ async def authorize_gitlab(
     try:
         token = await gitlab.get_access_token(code)
     except GetAccessTokenError as exc:
-        log.debug(f"Error getting access token {exc}")
+        log.debug("Error getting access token")
+        log.exception(exc)
         raise HTTPException(status_code=502, detail="Invalid code")
     user = crud.user.get_by_email(db, email=token.userinfo.email)
 
     if not user:
         user = await register_user(token, db)
-        if not user:
-            raise HTTPException(status_code=500, detail="Error when creating user")
+    if not user:
+        raise HTTPException(status_code=500, detail="Error when creating user")
 
     token = create_token(user)
     refresh_token = create_token(
-        user, expires_in_minutes=settings.REFRESH_TOKEN_EXPIRES_IN_MINUTES
+        user, expires_in_minutes=settings.REFRESH_TOKEN_EXPIRES_IN_SECONDS
     )
     response = RedirectResponse(settings.FRONTEND_URL, status_code=302)
     set_cookie(response, "access-token", str(token))
@@ -113,7 +115,7 @@ async def authorize_gitlab(
         response,
         "refresh-token",
         str(refresh_token),
-        max_age=settings.REFRESH_TOKEN_EXPIRES_IN_MINUTES,
+        max_age=settings.REFRESH_TOKEN_EXPIRES_IN_SECONDS,
     )
     return response
 
@@ -137,14 +139,14 @@ async def refresh(request: Request, response: Response, db: Session = Depends(ge
 
     token = create_token(user)
     refresh_token = create_token(
-        user, expires_in_minutes=settings.REFRESH_TOKEN_EXPIRES_IN_MINUTES
+        user, expires_in_minutes=settings.REFRESH_TOKEN_EXPIRES_IN_SECONDS
     )
     set_cookie(response, "access-token", str(token))
     set_cookie(
         response,
         "refresh-token",
         str(refresh_token),
-        max_age=settings.REFRESH_TOKEN_EXPIRES_IN_MINUTES,
+        max_age=settings.REFRESH_TOKEN_EXPIRES_IN_SECONDS,
     )
     response.status_code = 200
     return response
