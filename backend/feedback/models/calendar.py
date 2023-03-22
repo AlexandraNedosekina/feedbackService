@@ -24,3 +24,6 @@ class CalendarEvent(Base):
 
     status = Column(String)  # Accepted, Rejected, Resheduled
     rejection_cause = Column(String)
+
+    def __repr__(self) -> str:
+        return f"Calendar(id={self.id}, s={self.date_start}, e={self.date_end}, status={self.status})"

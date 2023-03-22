@@ -10,21 +10,15 @@ from feedback.crud.base import CRUDBase
 logger = logging.getLogger(__name__)
 
 
+class OverlappingEventError(Exception):
+    pass
+
+
 class CRUDCalendar(
     CRUDBase[
         models.CalendarEvent, schemas.CalendarEventCreate, schemas.CalendarEventUpdate
     ]
 ):
-    def update_status(
-        self,
-        db: Session,
-        *,
-        db_obj: models.CalendarEvent,
-        status: schemas.CalendarEventStatus,
-    ) -> models.CalendarEvent:
-        obj_in = {"status": status}
-        return super().update(db, db_obj=db_obj, obj_in=obj_in)
-
     def reject(
         self, db: Session, *, db_obj: models.CalendarEvent, rejection_cause: str = ""
     ) -> models.CalendarEvent:
@@ -34,6 +28,53 @@ class CRUDCalendar(
         }
         return super().update(db, db_obj=db_obj, obj_in=obj_in)
 
+    def update(
+        self,
+        db: Session,
+        *,
+        db_obj: models.CalendarEvent,
+        obj_in: schemas.CalendarEventUpdate,
+    ) -> models.CalendarEvent:
+        start = obj_in.date_start or db_obj.date_start
+        end = obj_in.date_end or db_obj.date_end
+
+        if self.get_overlapping_events(
+            db, start=start, end=end, user_id=db_obj.user_id
+        ):
+            raise OverlappingEventError(
+                f"User(id={db_obj.user_id} has overlapping events)"
+            )
+
+        if self.get_overlapping_events(
+            db, start=start, end=end, user_id=db_obj.owner_id
+        ):
+            raise OverlappingEventError(
+                f"User(id={db_obj.owner_id} has overlapping events)"
+            )
+        return super().update(db, db_obj=db_obj, obj_in=obj_in)
+
+    def accept(
+        self, db: Session, *, db_obj: models.CalendarEvent
+    ) -> models.CalendarEvent:
+        # Check that event participant has no overlapping events
+        if self.get_overlapping_events(
+            db, start=db_obj.date_start, end=db_obj.date_end, user_id=db_obj.user_id
+        ):
+            raise OverlappingEventError(
+                f"User(id={db_obj.user_id} has overlapping events)"
+            )
+
+        # Check that event creator has no overlapping events
+        if self.get_overlapping_events(
+            db, start=db_obj.date_start, end=db_obj.date_end, user_id=db_obj.owner_id
+        ):
+            raise OverlappingEventError(
+                f"User(id={db_obj.owner_id} has overlapping events)"
+            )
+
+        obj_in = {"status": schemas.CalendarEventStatus.ACCEPTED}
+        return super().update(db, db_obj=db_obj, obj_in=obj_in)
+
     def reshedule(
         self,
         db: Session,
@@ -41,11 +82,29 @@ class CRUDCalendar(
         db_obj: models.CalendarEvent,
         resheduled: schemas.CalendarEventReshedule,
     ) -> models.CalendarEvent:
+        start = resheduled.date_start or db_obj.date_start
+        end = resheduled.date_end or db_obj.date_end
+
+        if self.get_overlapping_events(
+            db, start=start, end=end, user_id=db_obj.user_id
+        ):
+            raise OverlappingEventError(
+                f"User(id={db_obj.user_id} has overlapping events)"
+            )
+
+        if self.get_overlapping_events(
+            db, start=start, end=end, user_id=db_obj.owner_id
+        ):
+            raise OverlappingEventError(
+                f"User(id={db_obj.owner_id} has overlapping events)"
+            )
+
         obj_in = dict(
-            owner_id=db_obj.user_id,
+            owner_id=db_obj.user_id,  # Change owner to user cuz now he proposed time
             user_id=db_obj.owner_id,
             status=schemas.CalendarEventStatus.RESHEDULED,
-            **resheduled.dict(),
+            date_start=start,
+            date_end=end,
         )
         return super().update(db, db_obj=db_obj, obj_in=obj_in)
 
@@ -105,7 +164,11 @@ class CRUDCalendar(
         q = self._filter_by_user_id_all(q, user_id)
         q = q.filter(models.CalendarEvent.status == status)
         q = self._filter_overlapping(q, start, end)
-        return q.all()
+        overlappings = q.all()
+        logger.debug(
+            f"Overlapping events for user {user_id} between {start} and {end} with status {status}: {overlappings}"
+        )
+        return overlappings
 
     def _filter_overlapping(
         self, q: Query, start: datetime.datetime, end: datetime.datetime

@@ -17,6 +17,7 @@ from feedback.db.session import Base
 
 class MyDateTime(TypeDecorator):
     impl = DateTime
+    cache_ok = True
 
     def process_bind_param(self, value, dialect):
         if type(value) is str:

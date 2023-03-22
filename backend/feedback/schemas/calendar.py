@@ -23,7 +23,7 @@ def convert_to_utc(date: datetime) -> datetime:
         return date.astimezone(pytz.timezone("UTC"))
     except pytz.UnknownTimeZoneError as e:
         logger.debug(e)
-        raise ValueError(f"unknown Timezone")
+        raise ValueError("unknown Timezone") from e
 
 
 def is_date_after_currnet_date(date: datetime):
