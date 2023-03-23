@@ -3,18 +3,22 @@ import dayGridPlugin from '@fullcalendar/daygrid'
 import timeGridPlugin from '@fullcalendar/timegrid'
 import interactionPlugin from '@fullcalendar/interaction'
 import 'dayjs/locale/ru'
-import { useState, useMemo, useRef } from 'react'
+import { useState, useMemo } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { myCalendar, QueryKeys } from 'shared/api'
 import dayjs from 'dayjs'
 import { CalendarFormat } from 'shared/api/generatedTypes'
-import { CreateEventModal, Event } from './components'
+import { CreateEventModal, Event, Header } from './components'
 import { useDisclosure } from '@mantine/hooks'
 
 const FullCalendar = () => {
-	const [isCreateModalOpen, createModalHandlers] = useDisclosure(false)
+	const [isCreateModalOpen, createModalHandlers] = useDisclosure(false, {
+		onOpen: () => {
+			setSelectedDate(undefined)
+		},
+	})
 	const [selectedDate, setSelectedDate] = useState<Date>()
-	const calendarRef = useRef<Calendar>(null)
+	const [calendarRef, setCalendarRef] = useState<Calendar | null>(null)
 
 	const { data } = useQuery({
 		queryKey: [QueryKeys.CALENDAR],
@@ -45,8 +49,14 @@ const FullCalendar = () => {
 
 	return (
 		<>
+			<Header
+				calendar={calendarRef}
+				openCreateModal={createModalHandlers.open}
+			/>
 			<Calendar
-				ref={calendarRef}
+				ref={ref => {
+					setCalendarRef(ref)
+				}}
 				plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
 				headerToolbar={{
 					left: 'prev,next today createEventButton',
@@ -61,7 +71,7 @@ const FullCalendar = () => {
 				}}
 				customButtons={{
 					createEventButton: {
-						text: 'Создать событие',
+						text: '+',
 						click: function () {
 							createModalHandlers.open()
 							setSelectedDate(undefined)
