@@ -9,9 +9,11 @@ import { myCalendar, QueryKeys } from 'shared/api'
 import dayjs from 'dayjs'
 import { CalendarFormat } from 'shared/api/generatedTypes'
 import { CreateEventModal, Event } from './components'
+import { useDisclosure } from '@mantine/hooks'
 
 const FullCalendar = () => {
-	const [opened, setOpened] = useState(false)
+	const [isCreateModalOpen, createModalHandlers] = useDisclosure(false)
+	const [selectedDate, setSelectedDate] = useState<Date>()
 	const calendarRef = useRef<Calendar>(null)
 
 	const { data } = useQuery({
@@ -61,7 +63,8 @@ const FullCalendar = () => {
 					createEventButton: {
 						text: 'Создать событие',
 						click: function () {
-							setOpened(true)
+							createModalHandlers.open()
+							setSelectedDate(undefined)
 						},
 					},
 				}}
@@ -70,7 +73,10 @@ const FullCalendar = () => {
 				locale="ru"
 				nowIndicator={true}
 				editable={true}
-				select={() => setOpened(true)}
+				select={value => {
+					createModalHandlers.open()
+					setSelectedDate(value.start)
+				}}
 				eventContent={props => <Event {...props} />}
 				businessHours={{
 					daysOfWeek: [1, 2, 3, 4, 5, 6, 0],
@@ -88,7 +94,11 @@ const FullCalendar = () => {
 				firstDay={1}
 				height="100%"
 			/>
-			<CreateEventModal opened={opened} onClose={() => setOpened(false)} />
+			<CreateEventModal
+				opened={isCreateModalOpen}
+				onClose={createModalHandlers.close}
+				selectedDate={selectedDate}
+			/>
 		</>
 	)
 }

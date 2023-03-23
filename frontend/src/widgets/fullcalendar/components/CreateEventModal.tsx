@@ -16,9 +16,10 @@ import { ICreateEventForm } from '../types'
 interface IProps {
 	opened: boolean
 	onClose: () => void
+	selectedDate?: Date
 }
 
-export default function ({ opened, onClose }: IProps) {
+export default function ({ opened, onClose, selectedDate }: IProps) {
 	const [isDesc, setIsDesc] = useState<boolean>(false)
 	const queryClient = useQueryClient()
 
@@ -117,8 +118,9 @@ export default function ({ opened, onClose }: IProps) {
 												<DateTimePicker
 													placeholder="Выберите начало"
 													name={props.input.name}
-													value={props.input.value}
+													value={props.input.value || selectedDate}
 													onChange={props.input.onChange}
+													valueFormat="hh:mm, D MMMM"
 													popoverProps={{ withinPortal: true }}
 													error={
 														props.meta.error && props.meta.dirty
@@ -136,8 +138,9 @@ export default function ({ opened, onClose }: IProps) {
 												<DateTimePicker
 													placeholder="Выберите окончание"
 													name={props.input.name}
-													value={props.input.value}
+													value={props.input.value || selectedDate}
 													onChange={props.input.onChange}
+													valueFormat="hh:mm, D MMMM"
 													popoverProps={{ withinPortal: true }}
 													error={
 														props.meta.error && props.meta.dirty
