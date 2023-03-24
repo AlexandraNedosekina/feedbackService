@@ -40,9 +40,9 @@ const words: Record<
 	resheduled: 'Время изменено',
 }
 
-interface IProps extends EventContentArg { }
+interface IProps extends EventContentArg {}
 
-export default function({
+export default function ({
 	timeText,
 	event: { title, extendedProps },
 	event,
@@ -94,7 +94,7 @@ export default function({
 							paddingInline: '0',
 							paddingLeft: '2px',
 						})}
-						title={timeText}
+						title={`${timeText}, ${status}`}
 					>
 						{title}
 					</Badge>

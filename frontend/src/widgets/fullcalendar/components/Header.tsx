@@ -25,7 +25,6 @@ export default ({ calendar, openCreateModal }: IProps) => {
 	const prev = () => {
 		calendarApi.prev()
 		setTitle(calendarApi.view.title)
-		console.log(calendarApi.getCurrentData().currentDate)
 	}
 	const next = () => {
 		calendarApi.next()
