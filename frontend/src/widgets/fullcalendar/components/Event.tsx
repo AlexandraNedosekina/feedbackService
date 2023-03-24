@@ -22,11 +22,11 @@ import EditEventModal from './EditEventModal'
 
 const colors: Record<
 	CalendarEventStatus,
-	'red' | 'brand' | 'green' | 'orange'
+	'red.7' | 'brand' | 'green' | 'orange'
 > = {
 	pending: 'brand',
 	accepted: 'green',
-	rejected: 'red',
+	rejected: 'red.7',
 	resheduled: 'orange',
 }
 
@@ -40,9 +40,9 @@ const words: Record<
 	resheduled: 'Время изменено',
 }
 
-interface IProps extends EventContentArg {}
+interface IProps extends EventContentArg { }
 
-export default function ({
+export default function({
 	timeText,
 	event: { title, extendedProps },
 	event,
@@ -134,8 +134,8 @@ export default function ({
 						<Flex gap="sm">
 							<Text color="dimmed">Время и дата</Text>
 							<Text>
-								{dayjs(event.startStr).format('D MMMM, hh:mm')} -{' '}
-								{dayjs(event.endStr).format('D MMMM, hh:mm')}
+								{dayjs(event.startStr).format('hh:mm, D MMMM')} -{' '}
+								{dayjs(event.endStr).format('hh:mm, D MMMM')}
 							</Text>
 						</Flex>
 						<Flex align="center" gap="xs">

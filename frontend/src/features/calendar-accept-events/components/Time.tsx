@@ -8,8 +8,8 @@ interface IProps {
 }
 
 export default function ({ end, start }: IProps) {
-	const startTime = dayjs(start).format('hh:mm A')
-	const endTime = dayjs(end).format('hh:mm A')
+	const startTime = dayjs(start).format('hh:mm')
+	const endTime = dayjs(end).format('hh:mm')
 	const date = dayjs(start).format('D MMMM')
 
 	return (
