@@ -47,7 +47,9 @@ export default function ({ opened, onClose, selectedDate }: IProps) {
 			title: values.title,
 			description: values.desc,
 			user_id: +values.userId,
+			//@ts-expect-error no problem
 			date_end: values.endTime,
+			//@ts-expect-error no problem
 			date_start: values.startTime,
 		})
 	}
@@ -71,6 +73,10 @@ export default function ({ opened, onClose, selectedDate }: IProps) {
 						}
 
 						return undefined
+					}}
+					initialValues={{
+						startTime: selectedDate,
+						endTime: selectedDate,
 					}}
 				>
 					{({ handleSubmit }) => (
@@ -118,7 +124,7 @@ export default function ({ opened, onClose, selectedDate }: IProps) {
 												<DateTimePicker
 													placeholder="Выберите начало"
 													name={props.input.name}
-													value={props.input.value || selectedDate}
+													value={props.input.value}
 													onChange={props.input.onChange}
 													valueFormat="hh:mm, D MMMM"
 													popoverProps={{ withinPortal: true }}
@@ -138,7 +144,7 @@ export default function ({ opened, onClose, selectedDate }: IProps) {
 												<DateTimePicker
 													placeholder="Выберите окончание"
 													name={props.input.name}
-													value={props.input.value || selectedDate}
+													value={props.input.value}
 													onChange={props.input.onChange}
 													valueFormat="hh:mm, D MMMM"
 													popoverProps={{ withinPortal: true }}
