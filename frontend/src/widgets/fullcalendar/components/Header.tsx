@@ -1,5 +1,6 @@
 import FullCalendar from '@fullcalendar/react'
-import { ActionIcon, Box, Button, Group, Title } from '@mantine/core'
+import { ActionIcon, Button, Flex, Group, Title } from '@mantine/core'
+import { CalendarAcceptEvents } from 'features/calendar-accept-events'
 import { useState } from 'react'
 import { Icon } from 'shared/ui'
 
@@ -24,6 +25,7 @@ export default ({ calendar, openCreateModal }: IProps) => {
 	const prev = () => {
 		calendarApi.prev()
 		setTitle(calendarApi.view.title)
+		console.log(calendarApi.getCurrentData().currentDate)
 	}
 	const next = () => {
 		calendarApi.next()
@@ -50,7 +52,7 @@ export default ({ calendar, openCreateModal }: IProps) => {
 	}
 
 	return (
-		<Group>
+		<Group mb="md">
 			<Button.Group>
 				<ActionIcon
 					onClick={prev}
@@ -74,15 +76,14 @@ export default ({ calendar, openCreateModal }: IProps) => {
 						borderBottomLeftRadius: 0,
 					})}
 				>
-					<Box
+					<Flex
 						sx={() => ({
 							transform: 'rotate(180deg)',
-							padding: 0,
-							margin: 0,
+							marginBottom: '2px',
 						})}
 					>
 						<Icon icon="arrow_back_ios_new" />
-					</Box>
+					</Flex>
 				</ActionIcon>
 			</Button.Group>
 
@@ -93,9 +94,12 @@ export default ({ calendar, openCreateModal }: IProps) => {
 				variant="filled"
 				color="brand"
 				onClick={openCreateModal}
+				title="Создать встречу"
 			>
 				<Icon icon="add" size={20} />
 			</ActionIcon>
+
+			<CalendarAcceptEvents />
 
 			<Title
 				order={2}

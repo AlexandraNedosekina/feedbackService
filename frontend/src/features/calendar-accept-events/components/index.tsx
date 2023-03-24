@@ -1,4 +1,5 @@
-import { Button } from '@mantine/core'
+import { Indicator } from '@mantine/core'
+import { ActionIcon } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
 import { useQuery } from '@tanstack/react-query'
 import dayjs from 'dayjs'
@@ -6,6 +7,7 @@ import { useUser } from 'entities/user'
 import { useMemo } from 'react'
 import { myCalendar, QueryKeys } from 'shared/api'
 import { CalendarEventStatus, CalendarFormat } from 'shared/api/generatedTypes'
+import { Icon } from 'shared/ui'
 import EventsModal from './EventsModal'
 
 export default function () {
@@ -34,9 +36,23 @@ export default function () {
 
 	return (
 		<>
-			<Button variant="outline" onClick={handlers.open}>
-				Подтверждения встреч ({pendingEvents?.length})
-			</Button>
+			<Indicator
+				disabled={pendingEvents.length === 0}
+				label={pendingEvents.length}
+				size={18}
+				inline
+				color="brand.8"
+				zIndex={2}
+			>
+				<ActionIcon
+					variant="filled"
+					color="brand"
+					size="lg"
+					onClick={handlers.open}
+				>
+					<Icon icon="calendar_month" size={20} />
+				</ActionIcon>
+			</Indicator>
 			<EventsModal
 				isOpen={isOpen}
 				onClose={handlers.close}

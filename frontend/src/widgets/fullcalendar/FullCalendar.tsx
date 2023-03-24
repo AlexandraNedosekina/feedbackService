@@ -58,11 +58,7 @@ const FullCalendar = () => {
 					setCalendarRef(ref)
 				}}
 				plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
-				headerToolbar={{
-					left: 'prev,next today createEventButton',
-					center: 'title',
-					right: 'dayGridMonth,timeGridWeek,timeGridDay',
-				}}
+				headerToolbar={false}
 				buttonText={{
 					today: 'Сегодня',
 					month: 'Месяц',
