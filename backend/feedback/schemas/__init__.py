@@ -16,6 +16,11 @@ from feedback.schemas.career import (
     CareerTrackCreate,
     CareerTrackUpdate,
 )
+from feedback.schemas.career_template import (
+    CareerTemplate,
+    CareerTemplateCreate,
+    CareerTemplateUpdate,
+)
 from feedback.schemas.feedback import (
     ColleagueRating,
     Colleagues,
