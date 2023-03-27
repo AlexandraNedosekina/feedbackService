@@ -32,7 +32,7 @@ const Navbar = ({ isMobileMenuOpen, closeMobileMenu }: IProps) => {
 	const [isFull, setIsFull] = useState<boolean>(false)
 
 	const theme = useMantineTheme()
-	const isMobile = useMediaQuery(`(max-width: ${theme.breakpoints.sm}px)`)
+	const isMobile = useMediaQuery(`(max-width: ${theme.breakpoints.sm})`)
 
 	const toggleFull = () => {
 		setIsFull(!isFull)

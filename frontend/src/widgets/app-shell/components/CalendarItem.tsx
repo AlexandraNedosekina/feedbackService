@@ -27,7 +27,10 @@ export default () => {
 	})
 	const notify = useMemo(() => {
 		return data?.some(
-			i => i.status === CalendarEventStatus.Pending && i.userId === user.id
+			i =>
+				(i.status === CalendarEventStatus.Pending ||
+					i.status === CalendarEventStatus.Resheduled) &&
+				i.userId === user.id
 		)
 	}, [data, user.id])
 

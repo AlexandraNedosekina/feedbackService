@@ -20,7 +20,7 @@ interface IProps {
 	event: EventApi
 }
 
-export default function ({ opened, onClose, event }: IProps) {
+export default function({ opened, onClose, event }: IProps) {
 	const [isDesc, setIsDesc] = useState<boolean>(
 		event?.extendedProps?.desc ? true : false
 	)
@@ -134,6 +134,7 @@ export default function ({ opened, onClose, event }: IProps) {
 													name={props.input.name}
 													value={props.input.value}
 													onChange={props.input.onChange}
+													valueFormat="hh:mm, D MMMM"
 													popoverProps={{
 														withinPortal: true,
 														zIndex: 501,
@@ -156,6 +157,7 @@ export default function ({ opened, onClose, event }: IProps) {
 													name={props.input.name}
 													value={props.input.value}
 													onChange={props.input.onChange}
+													valueFormat="hh:mm, D MMMM"
 													popoverProps={{
 														withinPortal: true,
 														zIndex: 501,
