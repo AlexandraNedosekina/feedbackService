@@ -126,7 +126,7 @@ export default function ({ opened, onClose, selectedDate }: IProps) {
 													name={props.input.name}
 													value={props.input.value}
 													onChange={props.input.onChange}
-													valueFormat="hh:mm, D MMMM"
+													valueFormat="HH:mm, D MMMM"
 													popoverProps={{ withinPortal: true }}
 													error={
 														props.meta.error && props.meta.dirty
@@ -146,7 +146,7 @@ export default function ({ opened, onClose, selectedDate }: IProps) {
 													name={props.input.name}
 													value={props.input.value}
 													onChange={props.input.onChange}
-													valueFormat="hh:mm, D MMMM"
+													valueFormat="HH:mm, D MMMM"
 													popoverProps={{ withinPortal: true }}
 													error={
 														props.meta.error && props.meta.dirty

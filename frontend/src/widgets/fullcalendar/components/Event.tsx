@@ -134,8 +134,10 @@ export default function ({
 						<Flex gap="sm">
 							<Text color="dimmed">Время и дата</Text>
 							<Text>
-								{dayjs(event.startStr).format('hh:mm, D MMMM')} -{' '}
-								{dayjs(event.endStr).format('hh:mm, D MMMM')}
+								{dayjs(event.startStr.split('+')[0]).format(
+									'HH:mm, D MMMM'
+								)}{' '}
+								- {dayjs(event.endStr).format('HH:mm D MMMM')}
 							</Text>
 						</Flex>
 						<Flex align="center" gap="xs">
