@@ -1,9 +1,11 @@
 import dayjs from 'dayjs'
-import { Form } from 'react-final-form'
+import { Form, FormSpy } from 'react-final-form'
+import { FormCondition } from 'shared/ui'
 import { IFormValues } from '../types'
 import Buttons from './Buttons'
 import SelectType from './SelectType'
 import TimePicker from './TimePicker'
+import UserSelect from './UserSelect'
 
 interface IProps {
 	onCancel?: () => void
@@ -26,7 +28,13 @@ export default ({ onCancel }: IProps) => {
 		>
 			{() => (
 				<>
+					<FormSpy>
+						{({ values }) => <pre>{JSON.stringify(values, null, 2)}</pre>}
+					</FormSpy>
 					<SelectType />
+					<FormCondition when={'type'} is="one">
+						<UserSelect />
+					</FormCondition>
 					<TimePicker />
 					<Buttons onCancel={onCancel} />
 				</>
