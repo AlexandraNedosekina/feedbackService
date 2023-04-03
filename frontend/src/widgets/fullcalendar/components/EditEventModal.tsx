@@ -50,7 +50,9 @@ export default function({ opened, onClose, event }: IProps) {
 			title: values.title,
 			description: values.desc,
 			user_id: +values.userId,
+			//@ts-expect-error good
 			date_end: values.endTime,
+			//@ts-expect-error good
 			date_start: values.startTime,
 		})
 	}
