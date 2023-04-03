@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import dayjs from 'dayjs'
 import { FORM_ERROR } from 'final-form'
-import { Form, FormSpy } from 'react-final-form'
+import { Form } from 'react-final-form'
 import { createEvent, QueryKeys } from 'shared/api'
 import { FormCondition } from 'shared/ui'
 import { IFormValues } from '../types'
@@ -43,15 +43,13 @@ export default ({ onCancel }: IProps) => {
 			.set('minutes', +endMinutes)
 			.toDate()
 
-		return { [FORM_ERROR]: 'something went wrong' }
-
-		//return mutateAsync({
-		//type: values.type,
-		//startDate: start,
-		//endDate: end,
-		//userId: values.userId,
-		//isTwoWay: values.twoWay,
-		//}).catch(() => ({ [FORM_ERROR]: 'something went wrong' }))
+		return mutateAsync({
+			type: values.type,
+			startDate: start,
+			endDate: end,
+			userId: values.userId,
+			isTwoWay: values.twoWay,
+		}).catch(() => ({ [FORM_ERROR]: 'something went wrong' }))
 	}
 
 	return (
@@ -76,9 +74,13 @@ export default ({ onCancel }: IProps) => {
 					dayjs(values.endDate).isBefore(values.startDate) ||
 					(dayjs(values.endDate).isSame(values.startDate) &&
 						+values.startTime.replace(':', '') >
-						+values.endTime.replace(':', ''))
+							+values.endTime.replace(':', ''))
 				) {
 					errors.endDate = 'Окончание не может быть раньше начала'
+				}
+
+				if (values.type === 'one' && !values.userId) {
+					errors.userId = 'Обязательно'
 				}
 
 				return errors
@@ -86,9 +88,6 @@ export default ({ onCancel }: IProps) => {
 		>
 			{({ handleSubmit, submitError }) => (
 				<>
-					<FormSpy>
-						{({ values }) => <pre>{JSON.stringify(values, null, 2)}</pre>}
-					</FormSpy>
 					<SelectType />
 					<FormCondition when={'type'} is="one">
 						<UserSelect />

@@ -9,11 +9,12 @@ export default () => {
 			<Checkbox />
 			<Box my="lg">
 				<Field name="userId">
-					{({ input }) => (
+					{({ input, meta }) => (
 						<UserSearchSelect
 							onChange={value => {
 								input.onChange(value)
 							}}
+							error={meta.error && meta.touched ? meta.error : undefined}
 						/>
 					)}
 				</Field>
