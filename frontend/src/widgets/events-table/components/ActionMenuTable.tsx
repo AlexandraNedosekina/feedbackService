@@ -2,12 +2,14 @@ import { useDisclosure } from '@mantine/hooks'
 import { ActionMenu, Icon } from 'shared/ui'
 import DeleteModal from './DeleteModal'
 import EditModal from './EditModal'
+import { Event } from 'shared/api/generatedTypes'
 
 interface IProps {
 	eventId: string
+	event: Event
 }
 
-const ActionMenuTable = ({ eventId }: IProps) => {
+const ActionMenuTable = ({ eventId, event }: IProps) => {
 	const [isDeleteModalOpen, deleteModalHandlers] = useDisclosure(false)
 	const [isEditModalOpen, editModalHandlers] = useDisclosure(false)
 
@@ -38,6 +40,7 @@ const ActionMenuTable = ({ eventId }: IProps) => {
 				isOpen={isEditModalOpen}
 				onClose={editModalHandlers.close}
 				eventId={eventId}
+				event={event}
 			/>
 		</>
 	)

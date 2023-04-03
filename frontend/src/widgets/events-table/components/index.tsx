@@ -44,7 +44,12 @@ const columns = [
 	// }),
 	columnHelper.display({
 		id: 'actions',
-		cell: ({ row }) => <ActionMenuTable eventId={String(row.original.id)} />,
+		cell: ({ row }) => (
+			<ActionMenuTable
+				eventId={String(row.original.id)}
+				event={row.original}
+			/>
+		),
 	}),
 ]
 

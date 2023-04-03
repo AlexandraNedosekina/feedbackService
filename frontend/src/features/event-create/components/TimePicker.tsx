@@ -8,14 +8,22 @@ const TimePicker = () => {
 				<Text>Начало</Text>
 				<Group align="start">
 					<FormTimeInput name="startTime" validate={required} />
-					<FormDatePickerInput name="startDate" validate={required} />
+					<FormDatePickerInput
+						name="startDate"
+						validate={required}
+						popoverProps={{ withinPortal: true }}
+					/>
 				</Group>
 			</Box>
 			<Box mt="md">
 				<Text>Окончание</Text>
 				<Group align="start">
 					<FormTimeInput name="endTime" validate={required} />
-					<FormDatePickerInput name="endDate" validate={required} />
+					<FormDatePickerInput
+						name="endDate"
+						validate={required}
+						popoverProps={{ withinPortal: true }}
+					/>
 				</Group>
 			</Box>
 		</>
