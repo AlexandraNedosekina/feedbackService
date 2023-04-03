@@ -1,15 +1,13 @@
 import { Button, Modal, Title } from '@mantine/core'
-import { createEventModel, EventCreate } from 'features/event-create'
+import { EventCreate } from 'features/event-create'
 import { useState } from 'react'
 import { Icon } from 'shared/ui'
 
 export default () => {
-	const restore = createEventModel.useCreateEventStore(state => state.restore)
 	const [isModalOpen, setIsModalOpen] = useState(false)
 
 	function handleClose() {
 		setIsModalOpen(false)
-		restore()
 	}
 
 	return (

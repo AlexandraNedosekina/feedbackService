@@ -1,8 +1,5 @@
-import { Box, SegmentedControl } from '@mantine/core'
-import { UserSearchSelect } from 'features/user-search-select'
-import shallow from 'zustand/shallow'
-import { useCreateEventStore } from '../model'
-import Checkbox from './Checkbox'
+import { SegmentedControl } from '@mantine/core'
+import { Field } from 'react-final-form'
 
 const data: { label: string; value: 'one' | 'all' }[] = [
 	{ label: 'Общий', value: 'all' },
@@ -10,36 +7,18 @@ const data: { label: string; value: 'one' | 'all' }[] = [
 ]
 
 const SelectType = () => {
-	const { type, update } = useCreateEventStore(
-		state => ({
-			type: state.type,
-			update: state.update,
-		}),
-		shallow
-	)
-
 	return (
-		<>
-			<SegmentedControl
-				value={type}
-				onChange={(value: 'one' | 'all') => update({ type: value })}
-				data={data}
-				color="brand"
-				size="md"
-			/>
-			{type === 'one' && (
-				<>
-					<Checkbox />
-					<Box my="lg">
-						<UserSearchSelect
-							onChange={value => {
-								update({ userId: value })
-							}}
-						/>
-					</Box>
-				</>
+		<Field name="type">
+			{({ input }) => (
+				<SegmentedControl
+					value={input.value}
+					onChange={input.onChange}
+					data={data}
+					color="brand"
+					size="md"
+				/>
 			)}
-		</>
+		</Field>
 	)
 }
 

@@ -1,20 +1,9 @@
-import { Checkbox as MantineCheckbox } from '@mantine/core'
-import { useCreateEventStore } from '../model'
-import shallow from 'zustand/shallow'
+import { FormCheckbox } from 'shared/ui'
 
 const Checkbox = () => {
-	const { isTwoWay, update } = useCreateEventStore(
-		state => ({
-			isTwoWay: state.isTwoWay,
-			update: state.update,
-		}),
-		shallow
-	)
-
 	return (
-		<MantineCheckbox
-			checked={isTwoWay}
-			onChange={() => update({ isTwoWay: !isTwoWay })}
+		<FormCheckbox
+			name="twoWay"
 			mt="md"
 			label="Коллеги сотрудника смогут оценивать друг друга"
 		/>

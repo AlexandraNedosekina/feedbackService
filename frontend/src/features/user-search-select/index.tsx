@@ -1,4 +1,4 @@
-import { Select, SelectItem, Text } from '@mantine/core'
+import { Select, SelectItem, Text, SelectProps } from '@mantine/core'
 import { useDebouncedValue } from '@mantine/hooks'
 import { useQuery } from '@tanstack/react-query'
 import { forwardRef, useEffect, useState } from 'react'
@@ -18,10 +18,10 @@ const SelectItem = forwardRef<HTMLDivElement, ItemProps>(
 )
 SelectItem.displayName = 'AutoCompleteItem'
 
-interface IProps {
+interface IProps extends Partial<SelectProps> {
 	value?: string
 	onChange?: (value: string) => void
-	placeholder?: string | null
+	placeholder?: string
 	defaultValue?: string
 	defaultData?: TSearchUserAdapter[]
 }
@@ -32,6 +32,7 @@ export const UserSearchSelect = ({
 	value: controlledValue,
 	defaultValue,
 	defaultData = [],
+	...props
 }: IProps) => {
 	const [value, setValue] = useState<string | null>(controlledValue || null)
 	const [searchValue, onSearchChange] = useState('')
@@ -105,6 +106,7 @@ export const UserSearchSelect = ({
 			clearable
 			withinPortal
 			zIndex={1000}
+			{...props}
 		/>
 	)
 }
