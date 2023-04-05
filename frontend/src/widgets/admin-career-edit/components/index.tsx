@@ -7,7 +7,7 @@ import { useRouter } from 'next/router'
 import { getCareerByUserId, getUserById, QueryKeys } from 'shared/api'
 import { Icon } from 'shared/ui'
 import shallow from 'zustand/shallow'
-import CareerChips from './CareerChips'
+import { CareerChips } from 'entities/career'
 import GradeCard from './GradeCard'
 
 export default () => {

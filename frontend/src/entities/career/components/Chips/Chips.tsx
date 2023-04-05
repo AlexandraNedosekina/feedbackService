@@ -4,12 +4,14 @@ import {
 	createStyles,
 	Flex,
 	getStylesRef,
+	Modal,
+	Title,
 } from '@mantine/core'
+import { useDisclosure } from '@mantine/hooks'
 import { careerModel } from 'entities/career'
-import { useState } from 'react'
+import { CareerAddGrade } from 'features/career-add-grade'
 import { Icon } from 'shared/ui'
 import shallow from 'zustand/shallow'
-import { EditModal } from './EditModal'
 
 const useStyles = createStyles(theme => ({
 	input: {
@@ -49,7 +51,7 @@ const useStyles = createStyles(theme => ({
 	},
 }))
 
-const CareerChips = () => {
+export const Chips = () => {
 	const { classes } = useStyles()
 	const { grades, update } = careerModel.useEdit(
 		state => ({
@@ -59,10 +61,11 @@ const CareerChips = () => {
 		shallow
 	)
 	const restore = careerModel.useEditGrade(state => state.restore)
-	const [isOpen, setIsOpen] = useState(false)
+	const isEdit = careerModel.useEditGrade(state => state.isEdit)
+	const [isAddModalOpen, addModalHandlers] = useDisclosure(false)
 
 	function handleCloseModal() {
-		setIsOpen(false)
+		addModalHandlers.close()
 		restore()
 	}
 
@@ -96,15 +99,24 @@ const CareerChips = () => {
 						variant="light"
 						color="brand.6"
 						size="lg"
-						onClick={() => setIsOpen(true)}
+						onClick={addModalHandlers.open}
 					>
 						<Icon icon="add" size={22} />
 					</ActionIcon>
 				</Chip.Group>
 			</Flex>
-			<EditModal isOpen={isOpen} onClose={handleCloseModal} />
+			<Modal
+				opened={isAddModalOpen}
+				onClose={handleCloseModal}
+				title={
+					<Title order={4}>
+						{isEdit ? 'Редактирование этапа' : 'Создание этапа'}
+					</Title>
+				}
+				size="lg"
+			>
+				<CareerAddGrade onClose={addModalHandlers.close} />
+			</Modal>
 		</>
 	)
 }
-
-export default CareerChips
