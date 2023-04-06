@@ -33,6 +33,7 @@ export default () => {
 		onSuccess: data => {
 			const defaultGradeId = data.find(i => i.is_current)?.id
 
+			//TODO move to feature lib
 			const grades = data.map(item => ({
 				label: item.name || '',
 				value: item.id,
@@ -76,7 +77,7 @@ export default () => {
 				<div>Загрузка...</div>
 			) : (
 				<>
-					<CareerChips />
+					<CareerChips type="personal" />
 					{data && data.length > 0 ? (
 						<GradeCard />
 					) : (
