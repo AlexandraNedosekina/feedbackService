@@ -1,14 +1,15 @@
 import { Modal, Title } from '@mantine/core'
 import { ICareerGradeFormValues } from 'entities/career'
-import { CareerAddGrade } from 'features/career-add-grade'
+import { PersonalGradeEdit } from 'features/career-grade'
 
 interface IProps {
 	isOpen: boolean
 	onClose: () => void
 	initialValues: ICareerGradeFormValues
+	careerId: string
 }
 
-export const EditModal = ({ isOpen, onClose, initialValues }: IProps) => {
+export const EditModal = ({ isOpen, onClose, initialValues, careerId }: IProps) => {
 	return (
 		<Modal
 			opened={isOpen}
@@ -16,7 +17,7 @@ export const EditModal = ({ isOpen, onClose, initialValues }: IProps) => {
 			title={<Title order={4}>{'Редактирование этапа'}</Title>}
 			size="lg"
 		>
-			<CareerAddGrade onClose={onClose} initialValues={initialValues} />
+			<PersonalGradeEdit onDone={onClose} initialValues={initialValues} careerId={careerId} />
 		</Modal>
 	)
 }

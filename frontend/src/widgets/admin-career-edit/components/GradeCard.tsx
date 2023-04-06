@@ -24,8 +24,6 @@ const GradeCard = () => {
 	} = useRouter()
 	const queryClient = useQueryClient()
 	const selectedGradeId = careerModel.useEdit(state => state.selectedGradeId)
-	const update = careerModel.useEditGrade(state => state.update)
-	const restore = careerModel.useEditGrade(state => state.restore)
 
 	const data = queryClient.getQueryData<TCareerAdapter[]>([
 		QueryKeys.CAREER_BY_USER_ID,
@@ -94,10 +92,6 @@ const GradeCard = () => {
 		}
 	}
 	function handleEdit() {
-		update({
-			careerId: String(grade?.id),
-			isEdit: true,
-		})
 		handleEditModal.open()
 	}
 
@@ -190,8 +184,8 @@ const GradeCard = () => {
 				isOpen={isEditModalOpen}
 				onClose={() => {
 					handleEditModal.close()
-					restore()
 				}}
+				careerId={String(grade.id)}
 				initialValues={{
 					title: grade.name ?? '',
 					salary: String(grade.salary) ?? '',

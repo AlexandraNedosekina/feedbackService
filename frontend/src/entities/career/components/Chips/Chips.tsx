@@ -9,7 +9,7 @@ import {
 } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
 import { careerModel } from 'entities/career'
-import { CareerAddGrade } from 'features/career-add-grade'
+import { PersonalGradeAdd } from 'features/career-grade'
 import { Icon } from 'shared/ui'
 import shallow from 'zustand/shallow'
 
@@ -51,7 +51,11 @@ const useStyles = createStyles(theme => ({
 	},
 }))
 
-export const Chips = () => {
+interface IProps {
+	type: 'personal' | 'template'
+}
+
+export const Chips = ({ type }: IProps) => {
 	const { classes } = useStyles()
 	const { grades, update } = careerModel.useEdit(
 		state => ({
@@ -60,13 +64,10 @@ export const Chips = () => {
 		}),
 		shallow
 	)
-	const restore = careerModel.useEditGrade(state => state.restore)
-	const isEdit = careerModel.useEditGrade(state => state.isEdit)
 	const [isAddModalOpen, addModalHandlers] = useDisclosure(false)
 
 	function handleCloseModal() {
 		addModalHandlers.close()
-		restore()
 	}
 
 	return (
@@ -108,14 +109,13 @@ export const Chips = () => {
 			<Modal
 				opened={isAddModalOpen}
 				onClose={handleCloseModal}
-				title={
-					<Title order={4}>
-						{isEdit ? 'Редактирование этапа' : 'Создание этапа'}
-					</Title>
-				}
+				title={<Title order={4}>Создание этапа</Title>}
 				size="lg"
 			>
-				<CareerAddGrade onClose={addModalHandlers.close} />
+				{type === 'personal' ? (
+					<PersonalGradeAdd onDone={addModalHandlers.close} />
+				) : //TODO change to TemplateGradeAdd
+				null}
 			</Modal>
 		</>
 	)
