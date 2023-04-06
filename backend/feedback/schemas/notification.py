@@ -14,5 +14,4 @@ class Notification(Base):
     user_id: int
     message: str
     subject: str
-    has_seen: bool
     created_at: datetime

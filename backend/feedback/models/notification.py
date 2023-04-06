@@ -9,5 +9,4 @@ class Notification(Base):
     user_id = Column(Integer, ForeignKey("user.id"))
     message = Column(String)
     subject = Column(String)
-    has_seen = Column(Boolean, server_default="0")
     created_at = Column(DateTime, server_default=func.now())

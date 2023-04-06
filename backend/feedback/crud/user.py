@@ -1,9 +1,10 @@
 from fastapi.encoders import jsonable_encoder
 from sqlalchemy.orm import Session
-from sqlalchemy.sql import update
 
 from feedback import models, schemas
 from feedback.crud.base import CRUDBase
+import logging
+
 
 relationship_models = {
     "skills": models.Skills,
@@ -35,7 +36,10 @@ class CRUDUser(CRUDBase[models.User, schemas.UserCreate, schemas.UserUpdate]):
         obj_in: schemas.UserUpdate | schemas.UserUpdateOther | schemas.UserUpdateSelf
     ) -> models.User:
         obj_data = jsonable_encoder(db_obj)
-        update_data = obj_in.dict(exclude_unset=True)
+        if isinstance(obj_in, dict):
+            update_data = obj_in
+        else:
+            update_data = obj_in.dict(exclude_unset=True)
 
         for field in obj_data:
             if field in update_data:
