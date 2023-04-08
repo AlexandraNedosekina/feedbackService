@@ -4,9 +4,7 @@ import { CareerTemplate } from '../generatedTypes'
 
 async function getCareerTemplateById(templateId: string) {
 	try {
-		const res = await api.get<CareerTemplate[]>(
-			`career/template/${templateId}`
-		)
+		const res = await api.get<CareerTemplate>(`career/template/${templateId}`)
 
 		return res.data
 	} catch (error: any) {
