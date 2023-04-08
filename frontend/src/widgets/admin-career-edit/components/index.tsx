@@ -21,10 +21,19 @@ export default () => {
 	const {
 		query: { id },
 	} = useRouter()
+	const router = useRouter()
+
 	const { data: user, isLoading: isUserLoading } = useQuery({
 		queryKey: [QueryKeys.USER, id],
 		queryFn: () => getUserById(id as string),
 		enabled: !!id,
+		retry(failureCount, error: any) {
+			if (error.code === 404) {
+				router.push('/career')
+			}
+			if (failureCount === 3) return false
+			return true
+		},
 	})
 	const { data, isLoading } = useQuery({
 		queryKey: [QueryKeys.CAREER_BY_USER_ID, id],
