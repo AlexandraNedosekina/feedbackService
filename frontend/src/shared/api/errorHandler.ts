@@ -6,7 +6,10 @@ import { HTTPValidationError } from './generatedTypes'
  */
 export const errorHandler = (error: any) => {
 	if (error instanceof AxiosError) {
-		if (error.response?.status === 404) return
+		if (error.response?.status === 404)
+			return {
+				code: 404,
+			}
 
 		const errorData = error.response?.data
 
