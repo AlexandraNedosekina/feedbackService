@@ -6,15 +6,9 @@ interface IProps {
 	isOpen: boolean
 	onClose: () => void
 	initialValues: ICareerGradeFormValues
-	careerId: string
 }
 
-export const EditModal = ({
-	isOpen,
-	onClose,
-	initialValues,
-	careerId,
-}: IProps) => {
+export const EditModal = ({ isOpen, onClose, initialValues }: IProps) => {
 	return (
 		<Modal
 			opened={isOpen}
@@ -22,11 +16,7 @@ export const EditModal = ({
 			title={<Title order={4}>{'Редактирование этапа'}</Title>}
 			size="lg"
 		>
-			<TemplateGradeEdit
-				onDone={onClose}
-				initialValues={initialValues}
-				careerId={careerId}
-			/>
+			<TemplateGradeEdit onDone={onClose} initialValues={initialValues} />
 		</Modal>
 	)
 }

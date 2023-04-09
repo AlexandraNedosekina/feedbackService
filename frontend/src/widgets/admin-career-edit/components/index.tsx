@@ -42,17 +42,15 @@ export default () => {
 		onSuccess: data => {
 			const defaultGradeId = data.find(i => i.is_current)?.id
 
-			//TODO move to feature lib
 			const grades = data.map(item => ({
 				label: item.name || '',
 				value: item.id,
 				isCompleted: item.is_completed,
 				isCurrent: item.is_current,
-				isDefault: item.id === defaultGradeId,
 			}))
 
 			update({ grades })
-			if (!selectedGradeId) {
+			if (!selectedGradeId || !data.some(i => i.id === selectedGradeId)) {
 				update({ selectedGradeId: String(defaultGradeId) })
 			}
 		},

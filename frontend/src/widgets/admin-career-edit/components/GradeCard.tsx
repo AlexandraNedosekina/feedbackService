@@ -30,7 +30,6 @@ const GradeCard = () => {
 		id,
 	])
 	const grade = data?.find(i => i.id === +selectedGradeId)
-
 	const statusData = useMemo<{ value: ECareerGradeStatus; label: string }[]>(
 		() => [
 			{ value: ECareerGradeStatus.notCompleted, label: 'Незавершенный' },

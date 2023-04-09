@@ -2,12 +2,14 @@ import { Button, Group, Menu, Modal, Text } from '@mantine/core'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { careerModel } from 'entities/career'
 import { useRouter } from 'next/router'
-import { deleteCareerTemplate, QueryKeys } from 'shared/api'
+import { QueryKeys } from 'shared/api'
 import { GradeCard as GradeCardBase } from 'entities/career'
 import { Icon } from 'shared/ui'
 import { useDisclosure } from '@mantine/hooks'
 import { EditModal } from './EditModal'
 import { CareerTemplate } from 'shared/api/generatedTypes'
+import { templateGradeLib } from 'features/career-grade'
+import { showNotification } from '@mantine/notifications'
 
 const GradeCard = () => {
 	const {
@@ -27,10 +29,14 @@ const GradeCard = () => {
 
 	const { mutate: deleteGrade, isLoading: isDeleteGradeLoading } = useMutation(
 		{
-			mutationFn: () => deleteCareerTemplate(String(data?.id)),
+			mutationFn: () => templateGradeLib.deleteGrade(),
 			onSuccess: () => {
 				queryClient.invalidateQueries([QueryKeys.CAREER_TEMPLATE_BY_ID, id])
 				handleDeleteModal.close()
+				showNotification({
+					message: 'Этап успешно удален',
+					color: 'green'
+				})
 			},
 		}
 	)

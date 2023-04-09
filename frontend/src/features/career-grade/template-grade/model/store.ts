@@ -1,26 +1,19 @@
-import create from 'zustand'
+import { CareerTemplate } from 'shared/api/generatedTypes'
 import { UpdateAction } from 'shared/types'
 import { devtools } from 'zustand/middleware'
 import { immer } from 'zustand/middleware/immer'
+import create from 'zustand'
 
 type State = {
-	selectedGradeId: string | number
-	grades: {
-		label: string
-		value: number | string
-		isCompleted?: boolean
-		isCurrent?: boolean
-		isDefault?: boolean
-	}[]
+	template: CareerTemplate | null
 }
 
 type Actions = {} & UpdateAction<State>
 
-export const useEdit = create(
+export const useTemplateStore = create(
 	devtools(
 		immer<State & Actions>(set => ({
-			selectedGradeId: '',
-			grades: [],
+			template: null,
 			update(value) {
 				set(() => value)
 			},

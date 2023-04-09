@@ -1,9 +1,11 @@
 import { Button } from '@mantine/core'
+import { showNotification } from '@mantine/notifications'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { ICareerGradeFormValues } from 'entities/career'
 import { useRouter } from 'next/router'
 import { FormSpy } from 'react-final-form'
-import { createCareerTrack, QueryKeys } from 'shared/api'
-import { CareerParamCreate, CareerTrackCreate } from 'shared/api/generatedTypes'
+import { QueryKeys } from 'shared/api'
+import { templateGradeLib } from '..'
 import { Form } from '../components'
 
 interface IProps {
@@ -17,9 +19,14 @@ export const TemplateGradeAdd = ({ onDone }: IProps) => {
 	const queryClient = useQueryClient()
 
 	const { mutate: create, isLoading: isCreateLoading } = useMutation({
-		mutationFn: (data: CareerTrackCreate) => createCareerTrack(data),
+		mutationFn: (data: Omit<ICareerGradeFormValues, 'idsToDelete'>) =>
+			templateGradeLib.addGrade(data),
 		onSuccess: () => {
-			queryClient.invalidateQueries([QueryKeys.CAREER_BY_USER_ID, id])
+			queryClient.invalidateQueries([QueryKeys.CAREER_TEMPLATE_BY_ID, id])
+			showNotification({
+				message: 'Этап успешно добавлен',
+				color: 'green',
+			})
 			onDone?.()
 		},
 	})
@@ -27,38 +34,18 @@ export const TemplateGradeAdd = ({ onDone }: IProps) => {
 	return (
 		<Form
 			onSubmit={values => {
-				const toLearn: CareerParamCreate[] = values.toLearn.map(item => ({
-					description: item.text,
-					type: 'to_learn',
-				}))
-				const toComplete: CareerParamCreate[] = values.toComplete.map(
-					item => ({
-						description: item.text,
-						type: 'to_complete',
-					})
-				)
-
-				const data: CareerTrackCreate = {
-					user_id: +(id as string),
-					name: values.title,
-					salary: +values.salary ?? 0,
-					params: [...toLearn, ...toComplete],
-				}
-
-				create(data)
+				create(values)
 			}}
 			submitButtons={
 				<FormSpy>
-					{({ invalid, hasValidationErrors, submitting, dirty }) => (
+					{({ invalid, hasValidationErrors, dirty }) => (
 						<Button
 							sx={() => ({
 								alignSelf: 'flex-end',
 							})}
 							type="submit"
 							loading={isCreateLoading}
-							disabled={
-								invalid || hasValidationErrors || submitting || !dirty
-							}
+							disabled={invalid || hasValidationErrors || !dirty}
 						>
 							Добавить
 						</Button>

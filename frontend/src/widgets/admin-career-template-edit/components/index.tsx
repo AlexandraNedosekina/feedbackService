@@ -8,6 +8,7 @@ import { Icon } from 'shared/ui'
 import shallow from 'zustand/shallow'
 import { CareerChips } from 'entities/career'
 import GradeCard from './GradeCard'
+import { templateGradeModel } from 'features/career-grade'
 
 export default () => {
 	const { update } = careerModel.useEdit(
@@ -16,6 +17,9 @@ export default () => {
 			update: state.update,
 		}),
 		shallow
+	)
+	const updateTemplate = templateGradeModel.useTemplateStore(
+		state => state.update
 	)
 	const {
 		query: { id },
@@ -30,12 +34,14 @@ export default () => {
 			const grades = data.template.map((item, i) => ({
 				label: item.name || '',
 				value: i,
-				isDefault: i === 0,
 			}))
 
 			update({
 				grades,
-				selectedGradeId: grades.length > 0 ? 0 : undefined,
+				selectedGradeId: grades.length > 0 ? grades.length - 1 : undefined,
+			})
+			updateTemplate({
+				template: data,
 			})
 		},
 		retry(failureCount, error: any) {
@@ -65,7 +71,7 @@ export default () => {
 				<div>Загрузка...</div>
 			) : (
 				<>
-					<CareerChips type="personal" />
+					<CareerChips type="template" />
 					{data && data.template.length > 0 ? (
 						<GradeCard />
 					) : (
