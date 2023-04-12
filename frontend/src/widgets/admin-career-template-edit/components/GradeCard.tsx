@@ -10,6 +10,7 @@ import { EditModal } from './EditModal'
 import { CareerTemplate } from 'shared/api/generatedTypes'
 import { templateGradeLib } from 'features/career-grade'
 import { showNotification } from '@mantine/notifications'
+import { List } from '@mantine/core'
 
 const GradeCard = () => {
 	const {
@@ -35,7 +36,7 @@ const GradeCard = () => {
 				handleDeleteModal.close()
 				showNotification({
 					message: 'Этап успешно удален',
-					color: 'green'
+					color: 'green',
 				})
 			},
 		}
@@ -75,15 +76,19 @@ const GradeCard = () => {
 			salary={grade.salary}
 		>
 			<Text mt="sm">Что нужно изучить:</Text>
-			{grade.params.map((item, i) => {
-				if (item.type !== 'to_learn') return
-				return <p key={i}>{item.description}</p>
-			})}
+			<List withPadding>
+				{grade.params.map((item, i) => {
+					if (item.type !== 'to_learn') return
+					return <List.Item key={i}>{item.description}</List.Item>
+				})}
+			</List>
 			<Text mt="sm">Что нужно сделать:</Text>
-			{grade.params.map((item, i) => {
-				if (item.type !== 'to_complete') return
-				return <p key={i}>{item.description}</p>
-			})}
+			<List withPadding>
+				{grade.params.map((item, i) => {
+					if (item.type !== 'to_complete') return
+					return <List.Item key={i}>{item.description}</List.Item>
+				})}
+			</List>
 
 			<Modal
 				title="Удалить трек?"
