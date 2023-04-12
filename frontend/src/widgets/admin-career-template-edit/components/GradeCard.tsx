@@ -108,7 +108,6 @@ const GradeCard = () => {
 				onClose={() => {
 					handleEditModal.close()
 				}}
-				careerId={String(data.id)}
 				initialValues={{
 					title: grade.name ?? '',
 					salary: String(grade.salary) ?? '',

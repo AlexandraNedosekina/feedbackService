@@ -1,4 +1,4 @@
-import { ActionIcon, Box, Group, Title } from '@mantine/core'
+import { ActionIcon, Group, Title } from '@mantine/core'
 import { useQuery } from '@tanstack/react-query'
 import { careerModel } from 'entities/career'
 import Link from 'next/link'
@@ -9,6 +9,8 @@ import shallow from 'zustand/shallow'
 import { CareerChips } from 'entities/career'
 import GradeCard from './GradeCard'
 import { templateGradeModel } from 'features/career-grade'
+import { TemplateTitle } from './TemplateTitle'
+import { Text } from '@mantine/core'
 
 export default () => {
 	const { update } = careerModel.useEdit(
@@ -38,7 +40,8 @@ export default () => {
 
 			update({
 				grades,
-				selectedGradeId: grades.length > 0 ? grades.length - 1 : undefined,
+				selectedGradeId:
+					grades.length > 0 ? String(grades.length - 1) : undefined,
 			})
 			updateTemplate({
 				template: data,
@@ -55,22 +58,20 @@ export default () => {
 
 	return (
 		<>
-			<Group spacing="xs">
+			<Group spacing={3}>
 				<Link href="/career">
 					<ActionIcon>
-						<Icon icon="arrow_back_ios_new" />
+						<Icon icon="arrow_back_ios_new" size={14} />
 					</ActionIcon>
 				</Link>
-				<Title order={2}>Редактирование шаблона</Title>
+				<Text>Редактирование шаблона</Text>
 			</Group>
-			<Box mt="xl">
-				<Title order={2}>{data?.name}</Title>
-			</Box>
 			{isLoading ? (
 				// TODO: add skeleton
 				<div>Загрузка...</div>
-			) : (
+			) : data ? (
 				<>
+					<TemplateTitle text={data.name} />
 					<CareerChips type="template" />
 					{data && data.template.length > 0 ? (
 						<GradeCard />
@@ -80,7 +81,7 @@ export default () => {
 						</Title>
 					)}
 				</>
-			)}{' '}
+			) : null}
 		</>
 	)
 }
