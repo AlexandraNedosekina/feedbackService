@@ -2,15 +2,15 @@ import { Button } from '@mantine/core'
 import { showNotification } from '@mantine/notifications'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { ICareerGradeFormValues } from 'entities/career'
-import {
-	IUpdateCareerTrackAllParams,
-	updateCareerTrackAll,
-} from 'features/career-add-grade/lib'
 import { useRouter } from 'next/router'
 import { FormSpy } from 'react-final-form'
 import { QueryKeys } from 'shared/api'
 import { Form } from '../components'
 import { reduceParams } from '../lib'
+import {
+	IUpdateCareerTrackAllParams,
+	updateCareerTrackAll,
+} from '../lib/updateCareerTrackAll'
 
 const defaultInitialValues: ICareerGradeFormValues = {
 	title: '',
@@ -57,10 +57,8 @@ export const PersonalGradeEdit = ({
 
 				const { created: toLearnCreated, updated: toLearnUpdated } =
 					reduceParams(dirtyFields, values.toLearn, 'to_learn')
-				const {
-					created: toCompleteCreated,
-					updated: toCompleteUpdated,
-				} = reduceParams(dirtyFields, values.toComplete, 'to_complete')
+				const { created: toCompleteCreated, updated: toCompleteUpdated } =
+					reduceParams(dirtyFields, values.toComplete, 'to_complete')
 
 				update({
 					careerId,

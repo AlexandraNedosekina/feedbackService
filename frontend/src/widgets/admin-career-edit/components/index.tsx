@@ -50,7 +50,10 @@ export default () => {
 			}))
 
 			update({ grades })
-			if (!selectedGradeId || !data.some(i => i.id === selectedGradeId)) {
+			if (
+				!selectedGradeId ||
+				!data.some(i => String(i.id) === selectedGradeId)
+			) {
 				update({ selectedGradeId: String(defaultGradeId) })
 			}
 		},

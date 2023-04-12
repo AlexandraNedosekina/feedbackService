@@ -4,13 +4,12 @@ import { devtools } from 'zustand/middleware'
 import { immer } from 'zustand/middleware/immer'
 
 type State = {
-	selectedGradeId: string | number
+	selectedGradeId: string
 	grades: {
 		label: string
 		value: number | string
 		isCompleted?: boolean
 		isCurrent?: boolean
-		isDefault?: boolean
 	}[]
 }
 
