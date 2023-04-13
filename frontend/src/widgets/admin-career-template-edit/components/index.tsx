@@ -72,7 +72,19 @@ export default () => {
 			) : data ? (
 				<>
 					<TemplateTitle text={data.name} />
-					<CareerChips type="template" />
+					<CareerChips
+						type="template"
+						addSection={({ openModal }) => (
+							<ActionIcon
+								variant="light"
+								color="brand.6"
+								size="lg"
+								onClick={openModal}
+							>
+								<Icon icon="add" size={22} />
+							</ActionIcon>
+						)}
+					/>
 					{data && data.template.length > 0 ? (
 						<GradeCard />
 					) : (

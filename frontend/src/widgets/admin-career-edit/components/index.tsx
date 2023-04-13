@@ -1,4 +1,4 @@
-import { ActionIcon, Box, Group, Title } from '@mantine/core'
+import { ActionIcon, Box, Group, Text, Title } from '@mantine/core'
 import { useQuery } from '@tanstack/react-query'
 import { careerModel } from 'entities/career'
 import { UserCard } from 'entities/user'
@@ -9,6 +9,9 @@ import { Icon } from 'shared/ui'
 import shallow from 'zustand/shallow'
 import { CareerChips } from 'entities/career'
 import GradeCard from './GradeCard'
+import { AddSection } from './AddSection'
+import { AddTemplateModal } from './AddTemplateModal'
+import { useDisclosure } from '@mantine/hooks'
 
 export default () => {
 	const { selectedGradeId, update } = careerModel.useEdit(
@@ -22,6 +25,9 @@ export default () => {
 		query: { id },
 	} = useRouter()
 	const router = useRouter()
+
+	const [isAddTemplateModalOpen, addTemplateModalHandlers] =
+		useDisclosure(false)
 
 	const { data: user, isLoading: isUserLoading } = useQuery({
 		queryKey: [QueryKeys.USER, id],
@@ -61,13 +67,13 @@ export default () => {
 
 	return (
 		<>
-			<Group spacing="xs">
+			<Group spacing={3}>
 				<Link href="/career">
 					<ActionIcon>
-						<Icon icon="arrow_back_ios_new" />
+						<Icon icon="arrow_back_ios_new" size={14} />
 					</ActionIcon>
 				</Link>
-				<Title order={2}>Редактирование карьерного роста</Title>
+				<Text>Редактирование карьерного роста</Text>
 			</Group>
 
 			{isUserLoading ? (
@@ -87,7 +93,15 @@ export default () => {
 				<div>Загрузка...</div>
 			) : (
 				<>
-					<CareerChips type="personal" />
+					<CareerChips
+						type="personal"
+						addSection={({ openModal }) => (
+							<AddSection
+								openAddGradeModal={openModal}
+								openAddTemplateModal={addTemplateModalHandlers.open}
+							/>
+						)}
+					/>
 					{data && data.length > 0 ? (
 						<GradeCard />
 					) : (
@@ -97,6 +111,11 @@ export default () => {
 					)}
 				</>
 			)}
+
+			<AddTemplateModal
+				isOpen={isAddTemplateModalOpen}
+				onClose={addTemplateModalHandlers.close}
+			/>
 		</>
 	)
 }

@@ -52,9 +52,10 @@ const useStyles = createStyles(theme => ({
 
 interface IProps {
 	type: 'personal' | 'template'
+	addSection: (props: { openModal: () => void }) => JSX.Element
 }
 
-export const Chips = ({ type }: IProps) => {
+export const Chips = ({ type, addSection }: IProps) => {
 	const { classes } = useStyles()
 	const { grades, update, selectedGradeId } = careerModel.useEdit()
 	const [isAddModalOpen, addModalHandlers] = useDisclosure(false)
@@ -86,14 +87,7 @@ export const Chips = ({ type }: IProps) => {
 							{label}
 						</Chip>
 					))}
-					<ActionIcon
-						variant="light"
-						color="brand.6"
-						size="lg"
-						onClick={addModalHandlers.open}
-					>
-						<Icon icon="add" size={22} />
-					</ActionIcon>
+					{addSection({ openModal: addModalHandlers.open })}
 				</Chip.Group>
 			</Flex>
 			<Modal
