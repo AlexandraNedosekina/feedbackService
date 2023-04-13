@@ -1,17 +1,16 @@
 import { ActionIcon, Box, Group, Text, Title } from '@mantine/core'
+import { useDisclosure } from '@mantine/hooks'
 import { useQuery } from '@tanstack/react-query'
-import { careerModel } from 'entities/career'
+import { CareerChips, careerModel } from 'entities/career'
 import { UserCard } from 'entities/user'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { getCareerByUserId, getUserById, QueryKeys } from 'shared/api'
+import { QueryKeys, getCareerByUserId, getUserById } from 'shared/api'
 import { Icon } from 'shared/ui'
 import shallow from 'zustand/shallow'
-import { CareerChips } from 'entities/career'
-import GradeCard from './GradeCard'
 import { AddSection } from './AddSection'
 import { AddTemplateModal } from './AddTemplateModal'
-import { useDisclosure } from '@mantine/hooks'
+import GradeCard from './GradeCard'
 
 export default () => {
 	const { selectedGradeId, update } = careerModel.useEdit(

@@ -5,14 +5,19 @@ import { CareerTemplate } from '../generatedTypes'
 interface IParams {
 	by: number
 	name: string
-	skip?: number
-	limit?: number
+	skip: number
+	limit: number
 }
 
-async function getCareerTemplates(params: IParams) {
+async function getCareerTemplates(params?: Partial<IParams>) {
 	try {
-		const res = await api.get<CareerTemplate[]>('career/template', {
-			params,
+		const res = await api.get<CareerTemplate[]>('career/template/', {
+			params: {
+				by: params?.by,
+				name: params?.name,
+				skip: params?.skip || 0,
+				limit: params?.limit || 100,
+			},
 		})
 
 		return res.data
