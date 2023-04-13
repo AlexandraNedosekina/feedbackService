@@ -22,6 +22,7 @@ export type TIcons =
 	| 'arrow_back_ios_new'
 	| 'question_mark'
 	| 'schedule'
+	| 'keyboard_arrow_down'
 type TIconType = 'outlined' | 'rounded' | 'sharp'
 
 export interface IIconProps {
