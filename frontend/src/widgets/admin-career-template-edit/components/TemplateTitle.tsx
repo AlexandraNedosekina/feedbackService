@@ -7,11 +7,11 @@ import {
 } from '@mantine/core'
 import { showNotification } from '@mantine/notifications'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { templateGradeLib } from 'features/career-grade'
 import { useRouter } from 'next/router'
 import { Field, Form } from 'react-final-form'
 import { QueryKeys } from 'shared/api'
 import { EditableValue, Icon, required } from 'shared/ui'
+import { updateTitle } from '../lib'
 
 const useStyles = createStyles(() => ({
 	actionIcon: {
@@ -39,7 +39,7 @@ export const TemplateTitle = ({ text }: IProps) => {
 	const queryClient = useQueryClient()
 
 	const { mutate, isLoading } = useMutation({
-		mutationFn: (title: string) => templateGradeLib.updateTitle(title),
+		mutationFn: (title: string) => updateTitle(title),
 		onSuccess: () => {
 			queryClient.invalidateQueries([QueryKeys.CAREER_TEMPLATE_BY_ID, id])
 			showNotification({
