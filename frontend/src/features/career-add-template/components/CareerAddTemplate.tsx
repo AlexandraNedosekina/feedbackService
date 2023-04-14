@@ -12,6 +12,7 @@ import {
 	getCoreRowModel,
 	getExpandedRowModel,
 	useReactTable,
+	RowSelectionState,
 } from '@tanstack/react-table'
 import { useMemo, useState } from 'react'
 import { CareerTemplate } from 'shared/api/generatedTypes'
@@ -87,14 +88,17 @@ export default function CareerAddTemplate() {
 	)
 
 	const [expanded, setExpanded] = useState<ExpandedState>({})
+	const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
 
 	const table = useReactTable({
 		data: data ?? [],
 		columns,
 		state: {
 			expanded,
+			rowSelection,
 		},
 		onExpandedChange: setExpanded,
+		onRowSelectionChange: setRowSelection,
 		//@ts-expect-error hack with column name
 		getSubRows: row => row.template,
 		getCoreRowModel: getCoreRowModel(),
