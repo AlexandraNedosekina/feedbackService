@@ -15,3 +15,6 @@ class CareerTemplate(Base):
     created_by_id = Column(Integer, ForeignKey("user.id"), nullable=False)
     created_by_user = relationship("User", foreign_keys=[created_by_id])
     created_at = Column(DateTime, server_default=func.now())
+
+    def __repr__(self) -> str:
+        return f"Template(id={self.id} name={self.name})"

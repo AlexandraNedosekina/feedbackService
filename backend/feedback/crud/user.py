@@ -1,10 +1,10 @@
+import logging
+
 from fastapi.encoders import jsonable_encoder
 from sqlalchemy.orm import Session
 
 from feedback import models, schemas
 from feedback.crud.base import CRUDBase
-import logging
-
 
 relationship_models = {
     "skills": models.Skills,

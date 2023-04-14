@@ -17,6 +17,7 @@ from feedback.schemas.career import (
     CareerTrackUpdate,
 )
 from feedback.schemas.career_template import (
+    ApplyTemplateOpts,
     CareerTemplate,
     CareerTemplateCreate,
     CareerTemplateUpdate,
