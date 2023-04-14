@@ -37,6 +37,7 @@ from feedback.schemas.feedback import (
 )
 from feedback.schemas.notification import Notification, NotificationCreate
 from feedback.schemas.oauth import OAuthToken, OAuthTokenData, OAuthUserInfo
+from feedback.schemas.pagination import PaginatedResponse
 from feedback.schemas.user import (
     User,
     UserCreate,

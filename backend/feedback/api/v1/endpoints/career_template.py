@@ -35,7 +35,7 @@ def create_template(
     return template
 
 
-@router.get("/", response_model=list[schemas.CareerTemplate])
+@router.get("/", response_model=schemas.PaginatedResponse[schemas.CareerTemplate])
 def get_templates(
     by: int | None = None,
     name: str | None = None,
@@ -44,8 +44,11 @@ def get_templates(
     db=Depends(get_db),
 ):
     log.debug(f"Getting templates with query: {name=}, {by=}, {skip=}, {limit=}")
-    return crud.career_template.get_multi_with_queries(
+    templates, total_count = crud.career_template.get_multi_with_queries(
         db, by=by, name=name, skip=skip, limit=limit
+    )
+    return schemas.PaginatedResponse(
+        total_count=total_count, count=len(templates), records=templates
     )
 
 
