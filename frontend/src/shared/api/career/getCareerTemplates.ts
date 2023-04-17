@@ -1,6 +1,8 @@
 import api from '..'
 import { errorHandler } from '../errorHandler'
-import { CareerTemplate } from '../generatedTypes'
+import {
+	PaginatedResponseCareerTemplate,
+} from '../generatedTypes'
 
 interface IParams {
 	by: number
@@ -11,14 +13,17 @@ interface IParams {
 
 async function getCareerTemplates(params?: Partial<IParams>) {
 	try {
-		const res = await api.get<CareerTemplate[]>('career/template/', {
-			params: {
-				by: params?.by,
-				name: params?.name,
-				skip: params?.skip || 0,
-				limit: params?.limit || 100,
-			},
-		})
+		const res = await api.get<PaginatedResponseCareerTemplate>(
+			'career/template/',
+			{
+				params: {
+					by: params?.by,
+					name: params?.name,
+					skip: params?.skip || 0,
+					limit: params?.limit || 100,
+				},
+			}
+		)
 
 		return res.data
 	} catch (error: any) {

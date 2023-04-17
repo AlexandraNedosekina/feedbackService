@@ -1,4 +1,4 @@
-import { Button, Flex, Modal, Title } from '@mantine/core'
+import { Modal, Title } from '@mantine/core'
 import { CareerAddTemplate } from 'features/career-add-template'
 
 interface IProps {
@@ -14,11 +14,7 @@ export const AddTemplateModal = ({ isOpen, onClose }: IProps) => {
 			title={<Title order={4}>Использовать шаблон</Title>}
 			size="lg"
 		>
-			<CareerAddTemplate />
-
-			<Flex justify={'end'} mt="lg">
-				<Button>Сохранить</Button>
-			</Flex>
+			<CareerAddTemplate onDone={onClose} />
 		</Modal>
 	)
 }

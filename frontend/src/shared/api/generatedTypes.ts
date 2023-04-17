@@ -9,6 +9,25 @@
  * ---------------------------------------------------------------
  */
 
+/** ApplyTemplateOpts */
+export interface ApplyTemplateOpts {
+	/**
+	 * User Ids
+	 * @min 0
+	 * @minItems 1
+	 * @uniqueItems true
+	 */
+	user_ids: number[]
+	/**
+	 * Indexes
+	 * Optional field to apply only included indexes from template
+	 * @min 0
+	 * @minItems 1
+	 * @uniqueItems true
+	 */
+	indexes?: number[]
+}
+
 /** Avatar */
 export interface Avatar {
 	/** Id */
@@ -492,6 +511,16 @@ export interface Notification {
 	 * @format date-time
 	 */
 	created_at: string
+}
+
+/** PaginatedResponse[CareerTemplate] */
+export interface PaginatedResponseCareerTemplate {
+	/** Total Count */
+	total_count: number
+	/** Count */
+	count: number
+	/** Records */
+	records: CareerTemplate[]
 }
 
 /** Role */

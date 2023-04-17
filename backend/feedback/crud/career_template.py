@@ -37,7 +37,7 @@ class CRUDCareer(
         if name:
             q = q.filter(models.CareerTemplate.name.ilike(f"%{name}%"))
 
-        return q.offset(skip).limit(limit).all()
+        return (q.offset(skip).limit(limit).all(), q.count())
 
 
 career_template = CRUDCareer(models.CareerTemplate)
