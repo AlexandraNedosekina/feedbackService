@@ -1,4 +1,4 @@
-import { Box, Input } from '@mantine/core'
+import { Box, Button, Group, Input } from '@mantine/core'
 import { useDebouncedValue } from '@mantine/hooks'
 import { useQuery } from '@tanstack/react-query'
 import {
@@ -68,23 +68,30 @@ export default () => {
 				</Tabs.List>
 
 				<Tabs.Panel value="staff" pt="xs">
-					Staff tab content
+					<Table table={table} />
 				</Tabs.Panel>
 
 				<Tabs.Panel value="templates" pt="xs">
-					Templates tab content
+					<Group position="right" mt="xl">
+						<Button
+						// disabled={!valid}
+						// onClick={handleSubmit}
+						// loading={isLoading}
+						>
+							+ Создать
+						</Button>
+						<Table table={table} />
+					</Group>
 				</Tabs.Panel>
 			</Tabs>
-			<Box maw={400} my="lg">
+			{/* <Box maw={400} my="lg">
 				<Input
 					value={searchValue}
 					onChange={e => setSearchValue(e.target.value)}
 					icon={<Icon icon="search" />}
 					placeholder="Поиск"
 				/>
-			</Box>
-
-			<Table table={table} />
+			</Box> */}
 		</>
 	)
 }
