@@ -1,6 +1,6 @@
-from datetime import datetime, timezone
+from datetime import datetime
 
-from pydantic import Field, Json, root_validator
+from pydantic import Field, root_validator
 
 from feedback.schemas.base import Base
 from feedback.schemas.career import CareerParamCreate, check_name_or_salary_exists
@@ -46,3 +46,14 @@ class CareerTemplateInDB(Base):
 
 class CareerTemplate(CareerTemplateInDB):
     pass
+
+
+class ApplyTemplateOpts(Base):
+    user_ids: list[int] = Field(min_items=1, ge=0, unique_items=True)
+    indexes: list[int] | None = Field(
+        default=None,
+        min_items=1,
+        ge=0,
+        unique_items=True,
+        description="Optional field to apply only included indexes from template",
+    )
