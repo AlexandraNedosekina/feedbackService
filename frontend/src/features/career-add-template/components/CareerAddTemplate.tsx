@@ -1,5 +1,6 @@
 import {
 	ActionIcon,
+	Button,
 	Checkbox,
 	Flex,
 	Pagination,
@@ -20,12 +21,20 @@ import { useEffect, useMemo, useState } from 'react'
 import { CareerTemplate } from 'shared/api/generatedTypes'
 import { Icon } from 'shared/ui'
 import tableStyles from 'shared/ui/Table/components/styles.module.sass'
-import { useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { QueryKeys, getCareerTemplates } from 'shared/api'
+import { applyTemplates } from '../lib'
+import { useRouter } from 'next/router'
+import { showNotification } from '@mantine/notifications'
 
+const PER_PAGE = 5
 const columnHelper = createColumnHelper<CareerTemplate>()
 
-export default function CareerAddTemplate() {
+interface IProps {
+	onDone?: () => void
+}
+
+export default function CareerAddTemplate({ onDone }: IProps) {
 	const columns = useMemo(
 		() => [
 			columnHelper.accessor('name', {
@@ -83,9 +92,15 @@ export default function CareerAddTemplate() {
 		],
 		[]
 	)
+
+	const {
+		query: { id },
+	} = useRouter()
+	const queryClient = useQueryClient()
+
 	const [pagination, setPagination] = useState<PaginationState>({
 		pageIndex: 0,
-		pageSize: 5,
+		pageSize: PER_PAGE,
 	})
 	const [expanded, setExpanded] = useState<ExpandedState>({})
 	const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
@@ -99,9 +114,24 @@ export default function CareerAddTemplate() {
 			}),
 		keepPreviousData: true,
 	})
+	const { mutate, isLoading: isMutateLoading } = useMutation({
+		mutationFn: (data: string[]) =>
+			applyTemplates({
+				userId: +(id as string),
+				ids: data,
+			}),
+		onSuccess: () => {
+			queryClient.invalidateQueries([QueryKeys.CAREER_BY_USER_ID, id])
+			showNotification({
+				message: 'Успешно',
+				color: 'green'
+			})
+			onDone?.()
+		}
+	})
 
 	const table = useReactTable({
-		data: data ?? [],
+		data: data?.records ?? [],
 		columns,
 		state: {
 			expanded,
@@ -125,9 +155,14 @@ export default function CareerAddTemplate() {
 		refetch()
 	}, [pagination, refetch])
 
+	function handleSubmit() {
+		mutate(Object.keys(rowSelection))
+	}
+
 	//TODO add skeleton
 	if (isLoading) return <Text>Загрузка</Text>
-	if (data && data.length === 0) return <Text>Шаблонов нет</Text>
+	if (data && data.records.length === 0) return <Text>Шаблонов нет</Text>
+	if (!data) return <Text>Нет данных</Text>
 
 	return (
 		<>
@@ -181,9 +216,19 @@ export default function CareerAddTemplate() {
 				onChange={value => {
 					table.setPageIndex(value - 1)
 				}}
-				total={2}
+				total={Math.ceil(data.total_count / PER_PAGE)}
 				mt="md"
 			/>
+
+			<Flex justify={'end'} mt="lg">
+				<Button
+					disabled={Object.keys(rowSelection).length === 0}
+					onClick={handleSubmit}
+					loading={isMutateLoading}
+				>
+					Сохранить
+				</Button>
+			</Flex>
 		</>
 	)
 }
