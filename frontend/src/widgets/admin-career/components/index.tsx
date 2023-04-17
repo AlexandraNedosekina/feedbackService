@@ -31,6 +31,19 @@ const columns = [
 	}),
 ]
 
+const columnsTemplates = [
+	columnHelper.accessor('job_title', {
+		header: 'Название',
+	}),
+	columnHelper.accessor('skills', {
+		header: 'Кол-во этапов',
+	}),
+	columnHelper.display({
+		id: 'edit',
+		cell: ({ row }) => <GotoEditButton id={row.original.id} />,
+	}),
+]
+
 export default () => {
 	const [searchValue, setSearchValue] = useState<string>('')
 	const [debounced] = useDebouncedValue(searchValue, 300)
@@ -50,6 +63,12 @@ export default () => {
 	const table = useReactTable({
 		data: debounced ? searchUsersParsed : users || [],
 		columns,
+		getCoreRowModel: getCoreRowModel(),
+	})
+
+	const tableTemp = useReactTable({
+		data: debounced ? searchUsersParsed : users || [],
+		columnsTemplates,
 		getCoreRowModel: getCoreRowModel(),
 	})
 
@@ -80,7 +99,7 @@ export default () => {
 						>
 							+ Создать
 						</Button>
-						<Table table={table} />
+						<Table table={tableTemp} />
 					</Group>
 				</Tabs.Panel>
 			</Tabs>
