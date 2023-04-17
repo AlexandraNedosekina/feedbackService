@@ -11,6 +11,7 @@ import { getAllUsers, QueryKeys, searchUserByFullname } from 'shared/api'
 import { User } from 'shared/api/generatedTypes'
 import { Icon, Table } from 'shared/ui'
 import GotoEditButton from './GotoEditButton'
+import { Tabs } from '@mantine/core'
 
 const columnHelper = createColumnHelper<User>()
 
@@ -60,6 +61,20 @@ export default () => {
 
 	return (
 		<>
+			<Tabs radius="md" defaultValue="gallery">
+				<Tabs.List>
+					<Tabs.Tab value="staff">Сотрудники</Tabs.Tab>
+					<Tabs.Tab value="templates">Шаблоны</Tabs.Tab>
+				</Tabs.List>
+
+				<Tabs.Panel value="staff" pt="xs">
+					Staff tab content
+				</Tabs.Panel>
+
+				<Tabs.Panel value="templates" pt="xs">
+					Templates tab content
+				</Tabs.Panel>
+			</Tabs>
 			<Box maw={400} my="lg">
 				<Input
 					value={searchValue}
