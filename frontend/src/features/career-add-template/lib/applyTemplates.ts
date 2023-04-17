@@ -14,18 +14,16 @@ export const applyTemplates = ({ ids, userId }: IOptions) => {
 
 		if (!parsedIds[parent]) {
 			parsedIds[parent] = []
-			if (child)
-				parsedIds[parent].push(+child)
+			if (child) parsedIds[parent].push(+child)
 		} else {
-			if (child)
-				parsedIds[parent].push(+child)
+			if (child) parsedIds[parent].push(+child)
 		}
 	}
 
 	Object.entries(parsedIds).forEach(([key, value]) => {
 		const request = applyCareerTemplate(key, {
 			user_ids: [userId],
-			indexes: value,
+			indexes: value.length === 0 ? undefined : value,
 		})
 
 		promises.push(request)
