@@ -1,5 +1,5 @@
 import { Box, Button, Group, Input } from '@mantine/core'
-import { useDebouncedValue } from '@mantine/hooks'
+import { useDebouncedValue, useDisclosure } from '@mantine/hooks'
 import { useQuery } from '@tanstack/react-query'
 import {
 	createColumnHelper,
@@ -12,6 +12,7 @@ import { User } from 'shared/api/generatedTypes'
 import { Icon, Table } from 'shared/ui'
 import GotoEditButton from './GotoEditButton'
 import { Tabs } from '@mantine/core'
+import CreateTemplateModal from './CreateTemplateModal'
 
 const columnHelper = createColumnHelper<User>()
 
@@ -45,6 +46,9 @@ const columnsTemplates = [
 ]
 
 export default () => {
+	const [isCreateTemplateModalOpen, createTemplateModalHandlers] =
+		useDisclosure(false)
+
 	const [searchValue, setSearchValue] = useState<string>('')
 	const [debounced] = useDebouncedValue(searchValue, 300)
 	const { data: users } = useQuery({
@@ -93,16 +97,19 @@ export default () => {
 				<Tabs.Panel value="templates" pt="xs">
 					<Group position="right" mt="xl">
 						<Button
-						// disabled={!valid}
-						// onClick={handleSubmit}
-						// loading={isLoading}
+							onClick={createTemplateModalHandlers.open}
+							leftIcon={<Icon icon="add" />}
 						>
-							+ Создать
+							Создать
 						</Button>
 						<Table table={tableTemp} />
 					</Group>
 				</Tabs.Panel>
 			</Tabs>
+			<CreateTemplateModal
+				isOpen={isCreateTemplateModalOpen}
+				onClose={createTemplateModalHandlers.close}
+			/>
 			{/* <Box maw={400} my="lg">
 				<Input
 					value={searchValue}
