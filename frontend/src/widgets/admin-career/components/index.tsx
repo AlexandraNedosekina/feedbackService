@@ -1,4 +1,4 @@
-import { Box, Button, Group, Input } from '@mantine/core'
+import { Button, Group, Tabs } from '@mantine/core'
 import { useDebouncedValue, useDisclosure } from '@mantine/hooks'
 import { useQuery } from '@tanstack/react-query'
 import {
@@ -7,12 +7,11 @@ import {
 	useReactTable,
 } from '@tanstack/react-table'
 import { useEffect, useMemo, useState } from 'react'
-import { getAllUsers, QueryKeys, searchUserByFullname } from 'shared/api'
+import { QueryKeys, getAllUsers, searchUserByFullname } from 'shared/api'
 import { User } from 'shared/api/generatedTypes'
 import { Icon, Table } from 'shared/ui'
-import GotoEditButton from './GotoEditButton'
-import { Tabs } from '@mantine/core'
 import CreateTemplateModal from './CreateTemplateModal'
+import GotoEditButton from './GotoEditButton'
 
 const columnHelper = createColumnHelper<User>()
 
@@ -84,8 +83,12 @@ export default () => {
 
 	return (
 		<>
-			<Tabs radius="md" defaultValue="gallery">
-				<Tabs.List>
+			<Tabs defaultValue="staff" mt="xl">
+				<Tabs.List
+					sx={() => ({
+						maxWidth: 'max-content',
+					})}
+				>
 					<Tabs.Tab value="staff">Сотрудники</Tabs.Tab>
 					<Tabs.Tab value="templates">Шаблоны</Tabs.Tab>
 				</Tabs.List>
