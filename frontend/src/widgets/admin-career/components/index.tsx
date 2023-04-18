@@ -1,19 +1,29 @@
-import { Button, Group, Tabs } from '@mantine/core'
+import { Box, Button, Group, Input } from '@mantine/core'
 import { useDebouncedValue, useDisclosure } from '@mantine/hooks'
 import { useQuery } from '@tanstack/react-query'
 import {
+	PaginationState,
 	createColumnHelper,
 	getCoreRowModel,
 	useReactTable,
 } from '@tanstack/react-table'
 import { useEffect, useMemo, useState } from 'react'
-import { QueryKeys, getAllUsers, searchUserByFullname } from 'shared/api'
-import { User } from 'shared/api/generatedTypes'
+import {
+	getAllUsers,
+	getCareerTemplates,
+	QueryKeys,
+	searchUserByFullname,
+} from 'shared/api'
+import { CareerTemplate, User } from 'shared/api/generatedTypes'
 import { Icon, Table } from 'shared/ui'
-import CreateTemplateModal from './CreateTemplateModal'
 import GotoEditButton from './GotoEditButton'
+import { Tabs } from '@mantine/core'
+import CreateTemplateModal from './CreateTemplateModal'
+import { Pagination } from '@mantine/core'
 
 const columnHelper = createColumnHelper<User>()
+const PER_PAGE = 5
+const columnHelperTemplates = createColumnHelper<CareerTemplate>()
 
 const columns = [
 	columnHelper.accessor('full_name', {
@@ -32,13 +42,16 @@ const columns = [
 ]
 
 const columnsTemplates = [
-	columnHelper.accessor('job_title', {
+	columnHelperTemplates.accessor('name', {
 		header: 'Название',
 	}),
-	columnHelper.accessor('skills', {
+	columnHelperTemplates.accessor('template', {
 		header: 'Кол-во этапов',
+		cell({ getValue }) {
+			return getValue().length
+		},
 	}),
-	columnHelper.display({
+	columnHelperTemplates.display({
 		id: 'edit',
 		cell: ({ row }) => <GotoEditButton id={row.original.id} />,
 	}),
@@ -63,6 +76,24 @@ export default () => {
 		return searchUsers?.map(user => user.original) || []
 	}, [searchUsers])
 
+	const [pagination, setPagination] = useState<PaginationState>({
+		pageIndex: 0,
+		pageSize: PER_PAGE,
+	})
+	const {
+		data: templates,
+		isLoading,
+		refetch: templateRefetch,
+	} = useQuery({
+		queryKey: [QueryKeys.CAREER_TEMPLATES],
+		queryFn: () =>
+			getCareerTemplates({
+				limit: pagination.pageSize,
+				skip: pagination.pageIndex * pagination.pageSize,
+			}),
+		keepPreviousData: true,
+	})
+
 	const table = useReactTable({
 		data: debounced ? searchUsersParsed : users || [],
 		columns,
@@ -70,9 +101,14 @@ export default () => {
 	})
 
 	const tableTemp = useReactTable({
-		data: debounced ? searchUsersParsed : users || [],
+		data: templates?.records || [],
 		columns: columnsTemplates,
+		state: {
+			pagination,
+		},
 		getCoreRowModel: getCoreRowModel(),
+		onPaginationChange: setPagination,
+		manualPagination: true,
 	})
 
 	useEffect(() => {
@@ -80,6 +116,11 @@ export default () => {
 			refetch()
 		}
 	}, [debounced, refetch])
+
+	useEffect(() => {
+		console.log('hey')
+		templateRefetch()
+	}, [pagination, templateRefetch])
 
 	return (
 		<>
@@ -107,6 +148,16 @@ export default () => {
 						</Button>
 						<Table table={tableTemp} />
 					</Group>
+					<Pagination
+						value={tableTemp.getState().pagination.pageIndex + 1}
+						onChange={value => {
+							tableTemp.setPageIndex(value - 1)
+						}}
+						// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+						//@ts-ignore
+						total={Math.ceil(templates?.total_count / PER_PAGE)}
+						mt="md"
+					/>
 				</Tabs.Panel>
 			</Tabs>
 			<CreateTemplateModal
