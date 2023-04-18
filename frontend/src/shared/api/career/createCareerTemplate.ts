@@ -4,7 +4,7 @@ import { CareerTemplate, CareerTemplateCreate } from '../generatedTypes'
 
 async function createCareerTemplate(data: CareerTemplateCreate) {
 	try {
-		const res = await api.post<CareerTemplate>('career/template', data, {
+		const res = await api.post<CareerTemplate>('career/template/', data, {
 			headers: {
 				'Content-Type': 'application/json',
 			},
