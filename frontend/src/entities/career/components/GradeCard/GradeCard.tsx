@@ -31,7 +31,7 @@ export default function GradeCard({
 
 			{salary ? (
 				<Text>
-					Зарпалата:{' '}
+					Зарплата:{' '}
 					<Badge variant="outline" ml="md">
 						{salary}
 					</Badge>
