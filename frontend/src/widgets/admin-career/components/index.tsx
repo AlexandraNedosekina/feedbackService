@@ -68,7 +68,7 @@ export default () => {
 
 	const tableTemp = useReactTable({
 		data: debounced ? searchUsersParsed : users || [],
-		columnsTemplates,
+		columns: columnsTemplates,
 		getCoreRowModel: getCoreRowModel(),
 	})
 
