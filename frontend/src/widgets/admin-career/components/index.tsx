@@ -1,4 +1,4 @@
-import { Box, Button, Group, Input } from '@mantine/core'
+import { Button, Group, Pagination, Tabs } from '@mantine/core'
 import { useDebouncedValue, useDisclosure } from '@mantine/hooks'
 import { useQuery } from '@tanstack/react-query'
 import {
@@ -9,17 +9,15 @@ import {
 } from '@tanstack/react-table'
 import { useEffect, useMemo, useState } from 'react'
 import {
+	QueryKeys,
 	getAllUsers,
 	getCareerTemplates,
-	QueryKeys,
 	searchUserByFullname,
 } from 'shared/api'
 import { CareerTemplate, User } from 'shared/api/generatedTypes'
 import { Icon, Table } from 'shared/ui'
-import GotoEditButton from './GotoEditButton'
-import { Tabs } from '@mantine/core'
 import CreateTemplateModal from './CreateTemplateModal'
-import { Pagination } from '@mantine/core'
+import GotoEditButton from './GotoEditButton'
 
 const columnHelper = createColumnHelper<User>()
 const PER_PAGE = 5
@@ -37,7 +35,9 @@ const columns = [
 	}),
 	columnHelper.display({
 		id: 'edit',
-		cell: ({ row }) => <GotoEditButton id={row.original.id} />,
+		cell: ({ row }) => (
+			<GotoEditButton href={`/career/edit/${row.original.id}`} />
+		),
 	}),
 ]
 
@@ -53,7 +53,9 @@ const columnsTemplates = [
 	}),
 	columnHelperTemplates.display({
 		id: 'edit',
-		cell: ({ row }) => <GotoEditButton id={row.original.id} />,
+		cell: ({ row }) => (
+			<GotoEditButton href={`/career/template/${row.original.id}`} />
+		),
 	}),
 ]
 
@@ -118,7 +120,6 @@ export default () => {
 	}, [debounced, refetch])
 
 	useEffect(() => {
-		console.log('hey')
 		templateRefetch()
 	}, [pagination, templateRefetch])
 
