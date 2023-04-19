@@ -1,5 +1,5 @@
-import { UpdateAction } from 'shared/types'
 import create from 'zustand'
+import { UpdateAction } from 'shared/types'
 import { devtools } from 'zustand/middleware'
 import { immer } from 'zustand/middleware/immer'
 
@@ -7,10 +7,9 @@ type State = {
 	selectedGradeId: string
 	grades: {
 		label: string
-		value: number
-		isCompleted: boolean
-		isCurrent: boolean
-		isDefault: boolean
+		value: number | string
+		isCompleted?: boolean
+		isCurrent?: boolean
 	}[]
 }
 

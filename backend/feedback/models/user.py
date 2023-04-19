@@ -1,4 +1,13 @@
-from sqlalchemy import Boolean, Column, Date, ForeignKey, Integer, String, Time
+from sqlalchemy import (
+    Boolean,
+    Column,
+    Date,
+    DateTime,
+    ForeignKey,
+    Integer,
+    String,
+    Time,
+)
 from sqlalchemy.orm import relationship
 
 from feedback.db.session import Base
@@ -53,6 +62,7 @@ class User(Base):
         lazy="joined",
         foreign_keys="Colleagues.owner_id",
     )
+    last_notifications_read = Column(DateTime)
 
     @property
     def get_roles(self) -> set[str]:

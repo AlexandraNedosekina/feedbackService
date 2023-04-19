@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from sqlalchemy.orm import Session
 
 from feedback import models, schemas
@@ -18,9 +20,21 @@ class CRUDNotification(
         q = db.query(models.Notification).filter(models.Notification.user_id == user_id)
         return q.all()
 
-    def change_to_seen(self, db: Session, notification: models.Notification):
-        upd = {"has_seen": "True"}
-        return super().update(db, db_obj=notification, obj_in=upd)
+    def get_new_by_last_read(
+        self, db: Session, *, user_id: int, last_read: datetime
+    ) -> list[models.Notification]:
+        q = (
+            db.query(models.Notification)
+            .filter(
+                models.Notification.user_id == user_id,
+                models.Notification.created_at > last_read,
+            )
+            .order_by(models.Notification.created_at)
+        )
+        return q.all()
+
+    def update(self, db: Session, *, db_obj, obj_in):
+        raise NotImplementedError
 
 
 notification = CRUDNotification(models.Notification)

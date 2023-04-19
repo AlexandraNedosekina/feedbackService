@@ -3,13 +3,13 @@ import Link from 'next/link'
 import { Icon } from 'shared/ui'
 
 interface IProps {
-	id: number
+	href: string
 }
 
-const GotoEditButton = ({ id }: IProps) => {
+const GotoEditButton = ({ href }: IProps) => {
 	return (
 		<Flex justify={'end'}>
-			<Link href={`/career/edit/${id}`} style={{ textDecoration: 'none' }}>
+			<Link href={href} style={{ textDecoration: 'none' }}>
 				<ActionIcon color="brand.3">
 					<Icon icon="edit" size={20} />
 				</ActionIcon>

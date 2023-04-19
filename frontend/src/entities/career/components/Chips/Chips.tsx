@@ -4,12 +4,13 @@ import {
 	createStyles,
 	Flex,
 	getStylesRef,
+	Modal,
+	Title,
 } from '@mantine/core'
+import { useDisclosure } from '@mantine/hooks'
 import { careerModel } from 'entities/career'
-import { useState } from 'react'
+import { PersonalGradeAdd, TemplateGradeAdd } from 'features/career-grade'
 import { Icon } from 'shared/ui'
-import shallow from 'zustand/shallow'
-import { EditModal } from './EditModal'
 
 const useStyles = createStyles(theme => ({
 	input: {
@@ -49,31 +50,25 @@ const useStyles = createStyles(theme => ({
 	},
 }))
 
-const CareerChips = () => {
+interface IProps {
+	type: 'personal' | 'template'
+	addSection: (props: { openModal: () => void }) => JSX.Element
+}
+
+export const Chips = ({ type, addSection }: IProps) => {
 	const { classes } = useStyles()
-	const { grades, update } = careerModel.useEdit(
-		state => ({
-			grades: state.grades,
-			update: state.update,
-		}),
-		shallow
-	)
-	const restore = careerModel.useEditGrade(state => state.restore)
-	const [isOpen, setIsOpen] = useState(false)
+	const { grades, update, selectedGradeId } = careerModel.useEdit()
+	const [isAddModalOpen, addModalHandlers] = useDisclosure(false)
 
 	function handleCloseModal() {
-		setIsOpen(false)
-		restore()
+		addModalHandlers.close()
 	}
 
 	return (
 		<>
-			<Flex mt="xl" gap="md">
+			<Flex mt="xl" gap="md" maw={600} wrap="wrap">
 				<Chip.Group
-					defaultValue={grades
-						.filter(({ isDefault }) => isDefault)
-						.map(({ value }) => value)
-						.toString()}
+					value={String(selectedGradeId)}
 					onChange={value => {
 						if (!Array.isArray(value)) {
 							update({ selectedGradeId: value })
@@ -92,19 +87,21 @@ const CareerChips = () => {
 							{label}
 						</Chip>
 					))}
-					<ActionIcon
-						variant="light"
-						color="brand.6"
-						size="lg"
-						onClick={() => setIsOpen(true)}
-					>
-						<Icon icon="add" size={22} />
-					</ActionIcon>
+					{addSection({ openModal: addModalHandlers.open })}
 				</Chip.Group>
 			</Flex>
-			<EditModal isOpen={isOpen} onClose={handleCloseModal} />
+			<Modal
+				opened={isAddModalOpen}
+				onClose={handleCloseModal}
+				title={<Title order={4}>Создание этапа</Title>}
+				size="lg"
+			>
+				{type === 'personal' ? (
+					<PersonalGradeAdd onDone={addModalHandlers.close} />
+				) : type === 'template' ? (
+					<TemplateGradeAdd onDone={addModalHandlers.close} />
+				) : null}
+			</Modal>
 		</>
 	)
 }
-
-export default CareerChips

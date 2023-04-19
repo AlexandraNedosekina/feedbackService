@@ -1,14 +1,22 @@
-import { Badge, Box, Flex, Group, Select, Text, Title } from '@mantine/core'
+import { Button, Flex, Group, Menu, Modal, Select, Text } from '@mantine/core'
 import { showNotification } from '@mantine/notifications'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { careerModel, ECareerGradeStatus } from 'entities/career'
 import { useRouter } from 'next/router'
 import { useEffect, useMemo, useState } from 'react'
-import { QueryKeys, TCareerAdapter, updateCareerTrack } from 'shared/api'
+import {
+	deleteCareerTrack,
+	QueryKeys,
+	TCareerAdapter,
+	updateCareerTrack,
+} from 'shared/api'
 import { CareerTrackUpdate } from 'shared/api/generatedTypes'
 import { setInitialStatus } from '../lib'
-import GradeCardMenu from './GradeCardMenu'
 import ParamCheckbox from './ParamCheckbox'
+import { GradeCard as GradeCardBase } from 'entities/career'
+import { Icon } from 'shared/ui'
+import { useDisclosure } from '@mantine/hooks'
+import { EditModal } from './EditModal'
 
 const GradeCard = () => {
 	const {
@@ -22,7 +30,6 @@ const GradeCard = () => {
 		id,
 	])
 	const grade = data?.find(i => i.id === +selectedGradeId)
-
 	const statusData = useMemo<{ value: ECareerGradeStatus; label: string }[]>(
 		() => [
 			{ value: ECareerGradeStatus.notCompleted, label: 'Незавершенный' },
@@ -34,6 +41,8 @@ const GradeCard = () => {
 	const [status, setStatus] = useState<ECareerGradeStatus>(() =>
 		setInitialStatus(grade)
 	)
+	const [isDeleteModalOpen, handleDeleteModal] = useDisclosure(false)
+	const [isEditModalOpen, handleEditModal] = useDisclosure(false)
 
 	const { mutate: updateStatus } = useMutation({
 		mutationFn: (data: CareerTrackUpdate) =>
@@ -55,6 +64,15 @@ const GradeCard = () => {
 			setStatus(() => setInitialStatus(grade))
 		},
 	})
+	const { mutate: deleteGrade, isLoading: isDeleteGradeLoading } = useMutation(
+		{
+			mutationFn: () => deleteCareerTrack(String(grade?.id)),
+			onSuccess: () => {
+				queryClient.invalidateQueries([QueryKeys.CAREER_BY_USER_ID, id])
+				handleDeleteModal.close()
+			},
+		}
+	)
 
 	function handleStatusChange(value: ECareerGradeStatus) {
 		if (value === status) return
@@ -72,6 +90,13 @@ const GradeCard = () => {
 				break
 		}
 	}
+	function handleEdit() {
+		handleEditModal.open()
+	}
+
+	function handleDelete() {
+		deleteGrade()
+	}
 
 	useEffect(() => {
 		setStatus(() => setInitialStatus(grade))
@@ -82,29 +107,28 @@ const GradeCard = () => {
 	if (!grade) return null
 
 	return (
-		<Box
-			sx={theme => ({
-				backgroundColor: theme.colors.brand[0],
-				padding: theme.spacing.lg,
-				marginTop: theme.spacing.lg,
-				borderRadius: '4px',
-				maxWidth: '600px',
-			})}
+		<GradeCardBase
+			menuItems={
+				<>
+					<Menu.Item
+						onClick={handleEdit}
+						icon={<Icon icon="edit" />}
+						color="brand"
+					>
+						Редактировать
+					</Menu.Item>
+					<Menu.Item
+						onClick={handleDeleteModal.open}
+						icon={<Icon icon="delete" />}
+						color="red"
+					>
+						Удалить
+					</Menu.Item>
+				</>
+			}
+			title={grade.name || 'Не задано'}
+			salary={grade.salary}
 		>
-			<Group position="apart">
-				<Title order={3}>{grade.name}</Title>
-				<GradeCardMenu grade={grade} />
-			</Group>
-
-			{grade.salary ? (
-				<Text>
-					Зарпалата:{' '}
-					<Badge variant="outline" ml="md">
-						{grade.salary}
-					</Badge>
-				</Text>
-			) : null}
-
 			<Text mt="sm">Что нужно изучить:</Text>
 			{grade.toLearn.map(item => (
 				<ParamCheckbox
@@ -136,7 +160,46 @@ const GradeCard = () => {
 					onChange={handleStatusChange}
 				/>
 			</Flex>
-		</Box>
+
+			<Modal
+				title="Удалить трек?"
+				opened={isDeleteModalOpen}
+				onClose={handleDeleteModal.close}
+			>
+				<Text>Вы уверены, что хотите удалить этот трек?</Text>
+				<Group position="right" mt="md">
+					<Button
+						variant="outline"
+						color="red"
+						onClick={handleDelete}
+						disabled={isDeleteGradeLoading}
+					>
+						Удалить
+					</Button>
+					<Button onClick={handleDeleteModal.close}>Отмена</Button>
+				</Group>
+			</Modal>
+			<EditModal
+				isOpen={isEditModalOpen}
+				onClose={() => {
+					handleEditModal.close()
+				}}
+				careerId={String(grade.id)}
+				initialValues={{
+					title: grade.name ?? '',
+					salary: String(grade.salary) ?? '',
+					toLearn: grade.toLearn.map(i => ({
+						text: i.description,
+						apiId: String(i.id),
+					})),
+					toComplete: grade.toComplete.map(i => ({
+						text: i.description,
+						apiId: String(i.id),
+					})),
+					idsToDelete: [],
+				}}
+			/>
+		</GradeCardBase>
 	)
 }
 

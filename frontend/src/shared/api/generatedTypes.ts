@@ -9,6 +9,25 @@
  * ---------------------------------------------------------------
  */
 
+/** ApplyTemplateOpts */
+export interface ApplyTemplateOpts {
+	/**
+	 * User Ids
+	 * @min 0
+	 * @minItems 1
+	 * @uniqueItems true
+	 */
+	user_ids: number[]
+	/**
+	 * Indexes
+	 * Optional field to apply only included indexes from template
+	 * @min 0
+	 * @minItems 1
+	 * @uniqueItems true
+	 */
+	indexes?: number[]
+}
+
 /** Avatar */
 export interface Avatar {
 	/** Id */
@@ -214,6 +233,40 @@ export interface CareerParamUpdate {
 	is_completed?: boolean
 }
 
+/** CareerTemplate */
+export interface CareerTemplate {
+	/** Id */
+	id: number
+	/** Name */
+	name: string
+	/** Template */
+	template: CareerTrackTemplate[]
+	/** Created By Id */
+	created_by_id: number
+	created_by_user: UserDetails
+	/**
+	 * Created At
+	 * @format date-time
+	 */
+	created_at: string
+}
+
+/** CareerTemplateCreate */
+export interface CareerTemplateCreate {
+	/** Name */
+	name: string
+	/** Template */
+	template: CareerTrackTemplate[]
+}
+
+/** CareerTemplateUpdate */
+export interface CareerTemplateUpdate {
+	/** Name */
+	name: string
+	/** Template */
+	template: CareerTrackTemplate[]
+}
+
 /** CareerTrack */
 export interface CareerTrack {
 	/** Id */
@@ -242,6 +295,16 @@ export interface CareerTrackCreate {
 	user_id: number
 	/** Params */
 	params?: CareerParamCreate[]
+}
+
+/** CareerTrackTemplate */
+export interface CareerTrackTemplate {
+	/** Name */
+	name?: string
+	/** Salary */
+	salary?: number
+	/** Params */
+	params: CareerParamCreate[]
 }
 
 /** CareerTrackUpdate */
@@ -431,6 +494,33 @@ export interface JobExpectation {
 	description: string
 	/** Owner Id */
 	owner_id?: number
+}
+
+/** Notification */
+export interface Notification {
+	/** Id */
+	id: number
+	/** User Id */
+	user_id: number
+	/** Message */
+	message: string
+	/** Subject */
+	subject: string
+	/**
+	 * Created At
+	 * @format date-time
+	 */
+	created_at: string
+}
+
+/** PaginatedResponse[CareerTemplate] */
+export interface PaginatedResponseCareerTemplate {
+	/** Total Count */
+	total_count: number
+	/** Count */
+	count: number
+	/** Records */
+	records: CareerTemplate[]
 }
 
 /** Role */
