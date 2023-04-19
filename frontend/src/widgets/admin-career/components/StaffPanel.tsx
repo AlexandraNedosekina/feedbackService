@@ -8,7 +8,7 @@ import {
 import { useEffect, useMemo, useState } from 'react'
 import { QueryKeys, getAllUsers, searchUserByFullname } from 'shared/api'
 import { User } from 'shared/api/generatedTypes'
-import { Table } from 'shared/ui'
+import { Table, TableSkeleton } from 'shared/ui'
 import GotoEditButton from './GotoEditButton'
 
 const columnHelper = createColumnHelper<User>()
@@ -34,7 +34,7 @@ const columns = [
 export default function StaffPanel() {
 	const [searchValue, setSearchValue] = useState<string>('')
 	const [debounced] = useDebouncedValue(searchValue, 300)
-	const { data: users } = useQuery({
+	const { data: users, isLoading } = useQuery({
 		queryKey: [QueryKeys.USERS],
 		queryFn: () => getAllUsers(),
 	})
@@ -58,6 +58,10 @@ export default function StaffPanel() {
 			refetch()
 		}
 	}, [debounced, refetch])
+
+	if (isLoading) {
+		return <TableSkeleton />
+	}
 
 	return <Table table={table} />
 }

@@ -1,7 +1,7 @@
 import { Tabs } from '@mantine/core'
+import { useRouter } from 'next/router'
 import StaffPanel from './StaffPanel'
 import TemplatesPanel from './TemplatesPanel'
-import { useRouter } from 'next/router'
 
 export default () => {
 	const { query } = useRouter()

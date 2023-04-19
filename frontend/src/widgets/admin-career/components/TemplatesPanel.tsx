@@ -8,7 +8,7 @@ import {
 import { useEffect, useMemo, useState } from 'react'
 import { QueryKeys, getCareerTemplates } from 'shared/api'
 import { CareerTemplate } from 'shared/api/generatedTypes'
-import { Icon, Table } from 'shared/ui'
+import { Icon, Table, TableSkeleton } from 'shared/ui'
 import GotoEditButton from './GotoEditButton'
 import { ActionIcon, Button, Flex, Group, Pagination } from '@mantine/core'
 import CreateTemplateModal from './CreateTemplateModal'
@@ -98,6 +98,10 @@ export default function TemplatesPanel() {
 	useEffect(() => {
 		refetch()
 	}, [pagination, refetch])
+
+	if (isLoading) {
+		return <TableSkeleton />
+	}
 
 	return (
 		<>
