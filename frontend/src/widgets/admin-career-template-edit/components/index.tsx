@@ -24,7 +24,7 @@ export default () => {
 		state => state.update
 	)
 	const {
-		query: { id },
+		query: { id, page },
 	} = useRouter()
 	const router = useRouter()
 
@@ -59,7 +59,15 @@ export default () => {
 	return (
 		<>
 			<Group spacing={3}>
-				<Link href="/career">
+				<Link
+					href={{
+						pathname: '/career',
+						query: {
+							from: 'template',
+							page,
+						},
+					}}
+				>
 					<ActionIcon>
 						<Icon icon="arrow_back_ios_new" size={14} />
 					</ActionIcon>

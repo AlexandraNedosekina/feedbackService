@@ -1,131 +1,17 @@
-import { Button, Group, Pagination, Tabs } from '@mantine/core'
-import { useDebouncedValue, useDisclosure } from '@mantine/hooks'
-import { useQuery } from '@tanstack/react-query'
-import {
-	PaginationState,
-	createColumnHelper,
-	getCoreRowModel,
-	useReactTable,
-} from '@tanstack/react-table'
-import { useEffect, useMemo, useState } from 'react'
-import {
-	QueryKeys,
-	getAllUsers,
-	getCareerTemplates,
-	searchUserByFullname,
-} from 'shared/api'
-import { CareerTemplate, User } from 'shared/api/generatedTypes'
-import { Icon, Table } from 'shared/ui'
-import CreateTemplateModal from './CreateTemplateModal'
-import GotoEditButton from './GotoEditButton'
-
-const columnHelper = createColumnHelper<User>()
-const PER_PAGE = 5
-const columnHelperTemplates = createColumnHelper<CareerTemplate>()
-
-const columns = [
-	columnHelper.accessor('full_name', {
-		header: 'Сотрудник',
-	}),
-	columnHelper.accessor('job_title', {
-		header: 'Должность',
-		cell({ getValue }) {
-			return getValue() || 'Не указана'
-		},
-	}),
-	columnHelper.display({
-		id: 'edit',
-		cell: ({ row }) => (
-			<GotoEditButton href={`/career/edit/${row.original.id}`} />
-		),
-	}),
-]
-
-const columnsTemplates = [
-	columnHelperTemplates.accessor('name', {
-		header: 'Название',
-	}),
-	columnHelperTemplates.accessor('template', {
-		header: 'Кол-во этапов',
-		cell({ getValue }) {
-			return getValue().length
-		},
-	}),
-	columnHelperTemplates.display({
-		id: 'edit',
-		cell: ({ row }) => (
-			<GotoEditButton href={`/career/template/${row.original.id}`} />
-		),
-	}),
-]
+import { Tabs } from '@mantine/core'
+import StaffPanel from './StaffPanel'
+import TemplatesPanel from './TemplatesPanel'
+import { useRouter } from 'next/router'
 
 export default () => {
-	const [isCreateTemplateModalOpen, createTemplateModalHandlers] =
-		useDisclosure(false)
-
-	const [searchValue, setSearchValue] = useState<string>('')
-	const [debounced] = useDebouncedValue(searchValue, 300)
-	const { data: users } = useQuery({
-		queryKey: [QueryKeys.USERS],
-		queryFn: () => getAllUsers(),
-	})
-	const { data: searchUsers, refetch } = useQuery({
-		queryKey: [QueryKeys.SEARCH_USERS],
-		queryFn: () => searchUserByFullname(debounced),
-		enabled: !!debounced,
-	})
-	const searchUsersParsed = useMemo<User[]>(() => {
-		return searchUsers?.map(user => user.original) || []
-	}, [searchUsers])
-
-	const [pagination, setPagination] = useState<PaginationState>({
-		pageIndex: 0,
-		pageSize: PER_PAGE,
-	})
-	const {
-		data: templates,
-		isLoading,
-		refetch: templateRefetch,
-	} = useQuery({
-		queryKey: [QueryKeys.CAREER_TEMPLATES],
-		queryFn: () =>
-			getCareerTemplates({
-				limit: pagination.pageSize,
-				skip: pagination.pageIndex * pagination.pageSize,
-			}),
-		keepPreviousData: true,
-	})
-
-	const table = useReactTable({
-		data: debounced ? searchUsersParsed : users || [],
-		columns,
-		getCoreRowModel: getCoreRowModel(),
-	})
-
-	const tableTemp = useReactTable({
-		data: templates?.records || [],
-		columns: columnsTemplates,
-		state: {
-			pagination,
-		},
-		getCoreRowModel: getCoreRowModel(),
-		onPaginationChange: setPagination,
-		manualPagination: true,
-	})
-
-	useEffect(() => {
-		if (debounced) {
-			refetch()
-		}
-	}, [debounced, refetch])
-
-	useEffect(() => {
-		templateRefetch()
-	}, [pagination, templateRefetch])
+	const { query } = useRouter()
 
 	return (
 		<>
-			<Tabs defaultValue="staff" mt="xl">
+			<Tabs
+				defaultValue={query.from === 'template' ? 'templates' : 'staff'}
+				mt="xl"
+			>
 				<Tabs.List
 					sx={() => ({
 						maxWidth: 'max-content',
@@ -136,43 +22,13 @@ export default () => {
 				</Tabs.List>
 
 				<Tabs.Panel value="staff" pt="xs">
-					<Table table={table} />
+					<StaffPanel />
 				</Tabs.Panel>
 
 				<Tabs.Panel value="templates" pt="xs">
-					<Group position="right" mt="xl">
-						<Button
-							onClick={createTemplateModalHandlers.open}
-							leftIcon={<Icon icon="add" />}
-						>
-							Создать
-						</Button>
-						<Table table={tableTemp} />
-					</Group>
-					<Pagination
-						value={tableTemp.getState().pagination.pageIndex + 1}
-						onChange={value => {
-							tableTemp.setPageIndex(value - 1)
-						}}
-						// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-						//@ts-ignore
-						total={Math.ceil(templates?.total_count / PER_PAGE)}
-						mt="md"
-					/>
+					<TemplatesPanel />
 				</Tabs.Panel>
 			</Tabs>
-			<CreateTemplateModal
-				isOpen={isCreateTemplateModalOpen}
-				onClose={createTemplateModalHandlers.close}
-			/>
-			{/* <Box maw={400} my="lg">
-				<Input
-					value={searchValue}
-					onChange={e => setSearchValue(e.target.value)}
-					icon={<Icon icon="search" />}
-					placeholder="Поиск"
-				/>
-			</Box> */}
 		</>
 	)
 }

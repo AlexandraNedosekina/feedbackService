@@ -39,6 +39,7 @@ export default function CreateTemplateModal({ isOpen, onClose }: IProps) {
 							name="title"
 							validate={required}
 							label="Название"
+							data-autofocus
 						/>
 
 						<Flex justify={'end'} mt="lg">
