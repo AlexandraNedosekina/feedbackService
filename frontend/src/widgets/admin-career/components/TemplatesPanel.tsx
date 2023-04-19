@@ -10,10 +10,11 @@ import { QueryKeys, getCareerTemplates } from 'shared/api'
 import { CareerTemplate } from 'shared/api/generatedTypes'
 import { Icon, Table } from 'shared/ui'
 import GotoEditButton from './GotoEditButton'
-import { Button, Group, Pagination } from '@mantine/core'
+import { ActionIcon, Button, Flex, Group, Pagination } from '@mantine/core'
 import CreateTemplateModal from './CreateTemplateModal'
 import { useDisclosure } from '@mantine/hooks'
 import { useRouter } from 'next/router'
+import DeleteTemplateModal from './DeleteTemplateModal'
 
 const PER_PAGE = 5
 const columnHelper = createColumnHelper<CareerTemplate>()
@@ -23,7 +24,10 @@ export default function TemplatesPanel() {
 		query: { page },
 	} = useRouter()
 
+	const [selectedTemplateId, setSelectedTemplateId] = useState<number>()
 	const [isCreateTemplateModalOpen, createTemplateModalHandlers] =
+		useDisclosure(false)
+	const [isDeleteTemplateModalOpen, deleteTemplateModalHandlers] =
 		useDisclosure(false)
 
 	const [pagination, setPagination] = useState<PaginationState>({
@@ -59,15 +63,25 @@ export default function TemplatesPanel() {
 			columnHelper.display({
 				id: 'edit',
 				cell: ({ row }) => (
-					<GotoEditButton
-						href={`/career/template/${row.original.id}?page=${
-							pagination.pageIndex + 1
-						}`}
-					/>
+					<Flex justify="end" gap={3}>
+						<GotoEditButton
+							href={`/career/template/${row.original.id}?page=${
+								pagination.pageIndex + 1
+							}`}
+						/>
+						<ActionIcon
+							onClick={() => {
+								deleteTemplateModalHandlers.open()
+								setSelectedTemplateId(row.original.id)
+							}}
+						>
+							<Icon icon="delete" />
+						</ActionIcon>
+					</Flex>
 				),
 			}),
 		],
-		[pagination.pageIndex]
+		[deleteTemplateModalHandlers, pagination.pageIndex]
 	)
 
 	const table = useReactTable({
@@ -109,6 +123,12 @@ export default function TemplatesPanel() {
 			<CreateTemplateModal
 				isOpen={isCreateTemplateModalOpen}
 				onClose={createTemplateModalHandlers.close}
+			/>
+
+			<DeleteTemplateModal
+				isOpen={isDeleteTemplateModalOpen}
+				onClose={deleteTemplateModalHandlers.close}
+				templateId={selectedTemplateId}
 			/>
 		</>
 	)
