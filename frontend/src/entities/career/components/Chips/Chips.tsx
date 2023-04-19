@@ -1,5 +1,4 @@
 import {
-	ActionIcon,
 	Chip,
 	createStyles,
 	Flex,
@@ -9,8 +8,6 @@ import {
 } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
 import { careerModel } from 'entities/career'
-import { PersonalGradeAdd, TemplateGradeAdd } from 'features/career-grade'
-import { Icon } from 'shared/ui'
 
 const useStyles = createStyles(theme => ({
 	input: {
@@ -51,11 +48,11 @@ const useStyles = createStyles(theme => ({
 }))
 
 interface IProps {
-	type: 'personal' | 'template'
 	addSection: (props: { openModal: () => void }) => JSX.Element
+	addModalContent: (props: { closeModal: () => void }) => JSX.Element
 }
 
-export const Chips = ({ type, addSection }: IProps) => {
+export const Chips = ({ addModalContent, addSection }: IProps) => {
 	const { classes } = useStyles()
 	const { grades, update, selectedGradeId } = careerModel.useEdit()
 	const [isAddModalOpen, addModalHandlers] = useDisclosure(false)
@@ -96,11 +93,7 @@ export const Chips = ({ type, addSection }: IProps) => {
 				title={<Title order={4}>Создание этапа</Title>}
 				size="lg"
 			>
-				{type === 'personal' ? (
-					<PersonalGradeAdd onDone={addModalHandlers.close} />
-				) : type === 'template' ? (
-					<TemplateGradeAdd onDone={addModalHandlers.close} />
-				) : null}
+				{addModalContent({ closeModal: addModalHandlers.close })}
 			</Modal>
 		</>
 	)

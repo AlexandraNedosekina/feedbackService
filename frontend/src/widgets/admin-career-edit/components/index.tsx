@@ -1,8 +1,13 @@
 import { ActionIcon, Box, Group, Text, Title } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
 import { useQuery } from '@tanstack/react-query'
-import { CareerChips, careerModel } from 'entities/career'
-import { UserCard } from 'entities/user'
+import {
+	CareerChips,
+	CareerChipsSkeleton,
+	GradeCardSkeleton,
+	careerModel,
+} from 'entities/career'
+import { UserCard, UserCardSkeleton } from 'entities/user'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { QueryKeys, getCareerByUserId, getUserById } from 'shared/api'
@@ -11,6 +16,7 @@ import shallow from 'zustand/shallow'
 import { AddSection } from './AddSection'
 import { AddTemplateModal } from './AddTemplateModal'
 import GradeCard from './GradeCard'
+import { PersonalGradeAdd } from 'features/career-grade'
 
 export default () => {
 	const { selectedGradeId, update } = careerModel.useEdit(
@@ -76,7 +82,9 @@ export default () => {
 			</Group>
 
 			{isUserLoading ? (
-				<div>Загрузка...</div>
+				<Box mt="xl">
+					<UserCardSkeleton />
+				</Box>
 			) : (
 				<Box mt="xl">
 					<UserCard
@@ -88,17 +96,21 @@ export default () => {
 			)}
 
 			{isLoading ? (
-				// TODO: add skeleton
-				<div>Загрузка...</div>
+				<Box mt="xl">
+					<CareerChipsSkeleton />
+					<GradeCardSkeleton />
+				</Box>
 			) : (
 				<>
 					<CareerChips
-						type="personal"
 						addSection={({ openModal }) => (
 							<AddSection
 								openAddGradeModal={openModal}
 								openAddTemplateModal={addTemplateModalHandlers.open}
 							/>
+						)}
+						addModalContent={({ closeModal }) => (
+							<PersonalGradeAdd onDone={closeModal} />
 						)}
 					/>
 					{data && data.length > 0 ? (
