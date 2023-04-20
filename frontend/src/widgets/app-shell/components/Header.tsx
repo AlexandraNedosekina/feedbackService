@@ -1,6 +1,7 @@
 import {
 	ActionIcon,
 	createStyles,
+	Flex,
 	Header as HeaderMantine,
 	MediaQuery,
 	Menu,
@@ -13,6 +14,7 @@ import { useRouter } from 'next/router'
 import { signOut } from 'shared/api'
 import { ERoles } from 'shared/types'
 import { Icon, useBaseWrapperContext } from 'shared/ui'
+import Notifications from './Notifications'
 
 const useStyles = createStyles(theme => ({
 	header: {
@@ -97,41 +99,46 @@ const Header = ({ toggleMobileMenu, isMobileMenuOpen }: IProps) => {
 					display: 'none',
 				}}
 			>
-				<Menu
-					position="bottom-end"
-					classNames={{
-						dropdown: classes.dropdown,
-						item: classes.item,
-					}}
-				>
-					<Menu.Target>
-						<ActionIcon variant="filled" color="brand" size="lg">
-							<Icon icon="account_circle" size={28} />
-						</ActionIcon>
-					</Menu.Target>
-					<Menu.Dropdown>
-						<Menu.Item component={Link} href="/profile">
-							Профиль
-						</Menu.Item>
-						{user?.roles.includes(ERoles.admin) ? (
-							isEdit ? (
-								<Menu.Item onClick={deactiveEdit}>
-									Выйти из режима управления
-								</Menu.Item>
-							) : (
-								<Menu.Item onClick={activateEdit}>Управление</Menu.Item>
-							)
-						) : null}
-						<Menu.Item
-							onClick={() => {
-								signOutMutate()
-								router.push('/')
-							}}
-						>
-							Выйти
-						</Menu.Item>
-					</Menu.Dropdown>
-				</Menu>
+				<Flex gap="md" align="center">
+					<Notifications />
+					<Menu
+						position="bottom-end"
+						classNames={{
+							dropdown: classes.dropdown,
+							item: classes.item,
+						}}
+					>
+						<Menu.Target>
+							<ActionIcon variant="filled" color="brand" size="lg">
+								<Icon icon="account_circle" size={28} />
+							</ActionIcon>
+						</Menu.Target>
+						<Menu.Dropdown>
+							<Menu.Item component={Link} href="/profile">
+								Профиль
+							</Menu.Item>
+							{user?.roles.includes(ERoles.admin) ? (
+								isEdit ? (
+									<Menu.Item onClick={deactiveEdit}>
+										Выйти из режима управления
+									</Menu.Item>
+								) : (
+									<Menu.Item onClick={activateEdit}>
+										Управление
+									</Menu.Item>
+								)
+							) : null}
+							<Menu.Item
+								onClick={() => {
+									signOutMutate()
+									router.push('/')
+								}}
+							>
+								Выйти
+							</Menu.Item>
+						</Menu.Dropdown>
+					</Menu>
+				</Flex>
 			</MediaQuery>
 		</HeaderMantine>
 	)
