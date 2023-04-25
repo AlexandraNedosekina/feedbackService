@@ -506,6 +506,8 @@ export interface Notification {
 	message: string
 	/** Subject */
 	subject: string
+	/** Has Seen */
+	has_seen: boolean
 	/**
 	 * Created At
 	 * @format date-time
@@ -521,6 +523,16 @@ export interface PaginatedResponseCareerTemplate {
 	count: number
 	/** Records */
 	records: CareerTemplate[]
+}
+
+/** PaginatedResponse[Notification] */
+export interface PaginatedResponseNotification {
+	/** Total Count */
+	total_count: number
+	/** Count */
+	count: number
+	/** Records */
+	records: Notification[]
 }
 
 /** Role */
