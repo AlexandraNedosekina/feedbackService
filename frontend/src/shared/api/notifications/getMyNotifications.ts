@@ -1,10 +1,18 @@
 import api from '..'
 import { errorHandler } from '../errorHandler'
-import { Notification } from '../generatedTypes'
+import { PaginatedResponseNotification } from '../generatedTypes'
 
-async function getMyNotifactions() {
+async function getMyNotifactions(skip = 0, limit = 100) {
 	try {
-		const res = await api.get<Notification[]>(`notificaions/me`)
+		const res = await api.get<PaginatedResponseNotification>(
+			`notifications/me`,
+			{
+				params: {
+					skip,
+					limit,
+				},
+			}
+		)
 
 		return res.data
 	} catch (error: any) {
