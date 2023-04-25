@@ -9,6 +9,34 @@ from feedback.api.deps import get_current_user, get_db
 router = APIRouter()
 
 
+@router.delete(
+    "/all",
+    status_code=status.HTTP_204_NO_CONTENT,
+)
+async def delete_all_notifications(
+    curr_user: models.User = Depends(get_current_user), db=Depends(get_db)
+):
+    last_read = curr_user.last_notifications_read or datetime(
+        1900, 1, 1, tzinfo=timezone.utc
+    )
+    crud.notification.delete_all(db, user_id=curr_user.id, last_read_time=last_read)
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+
+@router.patch(
+    "/all",
+    status_code=status.HTTP_204_NO_CONTENT,
+)
+async def mark_as_seen_all(
+    curr_user: models.User = Depends(get_current_user), db=Depends(get_db)
+):
+    last_read = curr_user.last_notifications_read or datetime(
+        1900, 1, 1, tzinfo=timezone.utc
+    )
+    crud.notification.mark_seen_all(db, user_id=curr_user.id, last_read_time=last_read)
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+
 @router.get("/me", response_model=schemas.PaginatedResponse[schemas.Notification])
 async def get_notifications_for_current_user(
     skip: int = 0,
@@ -72,32 +100,4 @@ async def mark_as_seen(
         raise HTTPException(status.HTTP_403_FORBIDDEN)
 
     crud.notification.mark_as_seen(db, db_obj=notification)
-    return Response(status_code=status.HTTP_204_NO_CONTENT)
-
-
-@router.delete(
-    "/all/",
-    status_code=status.HTTP_204_NO_CONTENT,
-)
-async def delete_all_notifications(
-    curr_user: models.User = Depends(get_current_user), db=Depends(get_db)
-):
-    last_read = curr_user.last_notifications_read or datetime(
-        1900, 1, 1, tzinfo=timezone.utc
-    )
-    crud.notification.delete_all(db, user_id=curr_user.id, last_read_time=last_read)
-    return Response(status_code=status.HTTP_204_NO_CONTENT)
-
-
-@router.patch(
-    "/all/",
-    status_code=status.HTTP_204_NO_CONTENT,
-)
-async def mark_as_seen_all(
-    curr_user: models.User = Depends(get_current_user), db=Depends(get_db)
-):
-    last_read = curr_user.last_notifications_read or datetime(
-        1900, 1, 1, tzinfo=timezone.utc
-    )
-    crud.notification.mark_seen_all(db, user_id=curr_user.id, last_read_time=last_read)
     return Response(status_code=status.HTTP_204_NO_CONTENT)
