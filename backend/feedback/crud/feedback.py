@@ -63,6 +63,15 @@ class CRUDFeedback(
         db_obj = models.Feedback(**obj_in.dict(), completed=False)
         return super().create(db, obj_in=db_obj)
 
+    def create_empty_bulk(
+        self, db: Session, *, objs_in: list[schemas.FeedbackCreateEmpty]
+    ):
+        db_objs = [
+            models.Feedback(**obj_in.dict(), completed=False) for obj_in in objs_in
+        ]
+        db.add_all(db_objs)
+        db.commit()
+
     def remove_all(self, db: Session) -> int:
         number_of_deleted_rows = db.query(models.Feedback).delete()
         db.commit()
