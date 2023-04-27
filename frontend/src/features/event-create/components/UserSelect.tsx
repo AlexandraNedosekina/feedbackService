@@ -14,6 +14,7 @@ export default () => {
 							onChange={value => {
 								input.onChange(value)
 							}}
+							value={input.value}
 							error={meta.error && meta.touched ? meta.error : undefined}
 						/>
 					)}

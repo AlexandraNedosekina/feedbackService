@@ -1,4 +1,5 @@
 export interface IFormValues {
+	name: string
 	type: 'one' | 'all'
 	startTime: string
 	startDate: string

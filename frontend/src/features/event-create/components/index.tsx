@@ -3,7 +3,7 @@ import dayjs from 'dayjs'
 import { FORM_ERROR } from 'final-form'
 import { Form } from 'react-final-form'
 import { createEvent, QueryKeys } from 'shared/api'
-import { FormCondition } from 'shared/ui'
+import { FormCondition, FormInput, required } from 'shared/ui'
 import { IFormValues } from '../types'
 import Buttons from './Buttons'
 import SelectType from './SelectType'
@@ -92,6 +92,12 @@ export default ({ onCancel }: IProps) => {
 					<FormCondition when={'type'} is="one">
 						<UserSelect />
 					</FormCondition>
+					<FormInput
+						name="name"
+						label="Название"
+						validate={required}
+						mt="md"
+					/>
 					<TimePicker />
 					{submitError && <p>{submitError}</p>}
 					<Buttons handleSubmit={handleSubmit} onCancel={onCancel} />
