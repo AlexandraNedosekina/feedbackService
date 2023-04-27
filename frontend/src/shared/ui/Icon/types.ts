@@ -23,6 +23,7 @@ export type TIcons =
 	| 'question_mark'
 	| 'schedule'
 	| 'keyboard_arrow_down'
+	| 'notifications'
 type TIconType = 'outlined' | 'rounded' | 'sharp'
 
 export interface IIconProps {
