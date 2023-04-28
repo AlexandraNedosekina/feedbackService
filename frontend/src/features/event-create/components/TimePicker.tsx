@@ -15,7 +15,7 @@ const TimePicker = () => {
 					/>
 				</Group>
 			</Box>
-			<Box mt="md">
+			<Box my="md">
 				<Text>Окончание</Text>
 				<Group align="start">
 					<FormTimeInput name="endTime" validate={required} />

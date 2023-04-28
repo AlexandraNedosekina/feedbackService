@@ -19,11 +19,12 @@ export default ({ onCancel }: IProps) => {
 
 	const { mutateAsync } = useMutation({
 		mutationFn: (data: {
+			name: string
 			startDate: Date
 			endDate: Date
 			type: 'all' | 'one'
 			isTwoWay?: boolean
-			userId?: string
+			userIds?: number[]
 		}) => createEvent(data),
 		onSuccess: () => {
 			queryClient.invalidateQueries([QueryKeys.EVENTS])
@@ -44,10 +45,11 @@ export default ({ onCancel }: IProps) => {
 			.toDate()
 
 		return mutateAsync({
+			name: values.name,
 			type: values.type,
 			startDate: start,
 			endDate: end,
-			userId: values.userId,
+			userIds: values?.userIds?.map(item => +item) ?? undefined,
 			isTwoWay: values.twoWay,
 		}).catch(() => ({ [FORM_ERROR]: 'something went wrong' }))
 	}
@@ -79,8 +81,8 @@ export default ({ onCancel }: IProps) => {
 					errors.endDate = 'Окончание не может быть раньше начала'
 				}
 
-				if (values.type === 'one' && !values.userId) {
-					errors.userId = 'Обязательно'
+				if (values.type === 'one' && !values.userIds?.length) {
+					errors.userIds = 'Обязательно'
 				}
 
 				return errors
@@ -88,17 +90,12 @@ export default ({ onCancel }: IProps) => {
 		>
 			{({ handleSubmit, submitError }) => (
 				<>
+					<FormInput name="name" label="Название" validate={required} />
+					<TimePicker />
 					<SelectType />
 					<FormCondition when={'type'} is="one">
 						<UserSelect />
 					</FormCondition>
-					<FormInput
-						name="name"
-						label="Название"
-						validate={required}
-						mt="md"
-					/>
-					<TimePicker />
 					{submitError && <p>{submitError}</p>}
 					<Buttons handleSubmit={handleSubmit} onCancel={onCancel} />
 				</>

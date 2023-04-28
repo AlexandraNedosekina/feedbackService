@@ -9,9 +9,8 @@ interface IProps {
 const Buttons = ({ onCancel, handleSubmit }: IProps) => {
 	return (
 		<FormSpy>
-			{({ invalid, submitting, values }) => (
+			{({ invalid, submitting }) => (
 				<>
-					{/* <pre>{JSON.stringify(values, null, 2)}</pre> */}
 					<Flex justify={'flex-end'} mt="lg">
 						<Button
 							onClick={handleSubmit}

@@ -6,5 +6,5 @@ export interface IFormValues {
 	endTime: string
 	endDate: string
 	twoWay?: boolean
-	userId?: string
+	userIds?: string[]
 }
