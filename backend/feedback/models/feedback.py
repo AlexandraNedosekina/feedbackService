@@ -31,6 +31,7 @@ class Event(Base):
 
     id = Column(Integer, primary_key=True)
 
+    name = Column(String, nullable=False)
     date_start = Column(MyDateTime, nullable=False)
     date_stop = Column(MyDateTime, nullable=False)
     status = Column(String)  # waiting, active, archive

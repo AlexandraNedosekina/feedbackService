@@ -1,3 +1,5 @@
+from logging import getLogger
+
 from fastapi import APIRouter, Depends, HTTPException, Response, status
 from pydantic import parse_obj_as
 from sqlalchemy.orm import Session
@@ -8,6 +10,7 @@ from feedback.api.deps import GetUserWithRoles, get_current_user, get_db
 get_admin = GetUserWithRoles(["admin"])
 get_admin_boss_manager = GetUserWithRoles(["admin", "boss", "manager"])
 router = APIRouter()
+log = getLogger(__name__)
 
 
 # Change permissions
@@ -21,6 +24,101 @@ async def get_all_events(
     return parse_obj_as(
         list[schemas.Event], crud.event.get_multi(db, skip=skip, limit=limit)
     )
+
+
+@router.post(
+    "/all",
+    response_model=schemas.Event,
+    description="Создать cбор обратной связи для всех пользователей",
+)
+async def create_event_for_all(
+    event_create: schemas.EventCreateForAllForm,
+    db: Session = Depends(get_db),
+    _: models.User = Depends(get_admin_boss_manager),
+):
+    event = crud.event.create(db=db, obj_in=schemas.EventCreate(**event_create.dict()))
+    users = crud.user.get_multi(db=db, skip=0, limit=10000)
+
+    objs_in = set()
+    for user in users:
+        for colleagues in user.colleagues:
+            obj_in = schemas.FeedbackCreateEmpty(
+                event_id=event.id,
+                sender_id=colleagues.colleague_id,
+                receiver_id=user.id,
+            )
+            objs_in.add(obj_in)
+    crud.feedback.create_empty_bulk(db, objs_in=objs_in)
+    log.debug(f"Created {len(objs_in)}")
+    log.debug(f"{objs_in=}")
+    return event
+
+
+@router.post(
+    "/create_oneway",
+    response_model=schemas.Event,
+    description="Создать сбор обратной связи по пользователям",
+)
+async def create_oneway_event(
+    event_create: schemas.EventCreateForm,
+    db: Session = Depends(get_db),
+    _: models.User = Depends(get_admin_boss_manager),
+):
+    users = []
+    for user_id in event_create.user_ids:
+        user = crud.user.get(db=db, id=user_id)
+        if not user:
+            raise HTTPException(status_code=404, detail="User does not exist")
+        users.append(user)
+    event = crud.event.create(db=db, obj_in=schemas.EventCreate(**event_create.dict()))
+
+    objs_in = set()
+    for user in users:
+        for colleague in user.colleagues:
+            obj_in = schemas.FeedbackCreateEmpty(
+                event_id=event.id, sender_id=colleague.colleague_id, receiver_id=user.id
+            )
+            objs_in.add(obj_in)
+
+    crud.feedback.create_empty_bulk(db, objs_in=objs_in)
+    log.debug(f"Created {len(objs_in)}")
+    log.debug(f"{objs_in=}")
+    return event
+
+
+@router.post(
+    "/create_twoway",
+    response_model=schemas.Event,
+    description="Создать сбор обратной связи для пользовотелей и их коллег",
+)
+async def create_twoway_event(
+    event_create: schemas.EventCreateForm,
+    db: Session = Depends(get_db),
+    _: models.User = Depends(get_admin_boss_manager),
+):
+    users = []
+    for user_id in event_create.user_ids:
+        user = crud.user.get(db=db, id=user_id)
+        if not user:
+            raise HTTPException(status_code=404, detail="User does not exist")
+        users.append(user)
+    event = crud.event.create(db=db, obj_in=schemas.EventCreate(**event_create.dict()))
+
+    objs_in = set()
+    for user in users:
+        for colleague in user.colleagues:
+            obj_in_user = schemas.FeedbackCreateEmpty(
+                event_id=event.id, sender_id=user.id, receiver_id=colleague.colleague_id
+            )
+            obj_in_colleague = schemas.FeedbackCreateEmpty(
+                event_id=event.id, sender_id=colleague.colleague_id, receiver_id=user.id
+            )
+            objs_in.add(obj_in_user)
+            objs_in.add(obj_in_colleague)
+    crud.feedback.create_empty_bulk(db, objs_in=objs_in)
+    log.debug(f"Created {len(objs_in)}")
+    log.debug(f"{objs_in=}")
+    return event
 
 
 @router.get("/{id}", response_model=schemas.Event)
@@ -70,81 +168,3 @@ async def delete_event(
         raise HTTPException(status_code=404, detail="Event does not exist")
     crud.event.remove(db, id=id)
     return Response(status_code=204)
-
-
-@router.post(
-    "/all",
-    response_model=schemas.Event,
-    description="Создать сбор обратной связи для всех пользователей",
-)
-async def create_event_for_all(
-    event_create: schemas.EventCreate,
-    db: Session = Depends(get_db),
-    _: models.User = Depends(get_admin_boss_manager),
-):
-    event = crud.event.create(db=db, obj_in=event_create)
-    users = crud.user.get_multi(db=db, skip=0, limit=10000)
-    for user in users:
-        for colleagues in user.colleagues:
-            obj_in = schemas.FeedbackCreateEmpty(
-                event_id=event.id,
-                sender_id=colleagues.colleague_id,
-                receiver_id=user.id,
-            )
-            _ = crud.feedback.create_empty(db=db, obj_in=obj_in)
-
-    return event
-
-
-@router.post(
-    "/create_oneway/{user_id}",
-    response_model=schemas.Event,
-    description="Создать сбор обратной связи по пользователю",
-)
-async def create_oneway_event(
-    user_id: int,
-    event_create: schemas.EventCreate,
-    db: Session = Depends(get_db),
-    _: models.User = Depends(get_admin_boss_manager),
-):
-    user = crud.user.get(db=db, id=user_id)
-    if not user:
-        raise HTTPException(status_code=404, detail="User does not exist")
-    event = crud.event.create(db=db, obj_in=event_create)
-
-    for colleague in user.colleagues:
-        obj_in = schemas.FeedbackCreateEmpty(
-            event_id=event.id, sender_id=colleague.colleague_id, receiver_id=user.id
-        )
-        _ = crud.feedback.create_empty(db=db, obj_in=obj_in)
-
-    return event
-
-
-@router.post(
-    "/create_twoway/{user_id}",
-    response_model=schemas.Event,
-    description="Создать сбор обратной связи для пользовотеля и его коллег",
-)
-async def create_twoway_event(
-    user_id: int,
-    event_create: schemas.EventCreate,
-    db: Session = Depends(get_db),
-    _: models.User = Depends(get_admin_boss_manager),
-):
-    user = crud.user.get(db=db, id=user_id)
-    if not user:
-        raise HTTPException(404, detail="User not found")
-    event = crud.event.create(db=db, obj_in=event_create)
-
-    for colleague in user.colleagues:
-        obj_in_user = schemas.FeedbackCreateEmpty(
-            event_id=event.id, sender_id=user.id, receiver_id=colleague.colleague_id
-        )
-        obj_in_colleague = schemas.FeedbackCreateEmpty(
-            event_id=event.id, sender_id=colleague.colleague_id, receiver_id=user.id
-        )
-        _ = crud.feedback.create_empty(db=db, obj_in=obj_in_user)
-        _ = crud.feedback.create_empty(db=db, obj_in=obj_in_colleague)
-
-    return event
