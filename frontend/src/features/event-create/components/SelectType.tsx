@@ -1,12 +1,22 @@
 import { SegmentedControl } from '@mantine/core'
-import { Field } from 'react-final-form'
+import { useEffect } from 'react'
+import { Field, useFormState } from 'react-final-form'
+import { IFormValues } from '../types'
 
 const data: { label: string; value: 'one' | 'all' }[] = [
 	{ label: 'Общий', value: 'all' },
-	{ label: 'Для 1 сотрудника', value: 'one' },
+	{ label: 'Индивидуальный', value: 'one' },
 ]
 
 const SelectType = () => {
+	const { values } = useFormState<IFormValues>()
+
+	useEffect(() => {
+		if (values.type === 'all' && !!values?.userIds?.length) {
+			values.userIds = []
+		}
+	}, [values])
+
 	return (
 		<Field name="type">
 			{({ input }) => (

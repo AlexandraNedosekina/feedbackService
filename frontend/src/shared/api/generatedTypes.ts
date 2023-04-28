@@ -349,6 +349,8 @@ export interface ColleaguesIdList {
 export interface Event {
 	/** Id */
 	id: number
+	/** Name */
+	name: string
 	/**
 	 * Date Start
 	 * @format date-time
@@ -363,8 +365,13 @@ export interface Event {
 	status: EventStatus
 }
 
-/** EventCreate */
-export interface EventCreate {
+/** EventCreateForAllForm */
+export interface EventCreateForAllForm {
+	/**
+	 * Name
+	 * Name of event
+	 */
+	name: string
 	/**
 	 * Date Start
 	 * Event start date in utc
@@ -379,6 +386,32 @@ export interface EventCreate {
 	date_stop: string
 }
 
+/** EventCreateForm */
+export interface EventCreateForm {
+	/**
+	 * Name
+	 * Name of event
+	 */
+	name: string
+	/**
+	 * Date Start
+	 * Event start date in utc
+	 * @format date-time
+	 */
+	date_start: string
+	/**
+	 * Date Stop
+	 * Event end date in utc
+	 * @format date-time
+	 */
+	date_stop: string
+	/**
+	 * User Ids
+	 * @minItems 1
+	 */
+	user_ids: number[]
+}
+
 /**
  * EventStatus
  * An enumeration.
@@ -391,6 +424,8 @@ export enum EventStatus {
 
 /** EventUpdate */
 export interface EventUpdate {
+	/** Name */
+	name?: string
 	/**
 	 * Date Start
 	 * @format date-time

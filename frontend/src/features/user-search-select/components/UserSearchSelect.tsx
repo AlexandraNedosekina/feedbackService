@@ -1,40 +1,28 @@
-import { Select, SelectItem, Text, SelectProps } from '@mantine/core'
 import { useDebouncedValue } from '@mantine/hooks'
 import { useQuery } from '@tanstack/react-query'
-import { forwardRef, useEffect, useState } from 'react'
-import { QueryKeys, TSearchUserAdapter, searchUserByFullname } from 'shared/api'
+import { useEffect, useState } from 'react'
+import { QueryKeys, searchUserByFullname } from 'shared/api'
+import { TMultiSelectProps, TSelectProps } from '../types'
+import { MultiSelect } from './MultiSelect'
+import { Select } from './Select'
+import { SelectItem } from './SelectItem'
+import { Text } from '@mantine/core'
 
-type ItemProps = React.ComponentPropsWithoutRef<'div'> & TSearchUserAdapter
+type IProps = TSelectProps | TMultiSelectProps
 
-const SelectItem = forwardRef<HTMLDivElement, ItemProps>(
-	({ email, full_name, job_title, ...others }: ItemProps, ref) => (
-		<div ref={ref} {...others}>
-			<Text>
-				{full_name} ({email})
-			</Text>
-			<Text size="xs">{job_title}</Text>
-		</div>
-	)
-)
-SelectItem.displayName = 'AutoCompleteItem'
-
-interface IProps extends Partial<SelectProps> {
-	value?: string
-	onChange?: (value: string) => void
-	placeholder?: string
-	defaultValue?: string
-	defaultData?: TSearchUserAdapter[]
+const componentsMapper: Record<string, (props: any) => JSX.Element> = {
+	multi: MultiSelect,
+	select: Select,
 }
 
-export const UserSearchSelect = ({
-	onChange,
-	placeholder,
-	value: controlledValue,
-	defaultValue,
+function UserSearchSelect(props: TSelectProps): JSX.Element
+function UserSearchSelect(props: TMultiSelectProps): JSX.Element
+function UserSearchSelect({
 	defaultData = [],
+	placeholder,
+	multi,
 	...props
-}: IProps) => {
-	const [value, setValue] = useState<string | null>(controlledValue || null)
+}: IProps): JSX.Element {
 	const [searchValue, onSearchChange] = useState('')
 	const [debounced] = useDebouncedValue(searchValue, 300)
 	const [isLoading, setIsLoading] = useState(false)
@@ -46,19 +34,11 @@ export const UserSearchSelect = ({
 		keepPreviousData: true,
 	})
 
-	function handleSelectChange(value: string | null) {
-		setValue(value)
-		if (onChange) {
-			onChange(value || '')
-		}
-	}
-
 	useEffect(() => {
 		if (debounced) {
 			refetch()
 		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [debounced])
+	}, [debounced, refetch])
 
 	useEffect(() => {
 		if (searchValue) {
@@ -74,18 +54,14 @@ export const UserSearchSelect = ({
 		}
 	}, [searchValue])
 
+	const Component = componentsMapper[multi ? 'multi' : 'select']
+
 	return (
-		<Select
-			value={value}
-			defaultValue={defaultValue}
-			onChange={handleSelectChange}
-			onSearchChange={onSearchChange}
+		<Component
 			searchValue={searchValue}
+			onSearchChange={onSearchChange}
 			data={data || defaultData}
 			itemComponent={SelectItem}
-			filter={(value, item: SelectItem & TSearchUserAdapter) =>
-				item.label.toLowerCase().includes(value.toLowerCase().trim())
-			}
 			nothingFound={
 				data?.length === 0 && !isLoading ? (
 					<Text size="sm">Ничего не найдено</Text>
@@ -110,3 +86,5 @@ export const UserSearchSelect = ({
 		/>
 	)
 }
+
+export default UserSearchSelect

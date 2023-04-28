@@ -1,13 +1,14 @@
-import { Button, Flex, Modal, Title } from '@mantine/core'
+import { Button, Flex, Modal } from '@mantine/core'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { QueryKeys, updateEvent } from 'shared/api'
-import { EventUpdate } from 'shared/api/generatedTypes'
+import dayjs from 'dayjs'
 import { EventCreateTimePicker as TimePicker } from 'features/event-create'
 import { Form } from 'react-final-form'
-import { Event } from 'shared/api/generatedTypes'
-import dayjs from 'dayjs'
+import { QueryKeys, updateEvent } from 'shared/api'
+import { Event, EventUpdate } from 'shared/api/generatedTypes'
+import { FormInput, required } from 'shared/ui'
 
 interface IFormValues {
+	name: string
 	startTime: string
 	startDate: string
 	endTime: string
@@ -45,6 +46,7 @@ export default ({ isOpen, onClose, eventId, event }: IProps) => {
 			.toISOString()
 
 		mutate({
+			name: values.name,
 			date_stop: end,
 			date_start: start,
 		})
@@ -52,13 +54,14 @@ export default ({ isOpen, onClose, eventId, event }: IProps) => {
 
 	return (
 		<Modal
-			title={<Title order={4}>Редактирование сбора обратной связи</Title>}
+			title={'Редактирование сбора обратной связи'}
 			opened={isOpen}
 			onClose={onClose}
 		>
 			<Form<IFormValues>
 				onSubmit={handleSubmit}
 				initialValues={{
+					name: event.name,
 					startTime: dayjs(event.date_start + '.000Z').format('HH:mm'),
 					//@ts-expect-error initial value must be type of Date
 					startDate: dayjs(event.date_start).toDate(),
@@ -73,7 +76,7 @@ export default ({ isOpen, onClose, eventId, event }: IProps) => {
 						dayjs(values.endDate).isBefore(values.startDate) ||
 						(dayjs(values.endDate).isSame(values.startDate) &&
 							+values.startTime.replace(':', '') >
-							+values.endTime.replace(':', ''))
+								+values.endTime.replace(':', ''))
 					) {
 						errors.endDate = 'Окончание не может быть раньше начала'
 					}
@@ -84,6 +87,8 @@ export default ({ isOpen, onClose, eventId, event }: IProps) => {
 			>
 				{({ handleSubmit, invalid, dirty }) => (
 					<>
+						<FormInput name="name" label="Название" validate={required} />
+
 						<TimePicker />
 
 						<Flex justify={'flex-end'} gap="md" mt="xl">
