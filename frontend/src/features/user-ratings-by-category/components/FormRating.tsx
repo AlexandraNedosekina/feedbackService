@@ -4,9 +4,10 @@ import { useField } from 'react-final-form'
 interface IProps {
 	title: string
 	name: string
+	readOnly?: boolean
 }
 
-export const Rating = ({ title, name }: IProps) => {
+export const FormRating = ({ title, name, readOnly = false }: IProps) => {
 	const { input } = useField(name)
 
 	return (
@@ -15,7 +16,8 @@ export const Rating = ({ title, name }: IProps) => {
 			<MantineRating
 				size="md"
 				value={input.value}
-				onChange={input.onChange}
+				onChange={readOnly ? undefined : input.onChange}
+				readOnly={readOnly}
 			/>
 		</Group>
 	)
