@@ -1,18 +1,38 @@
 import { Button, Group } from '@mantine/core'
-import { useRouter } from 'next/router'
 import { FormSpy, useForm } from 'react-final-form'
 
-export const Buttons = () => {
-	const { submit } = useForm()
-	const router = useRouter()
+interface IProps {
+	isEditing: boolean
+	setIsEditing: (value: boolean) => void
+	isEmptyFeedback: boolean
+}
 
-	function goToEmpty() {
-		router.push('/feedback/')
+export const Buttons = ({
+	isEditing,
+	setIsEditing,
+	isEmptyFeedback,
+}: IProps) => {
+	const { submit } = useForm()
+
+	function goToEdit() {
+		setIsEditing(true)
+	}
+
+	function goToSave() {
+		setIsEditing(false)
+	}
+
+	if (!isEditing) {
+		return (
+			<Group>
+				<Button onClick={goToEdit}>Редактировать</Button>
+			</Group>
+		)
 	}
 
 	return (
 		<FormSpy>
-			{({ hasValidationErrors, pristine, submitting }) => (
+			{({ hasValidationErrors, pristine, submitting, form: { reset } }) => (
 				<Group>
 					<Button
 						disabled={pristine || hasValidationErrors}
@@ -21,13 +41,18 @@ export const Buttons = () => {
 					>
 						Сохранить
 					</Button>
-					<Button
-						variant="outline"
-						style={{ background: 'white' }}
-						onClick={goToEmpty}
-					>
-						Отмена
-					</Button>
+					{!isEmptyFeedback && (
+						<Button
+							variant="outline"
+							style={{ background: 'white' }}
+							onClick={() => {
+								reset()
+								goToSave()
+							}}
+						>
+							Отмена
+						</Button>
+					)}
 				</Group>
 			)}
 		</FormSpy>
