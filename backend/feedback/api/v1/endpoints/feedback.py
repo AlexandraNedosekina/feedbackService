@@ -1,7 +1,7 @@
 import logging
 from datetime import datetime, timedelta, timezone
 
-from fastapi import APIRouter, Depends, HTTPException, Response
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Response, status
 from fastapi_utils.tasks import repeat_every
 from pydantic import parse_obj_as
 from sqlalchemy import or_
@@ -69,6 +69,7 @@ async def send_feedback_out_of_turn(
 async def send_feedback(
     feedback_id: int,
     feedback_upd: schemas.FeedbackFromUser,
+    background_tasks: BackgroundTasks,
     curr_user: models.User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ) -> schemas.Feedback:
@@ -92,6 +93,16 @@ async def send_feedback(
             db, feedback.event_id, curr_user.id, feedback.receiver_id
         )
         if _feedback:
+            if feedback.completed is True:
+                background_tasks.add_task(
+                    crud.feedback_history.create,
+                    db,
+                    obj_in=schemas.FeedbackHistoryCreate(
+                        **schemas.Feedback.from_orm(feedback).dict(),
+                        feedback_id=feedback.id,
+                        created_at=feedback.updated_at,
+                    ),
+                )
             return crud.feedback.update_user_feedback(
                 db=db, db_obj=_feedback, obj_in=feedback_upd
             )
@@ -100,6 +111,7 @@ async def send_feedback(
             raise HTTPException(
                 status_code=400, detail="You can not send feedback to yourself"
             )
+
         return crud.feedback.create(
             db,
             obj_in=feedback_upd,
@@ -113,9 +125,16 @@ async def send_feedback(
             status_code=403, detail="You can not send feedback to this user"
         )
 
-    if not curr_user.id == feedback.sender_id:
+    if curr_user.id != feedback.sender_id:
         raise HTTPException(
             status_code=403, detail="You can not send feedback with this id"
+        )
+
+    if feedback.completed is True:
+        background_tasks.add_task(
+            crud.feedback_history.create,
+            db,
+            obj_in=schemas.FeedbackHistoryCreate.from_orm(feedback),
         )
 
     feedback = crud.feedback.update_user_feedback(
@@ -361,3 +380,19 @@ async def sheduled_update_event_status():
 
     except Exception as e:
         logger.debug(f"Error sheduled update event status: {e}")
+
+
+@router.get("/{feedback_id}/history", response_model=list[schemas.FeedbackHistory])
+async def get_history_for_feedback(
+    feedback_id: int,
+    curr_user: models.User = Depends(get_current_user),
+    db=Depends(get_db),
+) -> list[schemas.FeedbackHistory]:
+    feedback = crud.feedback.get(db, feedback_id)
+    if not feedback:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Feedback not found")
+
+    if curr_user.id != feedback.sender_id or "admin" not in curr_user.get_roles:
+        raise HTTPException(status.HTTP_403_FORBIDDEN)
+
+    return crud.feedback_history.get_by_feedback_id(db, feedback_id=feedback_id)
