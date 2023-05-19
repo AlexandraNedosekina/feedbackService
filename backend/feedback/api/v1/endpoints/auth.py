@@ -1,7 +1,7 @@
 import datetime
 import logging
 
-from fastapi import APIRouter, Depends, HTTPException, Request, Response
+from fastapi import APIRouter, Depends, HTTPException, Request, Response, status
 from fastapi.responses import RedirectResponse
 from httpx_oauth.oauth2 import GetAccessTokenError
 from pydantic import AnyHttpUrl
@@ -36,14 +36,23 @@ def set_cookie(
     r: Response,
     key: str,
     val: str,
-    domain: AnyHttpUrl = settings.BACKEND_URL.host,
+    domain: AnyHttpUrl = settings.BACKEND_URL,
     max_age: int = 60 * 60 * 2,
 ):
-    domains = domain.split(".")
-    if len(domains) > 1:
+    if domain.host_type == "domain":
+        domains = domain.host.split(".")
+        if len(domains < 2):
+            log.error("Bad domain for cookie")
+            raise HTTPException(status.HTTP_500_INTERNAL_SERVER_ERROR, "Internal Error")
         domain = ".".join([domains[-2], domains[-1]])
+    elif domain.host_type == "ipv4":
+        domain = domain.host
+    else:
+        log.debug("Bad domain for cookie")
+        raise HTTPException(status.HTTP_500_INTERNAL_SERVER_ERROR, "Internal Error")
+
     r.set_cookie(key=key, domain=domain, value=val, max_age=max_age, secure=True)
-    log.debug(f"cookie is set to {key=} {val=} for {domain=}")
+    log.debug(f"cookie is set to {key=} for {domain=}")
     return r
 
 
