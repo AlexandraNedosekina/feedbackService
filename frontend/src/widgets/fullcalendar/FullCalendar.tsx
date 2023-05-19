@@ -3,16 +3,22 @@ import dayGridPlugin from '@fullcalendar/daygrid'
 import timeGridPlugin from '@fullcalendar/timegrid'
 import interactionPlugin from '@fullcalendar/interaction'
 import 'dayjs/locale/ru'
-import { useState, useMemo, useRef } from 'react'
+import { useState, useMemo } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { myCalendar, QueryKeys } from 'shared/api'
 import dayjs from 'dayjs'
 import { CalendarFormat } from 'shared/api/generatedTypes'
-import { CreateEventModal, Event } from './components'
+import { CreateEventModal, Event, Header } from './components'
+import { useDisclosure } from '@mantine/hooks'
 
 const FullCalendar = () => {
-	const [opened, setOpened] = useState(false)
-	const calendarRef = useRef<Calendar>(null)
+	const [isCreateModalOpen, createModalHandlers] = useDisclosure(false, {
+		onOpen: () => {
+			setSelectedDate(undefined)
+		},
+	})
+	const [selectedDate, setSelectedDate] = useState<Date>()
+	const [calendarRef, setCalendarRef] = useState<Calendar | null>(null)
 
 	const { data } = useQuery({
 		queryKey: [QueryKeys.CALENDAR],
@@ -43,14 +49,16 @@ const FullCalendar = () => {
 
 	return (
 		<>
+			<Header
+				calendar={calendarRef}
+				openCreateModal={createModalHandlers.open}
+			/>
 			<Calendar
-				ref={calendarRef}
-				plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
-				headerToolbar={{
-					left: 'prev,next today createEventButton',
-					center: 'title',
-					right: 'dayGridMonth,timeGridWeek,timeGridDay',
+				ref={ref => {
+					setCalendarRef(ref)
 				}}
+				plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+				headerToolbar={false}
 				buttonText={{
 					today: 'Сегодня',
 					month: 'Месяц',
@@ -59,9 +67,10 @@ const FullCalendar = () => {
 				}}
 				customButtons={{
 					createEventButton: {
-						text: 'Создать событие',
+						text: '+',
 						click: function () {
-							setOpened(true)
+							createModalHandlers.open()
+							setSelectedDate(undefined)
 						},
 					},
 				}}
@@ -70,7 +79,10 @@ const FullCalendar = () => {
 				locale="ru"
 				nowIndicator={true}
 				editable={true}
-				select={() => setOpened(true)}
+				select={value => {
+					createModalHandlers.open()
+					setSelectedDate(value.start)
+				}}
 				eventContent={props => <Event {...props} />}
 				businessHours={{
 					daysOfWeek: [1, 2, 3, 4, 5, 6, 0],
@@ -88,7 +100,11 @@ const FullCalendar = () => {
 				firstDay={1}
 				height="100%"
 			/>
-			<CreateEventModal opened={opened} onClose={() => setOpened(false)} />
+			<CreateEventModal
+				opened={isCreateModalOpen}
+				onClose={createModalHandlers.close}
+				selectedDate={selectedDate}
+			/>
 		</>
 	)
 }

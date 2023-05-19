@@ -8,19 +8,22 @@ import {
 } from '@tanstack/react-table'
 import { getAllEvents, QueryKeys, TEventAdapter } from 'shared/api'
 import { EventStatus } from 'shared/api/generatedTypes'
-import { Table } from 'shared/ui'
+import { Table, TableSkeleton } from 'shared/ui'
 import ActionMenuTable from './ActionMenuTable'
 
 const columnHelper = createColumnHelper<TEventAdapter>()
 
 const columns = [
+	columnHelper.accessor('name', {
+		header: 'Название',
+	}),
 	columnHelper.accessor(
 		row => {
 			return `${row.parsedStartDate} - ${row.parsedEndDate}`
 		},
 		{
 			id: 'date',
-			header: 'Дата',
+			header: 'Сроки проведения',
 		}
 	),
 	columnHelper.accessor('status', {
@@ -44,7 +47,12 @@ const columns = [
 	// }),
 	columnHelper.display({
 		id: 'actions',
-		cell: ({ row }) => <ActionMenuTable eventId={String(row.original.id)} />,
+		cell: ({ row }) => (
+			<ActionMenuTable
+				eventId={String(row.original.id)}
+				event={row.original}
+			/>
+		),
 	}),
 ]
 
@@ -60,7 +68,12 @@ export default () => {
 		getCoreRowModel: getCoreRowModel(),
 	})
 
-	if (isLoading) return <div>Загрузка...</div>
+	if (isLoading)
+		return (
+			<Box mt="lg">
+				<TableSkeleton />
+			</Box>
+		)
 
 	return (
 		<Box mt="lg">

@@ -1,14 +1,36 @@
 /* eslint-disable react/display-name */
 import { Field, FieldProps, FieldRenderProps } from 'react-final-form'
 
-const withField = <T,>(Component: React.FC<T>) => {
+const withField = <T,>(
+	Component: React.FC<T>,
+	defaultFieldProps?: Omit<
+		FieldProps<string, FieldRenderProps<string>>,
+		'name'
+	> & {
+		name?: string
+	}
+) => {
 	return (props: FieldProps<string, FieldRenderProps<string>> & T) => {
-		const { name, validate, format, formatOnBlur, subscription, ...rest } =
-			props
-		const fieldProps = { name, validate, format, formatOnBlur, subscription }
+		const {
+			name,
+			validate,
+			format,
+			formatOnBlur,
+			subscription,
+			type,
+			...rest
+		} = props
+		const fieldProps = {
+			name,
+			validate,
+			format,
+			formatOnBlur,
+			subscription,
+			type,
+		}
 
 		return (
-			<Field {...fieldProps}>
+			<Field {...fieldProps} {...defaultFieldProps}>
 				{({ input, meta }) => {
 					return (
 						<Component

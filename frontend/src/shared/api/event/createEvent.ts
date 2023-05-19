@@ -3,11 +3,12 @@ import api from '..'
 import { errorHandler } from '../errorHandler'
 
 async function createEvent(data: {
+	name: string
 	startDate: Date
 	endDate: Date
 	type: 'all' | 'one'
 	isTwoWay?: boolean
-	userId?: string
+	userIds?: number[]
 }) {
 	let eventTypeUrl: 'all' | 'create_oneway' | 'create_twoway' = 'all'
 	let eventUrl = 'event/all'
@@ -16,20 +17,22 @@ async function createEvent(data: {
 		throw new Error('Start date cannot be after end date')
 
 	if (data.type === 'one') {
-		if (!data.userId) throw new Error('Missing userId')
+		if (!data.userIds) throw new Error('Missing userIds')
 		if (data.isTwoWay === undefined || data.isTwoWay === null)
 			throw new Error('Missing isTwoWay')
 
 		eventTypeUrl = data.isTwoWay ? 'create_twoway' : 'create_oneway'
-		eventUrl = `event/${eventTypeUrl}/${data.userId}`
+		eventUrl = `event/${eventTypeUrl}`
 	}
 
 	try {
 		const res = await api.post(
 			eventUrl,
 			{
+				name: data.name,
 				date_start: data.startDate,
 				date_stop: data.endDate,
+				user_ids: data.userIds,
 			},
 			{
 				headers: {

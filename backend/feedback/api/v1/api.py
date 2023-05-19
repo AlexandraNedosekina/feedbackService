@@ -5,11 +5,12 @@ from feedback.api.v1.endpoints import (
     avatar,
     calendar,
     career,
+    career_template,
     colleagues,
     event,
     feedback,
     for_tests,
-    notificaions,
+    notifications,
     promts,
     user,
 )
@@ -30,11 +31,16 @@ api_router.include_router(colleagues.router, prefix="/colleagues", tags=["collea
 
 api_router.include_router(event.router, prefix="/event", tags=["event"])
 api_router.include_router(feedback.router, prefix="/feedback", tags=["feedback"])
+
 api_router.include_router(career.router, prefix="/career", tags=["career"])
+api_router.include_router(
+    career_template.router, prefix="/career/template", tags=["career", "template"]
+)
+
 api_router.include_router(calendar.router, prefix="/calendar", tags=["calendar"])
 
 api_router.include_router(
-    notificaions.router, prefix="/notificaions", tags=["notifications"]
+    notifications.router, prefix="/notifications", tags=["notifications"]
 )
 
 # Remove

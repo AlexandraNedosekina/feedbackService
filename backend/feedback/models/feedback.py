@@ -17,6 +17,7 @@ from feedback.db.session import Base
 
 class MyDateTime(TypeDecorator):
     impl = DateTime
+    cache_ok = True
 
     def process_bind_param(self, value, dialect):
         if type(value) is str:
@@ -30,6 +31,7 @@ class Event(Base):
 
     id = Column(Integer, primary_key=True)
 
+    name = Column(String, nullable=False)
     date_start = Column(MyDateTime, nullable=False)
     date_stop = Column(MyDateTime, nullable=False)
     status = Column(String)  # waiting, active, archive

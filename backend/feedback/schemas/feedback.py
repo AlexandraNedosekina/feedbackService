@@ -17,7 +17,8 @@ class Colleagues(Base):
     owner_id: int
 
 
-class EventCreate(Base):
+class EventCreateForAllForm(Base):
+    name: str = Field(..., description="Name of event")
     date_start: datetime = Field(..., description="Event start date in utc")
     date_stop: datetime = Field(..., description="Event end date in utc")
 
@@ -35,7 +36,32 @@ class EventCreate(Base):
         return v
 
 
+class EventCreateForm(Base):
+    name: str = Field(..., description="Name of event")
+    date_start: datetime = Field(..., description="Event start date in utc")
+    date_stop: datetime = Field(..., description="Event end date in utc")
+    user_ids: list[int] = Field(..., min_items=1)
+
+    @validator("date_start", "date_stop")
+    def validate_dates(cls, v):
+        if v < datetime.now(timezone.utc):
+            raise ValueError("date can not be earlier than now")
+        return v
+
+    @validator("date_stop")
+    def validate_both_dates(cls, v, values):
+        start_date = values.get("date_start")
+        if v < start_date:
+            raise ValueError("stop can not be earlier than start")
+        return v
+
+
+class EventCreate(EventCreateForAllForm):
+    pass
+
+
 class EventUpdate(Base):
+    name: str | None
     date_start: datetime | None
     date_stop: datetime | None
 
@@ -62,6 +88,7 @@ class EventStatus(str, Enum):
 
 class EventInDB(Base):
     id: int
+    name: str
     date_start: datetime
     date_stop: datetime
     status: EventStatus
@@ -93,6 +120,9 @@ class FeedbackCreateEmpty(Base):
     event_id: int
     sender_id: int
     receiver_id: int
+
+    def __hash__(self):  # make hashable
+        return hash((type(self),) + tuple(self.__dict__.values()))
 
 
 class FeedbackInDB(Base):

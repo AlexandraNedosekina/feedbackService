@@ -50,7 +50,9 @@ export default function ({ opened, onClose, event }: IProps) {
 			title: values.title,
 			description: values.desc,
 			user_id: +values.userId,
+			//@ts-expect-error good
 			date_end: values.endTime,
+			//@ts-expect-error good
 			date_start: values.startTime,
 		})
 	}
@@ -134,6 +136,7 @@ export default function ({ opened, onClose, event }: IProps) {
 													name={props.input.name}
 													value={props.input.value}
 													onChange={props.input.onChange}
+													valueFormat="HH:mm, D MMMM"
 													popoverProps={{
 														withinPortal: true,
 														zIndex: 501,
@@ -156,6 +159,7 @@ export default function ({ opened, onClose, event }: IProps) {
 													name={props.input.name}
 													value={props.input.value}
 													onChange={props.input.onChange}
+													valueFormat="HH:mm, D MMMM"
 													popoverProps={{
 														withinPortal: true,
 														zIndex: 501,

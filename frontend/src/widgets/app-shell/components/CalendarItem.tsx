@@ -25,11 +25,16 @@ export default () => {
 			})),
 		refetchInterval: 1000 * 60 * 3, // 3 minutes
 	})
-	const notify = useMemo(() => {
+	const notify: boolean = useMemo(() => {
+		if (!data || !user?.id) return false
+
 		return data?.some(
-			i => i.status === CalendarEventStatus.Pending && i.userId === user.id
+			i =>
+				(i.status === CalendarEventStatus.Pending ||
+					i.status === CalendarEventStatus.Resheduled) &&
+				i.userId === user.id
 		)
-	}, [data, user.id])
+	}, [data, user?.id])
 
 	return (
 		<NavItem

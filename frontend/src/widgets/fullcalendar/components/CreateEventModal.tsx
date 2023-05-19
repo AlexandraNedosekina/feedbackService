@@ -16,9 +16,10 @@ import { ICreateEventForm } from '../types'
 interface IProps {
 	opened: boolean
 	onClose: () => void
+	selectedDate?: Date
 }
 
-export default function ({ opened, onClose }: IProps) {
+export default function ({ opened, onClose, selectedDate }: IProps) {
 	const [isDesc, setIsDesc] = useState<boolean>(false)
 	const queryClient = useQueryClient()
 
@@ -46,7 +47,9 @@ export default function ({ opened, onClose }: IProps) {
 			title: values.title,
 			description: values.desc,
 			user_id: +values.userId,
+			//@ts-expect-error no problem
 			date_end: values.endTime,
+			//@ts-expect-error no problem
 			date_start: values.startTime,
 		})
 	}
@@ -70,6 +73,10 @@ export default function ({ opened, onClose }: IProps) {
 						}
 
 						return undefined
+					}}
+					initialValues={{
+						startTime: selectedDate,
+						endTime: selectedDate,
 					}}
 				>
 					{({ handleSubmit }) => (
@@ -119,6 +126,7 @@ export default function ({ opened, onClose }: IProps) {
 													name={props.input.name}
 													value={props.input.value}
 													onChange={props.input.onChange}
+													valueFormat="HH:mm, D MMMM"
 													popoverProps={{ withinPortal: true }}
 													error={
 														props.meta.error && props.meta.dirty
@@ -138,6 +146,7 @@ export default function ({ opened, onClose }: IProps) {
 													name={props.input.name}
 													value={props.input.value}
 													onChange={props.input.onChange}
+													valueFormat="HH:mm, D MMMM"
 													popoverProps={{ withinPortal: true }}
 													error={
 														props.meta.error && props.meta.dirty

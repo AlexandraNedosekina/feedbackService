@@ -21,6 +21,7 @@ from feedback.api.deps import (
     get_notifiers,
     is_allowed,
 )
+from feedback.crud.calendar import OverlappingEventError
 from feedback.notifications.notifiers import AbstractNotifier
 
 EKB_UTC_OFFSET = 5
@@ -42,9 +43,13 @@ def get_calendar_events_for_current_user(
     db: Session = Depends(get_db),
     curr_user=Depends(get_current_user),
 ):
+    logger.debug(
+        f"Gettings events for current user {curr_user.id=} with queries {date=}, {format=}, {status=}"
+    )
     events = crud.calendar.get_with_common_queries(
         db, user_id=curr_user.id, date=date, format=format, status=status
     )
+    logger.debug(f"Found events {events}")
     return events
 
 
@@ -99,7 +104,7 @@ def create_calendar_event(
     if curr_user.id == user.id:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"You cant create event to yourself",
+            detail="You cant create event to yourself",
         )
 
     # TODO: if user is trainee => he can create event to his mentor
@@ -120,17 +125,15 @@ def create_calendar_event(
         ):
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail=f"User doesnt work at this time",
+                detail="User doesnt work at this time",
             )
 
-    overlaps = crud.calendar.get_overlapping_events(
+    if crud.calendar.get_overlapping_events(
         db,
         start=cal_event_create.date_start,
         end=cal_event_create.date_end,
         user_id=user.id,
-    )
-    if overlaps:
-        logger.debug(overlaps)
+    ):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST, detail="User has overlaping events"
         )
@@ -164,7 +167,7 @@ def update_calendar_event(
 
     if event.owner_id != curr_user.id:
         raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
+            status_code=status.HTTP_403_FORBIDDEN,
             detail="You must be creator to delete",
         )
 
@@ -177,16 +180,36 @@ def update_calendar_event(
     # If only 1 of the dates is changed. check with val in db
     start = calendar_event_update.date_start
     end = calendar_event_update.date_end
-    if bool(start) != bool(end):
-        if (start and event.date_end <= start.replace(tzinfo=None)) or (
-            end and event.date_start >= end.replace(tzinfo=None)
-        ):
+    logger.debug("Checking if changed date is after or before stored date")
+    if (
+        bool(start) != bool(end)
+        and (start and event.date_end <= start.replace(tzinfo=None))
+        or (end and event.date_start >= end.replace(tzinfo=None))
+    ):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="date_start cant be smaller or equal to date_end",
+        )
+
+    if event.user.work_hours_end and event.user.work_hours_start:
+        work_start_utc = convert_time_to_utc(
+            event.user.work_hours_start, EKB_UTC_OFFSET
+        )
+        work_end_utc = convert_time_to_utc(event.user.work_hours_end, EKB_UTC_OFFSET)
+        if work_start_utc > start.time() or work_end_utc < end.time():
             raise HTTPException(
-                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-                detail="date_start cant cant be smaller or equal to date_end",
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="User doesnt work at this time",
             )
 
-    event = crud.calendar.update(db, db_obj=event, obj_in=calendar_event_update)
+    try:
+        event = crud.calendar.update(db, db_obj=event, obj_in=calendar_event_update)
+    except OverlappingEventError:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Either you, or event participant have overlapping event",
+        )
+    logger.debug("Updated calendar event")
     return event
 
 
@@ -206,7 +229,7 @@ def delete_calendar_event(
 
     if event.owner_id != curr_user.id:
         raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
+            status_code=status.HTTP_403_FORBIDDEN,
             detail="You must be creator to delete",
         )
 
@@ -239,9 +262,13 @@ def get_calendar_events_by_user_id(
     """
     Only for users with roles [admin, boss, manager, hr]
     """
+    logger.debug(
+        f"Getting events for {user_id=} with queries {date=} {format=} {status=}"
+    )
     events = crud.calendar.get_with_common_queries(
         db, user_id=user_id, date=date, format=format, status=status
     )
+    logger.debug(f"Found {events}")
     return events
 
 
@@ -258,8 +285,9 @@ def accept_calendar_event(
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
 
     if event.user_id != curr_user.id:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
 
+    logger.debug(f"{curr_user.full_name} is trying to accept {event}")
     if event.status not in (
         schemas.CalendarEventStatus.PENDING,
         schemas.CalendarEventStatus.RESHEDULED,
@@ -269,9 +297,14 @@ def accept_calendar_event(
             detail="Action on this event already prefomed",
         )
 
-    event = crud.calendar.update_status(
-        db, db_obj=event, status=schemas.CalendarEventStatus.ACCEPTED
-    )
+    try:
+        event = crud.calendar.accept(db, db_obj=event)
+    except OverlappingEventError as e:
+        logger.debug(f"Event(id={event.id}) users have overlapping events")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Either you, or event participant have overlapping event",
+        )
 
     background_tasks.add_task(
         notifiers.send,
@@ -280,6 +313,7 @@ def accept_calendar_event(
         "calendar.accept",
         db=db,
     )
+    logger.debug("Event accepted")
     return event
 
 
@@ -297,8 +331,9 @@ def reject_calendar_event(
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
 
     if event.user_id != curr_user.id:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
 
+    logger.debug(f"{curr_user.full_name} is trying to reject {event})")
     if event.status not in (
         schemas.CalendarEventStatus.PENDING,
         schemas.CalendarEventStatus.RESHEDULED,
@@ -317,6 +352,7 @@ def reject_calendar_event(
         "calendar.reject",
         db=db,
     )
+    logger.debug("Event rejected")
     return event
 
 
@@ -334,8 +370,11 @@ def reshedule_calendar_event(
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
 
     if event.user_id != curr_user.id:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
 
+    logger.debug(
+        f"{curr_user.full_name} is trying to reshedule {event} to {resheduled_event}"
+    )
     if event.status not in (
         schemas.CalendarEventStatus.PENDING,
         schemas.CalendarEventStatus.RESHEDULED,
@@ -357,19 +396,13 @@ def reshedule_calendar_event(
             detail="Date must differ from previous",
         )
 
-    overlaps = crud.calendar.get_overlapping_events(
-        db,
-        start=resheduled_event.date_start,
-        end=resheduled_event.date_end,
-        user_id=event.owner_id,
-    )
-    if overlaps:
-        logger.debug(overlaps)
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail="User has overlaping events"
+    try:
+        event = crud.calendar.reshedule(db, db_obj=event, resheduled=resheduled_event)
+    except OverlappingEventError:
+        return HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Either you, or event participant have overlapping event",
         )
-
-    event = crud.calendar.reshedule(db, db_obj=event, resheduled=resheduled_event)
 
     background_tasks.add_task(
         notifiers.send,
@@ -378,6 +411,7 @@ def reshedule_calendar_event(
         "calendar.reshedule",
         db=db,
     )
+    logger.debug("Event resheduled")
     return event
 
 

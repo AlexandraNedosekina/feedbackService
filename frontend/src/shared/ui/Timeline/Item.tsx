@@ -2,11 +2,17 @@ import styles from './styles.module.sass'
 
 interface IProps {
 	children: React.ReactNode
-	isCurrent: boolean
+	bulletFilled?: boolean
+	lineFilled?: boolean
 	position?: 'left' | 'right'
 }
 
-const Item = ({ children, isCurrent, position = 'left' }: IProps) => {
+const Item = ({
+	children,
+	bulletFilled = false,
+	lineFilled = false,
+	position = 'left',
+}: IProps) => {
 	return (
 		<div className={styles.timeline_item}>
 			{position === 'right' ? (
@@ -15,13 +21,13 @@ const Item = ({ children, isCurrent, position = 'left' }: IProps) => {
 
 			<div
 				className={styles.timeline_item_content}
-				data-line-active={isCurrent}
+				data-line-active={lineFilled}
 			>
 				{children}
 
 				<div
 					className={styles.timeline_bullet}
-					data-active={isCurrent}
+					data-active={bulletFilled}
 				></div>
 			</div>
 

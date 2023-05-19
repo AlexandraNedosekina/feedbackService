@@ -1,14 +1,22 @@
-import { ActionIcon, Box, Group, Title } from '@mantine/core'
+import { ActionIcon, Box, Group, Text, Title } from '@mantine/core'
+import { useDisclosure } from '@mantine/hooks'
 import { useQuery } from '@tanstack/react-query'
-import { careerModel } from 'entities/career'
-import { UserCard } from 'entities/user'
+import {
+	CareerChips,
+	CareerChipsSkeleton,
+	GradeCardSkeleton,
+	careerModel,
+} from 'entities/career'
+import { UserCard, UserCardSkeleton } from 'entities/user'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { getCareerByUserId, getUserById, QueryKeys } from 'shared/api'
+import { QueryKeys, getCareerByUserId, getUserById } from 'shared/api'
 import { Icon } from 'shared/ui'
 import shallow from 'zustand/shallow'
-import CareerChips from './CareerChips'
+import { AddSection } from './AddSection'
+import { AddTemplateModal } from './AddTemplateModal'
 import GradeCard from './GradeCard'
+import { PersonalGradeAdd } from 'features/career-grade'
 
 export default () => {
 	const { selectedGradeId, update } = careerModel.useEdit(
@@ -21,10 +29,22 @@ export default () => {
 	const {
 		query: { id },
 	} = useRouter()
+	const router = useRouter()
+
+	const [isAddTemplateModalOpen, addTemplateModalHandlers] =
+		useDisclosure(false)
+
 	const { data: user, isLoading: isUserLoading } = useQuery({
 		queryKey: [QueryKeys.USER, id],
 		queryFn: () => getUserById(id as string),
 		enabled: !!id,
+		retry(failureCount, error: any) {
+			if (error.code === 404) {
+				router.push('/career')
+			}
+			if (failureCount === 3) return false
+			return true
+		},
 	})
 	const { data, isLoading } = useQuery({
 		queryKey: [QueryKeys.CAREER_BY_USER_ID, id],
@@ -38,11 +58,13 @@ export default () => {
 				value: item.id,
 				isCompleted: item.is_completed,
 				isCurrent: item.is_current,
-				isDefault: item.id === defaultGradeId,
 			}))
 
 			update({ grades })
-			if (!selectedGradeId) {
+			if (
+				!selectedGradeId ||
+				!data.some(i => String(i.id) === selectedGradeId)
+			) {
 				update({ selectedGradeId: String(defaultGradeId) })
 			}
 		},
@@ -50,17 +72,19 @@ export default () => {
 
 	return (
 		<>
-			<Group spacing="xs">
+			<Group spacing={3}>
 				<Link href="/career">
 					<ActionIcon>
-						<Icon icon="arrow_back_ios_new" />
+						<Icon icon="arrow_back_ios_new" size={14} />
 					</ActionIcon>
 				</Link>
-				<Title order={2}>Редактирование карьерного роста</Title>
+				<Text>Редактирование карьерного роста</Text>
 			</Group>
 
 			{isUserLoading ? (
-				<div>Загрузка...</div>
+				<Box mt="xl">
+					<UserCardSkeleton />
+				</Box>
 			) : (
 				<Box mt="xl">
 					<UserCard
@@ -72,11 +96,23 @@ export default () => {
 			)}
 
 			{isLoading ? (
-				// TODO: add skeleton
-				<div>Загрузка...</div>
+				<Box mt="xl">
+					<CareerChipsSkeleton />
+					<GradeCardSkeleton />
+				</Box>
 			) : (
 				<>
-					<CareerChips />
+					<CareerChips
+						addSection={({ openModal }) => (
+							<AddSection
+								openAddGradeModal={openModal}
+								openAddTemplateModal={addTemplateModalHandlers.open}
+							/>
+						)}
+						addModalContent={({ closeModal }) => (
+							<PersonalGradeAdd onDone={closeModal} />
+						)}
+					/>
 					{data && data.length > 0 ? (
 						<GradeCard />
 					) : (
@@ -86,6 +122,11 @@ export default () => {
 					)}
 				</>
 			)}
+
+			<AddTemplateModal
+				isOpen={isAddTemplateModalOpen}
+				onClose={addTemplateModalHandlers.close}
+			/>
 		</>
 	)
 }

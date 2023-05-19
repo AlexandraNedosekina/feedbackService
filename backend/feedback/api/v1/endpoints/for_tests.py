@@ -35,7 +35,7 @@ async def FOR_TESTS_login_as_different_user(
 
     token = create_token(user)
     refresh_token = create_token(
-        user, expires_in_minutes=settings.REFRESH_TOKEN_EXPIRES_IN_MINUTES
+        user, expires_in_minutes=settings.REFRESH_TOKEN_EXPIRES_IN_SECONDS
     )
     response = Response(status_code=204)
     set_cookie(response, "access-token", str(token))
@@ -43,6 +43,6 @@ async def FOR_TESTS_login_as_different_user(
         response,
         "refresh-token",
         str(refresh_token),
-        max_age=settings.REFRESH_TOKEN_EXPIRES_IN_MINUTES,
+        max_age=settings.REFRESH_TOKEN_EXPIRES_IN_SECONDS,
     )
     return response

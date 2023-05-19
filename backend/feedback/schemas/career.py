@@ -1,8 +1,16 @@
 from typing import Literal
 
-from pydantic import BaseModel, root_validator, validator
+from pydantic import BaseModel, root_validator
 
 ParamType = Literal["to_complete", "to_learn"]
+
+
+def check_name_or_salary_exists(cls, values):
+    name = values.get("name")
+    salary = values.get("salary")
+    if not name and not salary:
+        raise ValueError("Either name or salary field must be specified")
+    return values
 
 
 class CareerParamCreate(BaseModel):
@@ -36,13 +44,9 @@ class CareerTrackCreate(BaseModel):
     user_id: int
     params: list[CareerParamCreate] | None
 
-    @root_validator
-    def check_name_or_salary_exists(cls, values):
-        name = values.get("name")
-        salary = values.get("salary")
-        if not name and not salary:
-            raise ValueError("Either name or salary field must be specified")
-        return values
+    __check_name_or_salary = root_validator(allow_reuse=True)(
+        check_name_or_salary_exists
+    )
 
 
 class CareerTrackUpdate(BaseModel):

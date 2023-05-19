@@ -7,13 +7,16 @@ interface IProps {
 }
 
 export default ({ data }: IProps) => {
+	const currentIndex = data.findIndex(i => i.is_current)
+
 	return (
 		<Timeline>
 			{data.map((item, i) => (
 				<Timeline.Item
 					key={i}
-					isCurrent={item.is_current}
 					position={i % 2 === 0 ? 'left' : 'right'}
+					bulletFilled={i <= currentIndex}
+					lineFilled={i < currentIndex}
 				>
 					<Title order={4} color="brand.6">
 						{item.name}
