@@ -1,15 +1,20 @@
 import { Stack } from '@mantine/core'
-import { Rating } from './Rating'
-import { RatingReadonly } from './RatingReadonly'
+import { FormRating } from './FormRating'
+import { ValueRating } from './ValueRating'
 
-type NoReadOnlyProps = {
+type FormProps = {
 	formNames: { [key: string]: string }
-	readOnly?: false
+	values?: undefined
+	readOnly?: boolean
 }
-type ReadOnlyProps = { values: { [key: string]: number }; readOnly: true }
+type ValuesProps = {
+	values: { [key: string]: number }
+	formNames?: undefined
+	readOnly?: boolean
+}
 
-function UserRatingsByCategory(props: NoReadOnlyProps): JSX.Element
-function UserRatingsByCategory(props: ReadOnlyProps): JSX.Element
+function UserRatingsByCategory(props: FormProps): JSX.Element
+function UserRatingsByCategory(props: ValuesProps): JSX.Element
 function UserRatingsByCategory(props: {
 	readOnly?: boolean
 	formNames?: { [key: string]: string }
@@ -17,11 +22,8 @@ function UserRatingsByCategory(props: {
 }) {
 	const { readOnly, formNames, values } = props
 
-	if (readOnly && !values) {
-		throw new Error('values prop is required in readonly mode')
-	}
-	if (!readOnly && !formNames) {
-		throw new Error('formNames prop is required in non-readonly mode')
+	if (formNames && values) {
+		throw new Error('formNames and values props are mutually exclusive')
 	}
 
 	return (
@@ -30,15 +32,26 @@ function UserRatingsByCategory(props: {
 				maxWidth: 'max-content',
 			})}
 		>
-			{readOnly && values
+			{values
 				? Object.entries(values).map(([key, value], i) => (
-					<RatingReadonly key={i} title={key} rating={value} />
-				))
-				: !readOnly && formNames
-					? Object.entries(formNames).map(([key, value], i) => (
-						<Rating key={i} title={key} name={value} />
-					))
-					: null}
+						<ValueRating
+							key={i}
+							title={key}
+							rating={value}
+							readOnly={readOnly}
+						/>
+				  ))
+				: null}
+			{formNames
+				? Object.entries(formNames).map(([key, value], i) => (
+						<FormRating
+							key={i}
+							title={key}
+							name={value}
+							readOnly={readOnly}
+						/>
+				  ))
+				: null}
 		</Stack>
 	)
 }

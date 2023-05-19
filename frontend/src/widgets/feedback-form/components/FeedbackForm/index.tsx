@@ -1,6 +1,13 @@
 import { Form } from 'react-final-form'
 import { IFormValues } from '../../types'
-import { Flex, LoadingOverlay, ScrollArea, Space, Stack, Text } from '@mantine/core'
+import {
+	Flex,
+	LoadingOverlay,
+	ScrollArea,
+	Space,
+	Stack,
+	Text,
+} from '@mantine/core'
 import { CompletedBadge } from '../CompletedBadge'
 import { UserRatingsByCategory } from 'features/user-ratings-by-category'
 import { Textarea } from '../Textarea'
@@ -11,6 +18,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createFeedback, getFeedback, QueryKeys } from 'shared/api'
 import { showNotification } from '@mantine/notifications'
 import { UserCard } from 'entities/user'
+import { useState } from 'react'
 
 const FeedbackForm = () => {
 	const { classes } = useStyles()
@@ -22,7 +30,7 @@ const FeedbackForm = () => {
 	const router = useRouter()
 	const queryClient = useQueryClient()
 
-	const { data, isLoading, isError, isFetching } = useQuery({
+	const { data, isLoading, isError } = useQuery({
 		queryKey: [QueryKeys.FEEDBACK, +(feedbackId as string)],
 		queryFn: () => getFeedback(+(feedbackId as string)),
 		enabled: !!feedbackId,
@@ -41,6 +49,10 @@ const FeedbackForm = () => {
 			})
 		},
 	})
+	const [isEmptyFeedback] = useState<boolean>(() =>
+		data?.task_completion ? false : true
+	)
+	const [isEditing, setIsEditing] = useState<boolean>(isEmptyFeedback)
 	const { mutate } = useMutation({
 		mutationFn: (data: IFormValues) => {
 			return createFeedback(+(feedbackId as string), {
@@ -63,6 +75,8 @@ const FeedbackForm = () => {
 				message: 'Обратная связь сохранена',
 				color: 'green',
 			})
+
+			setIsEditing(false)
 		},
 	})
 
@@ -87,7 +101,7 @@ const FeedbackForm = () => {
 		)
 	}
 
-	if (isLoading || isError || isFetching)
+	if (isLoading || isError)
 		return (
 			<div className={classes.root}>
 				<LoadingOverlay visible />
@@ -116,7 +130,6 @@ const FeedbackForm = () => {
 
 					return errors
 				}}
-				keepDirtyOnReinitialize={true}
 			>
 				{() => (
 					<>
@@ -129,7 +142,7 @@ const FeedbackForm = () => {
 
 							{data.completed ? <CompletedBadge /> : null}
 
-							<Space h='xl' />
+							<Space h="xl" />
 
 							<UserRatingsByCategory
 								formNames={{
@@ -138,34 +151,43 @@ const FeedbackForm = () => {
 									Мотивация: 'motivation',
 									'Взаимодействие с командой': 'interaction',
 								}}
+								readOnly={!isEditing}
 							/>
 
-							<Space h='xl' />
+							<Space h="xl" />
 
 							<Stack maw={'400px'} pb={1}>
 								<Textarea
 									placeholder="Опишите, какие успехи достигнуты"
 									label="Достижения"
 									name="achievements"
+									disabled={!isEditing}
 								/>
 								<Textarea
 									placeholder="Что можно сделать лучше"
 									label="Пожелания"
 									name="wishes"
+									disabled={!isEditing}
 								/>
 								<Textarea
 									placeholder="Что получилось не очень"
 									label="Замечания"
 									name="remarks"
+									disabled={!isEditing}
 								/>
 								<Textarea
 									placeholder="Любые комментарии"
 									label="Комментарии"
 									name="comments"
+									disabled={!isEditing}
 								/>
 							</Stack>
 						</ScrollArea>
-						<Buttons />
+						<Buttons
+							isEditing={isEditing}
+							setIsEditing={setIsEditing}
+							isEmptyFeedback={isEmptyFeedback}
+						/>
 					</>
 				)}
 			</Form>
