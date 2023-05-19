@@ -39,12 +39,12 @@ def set_cookie(
     domain: AnyHttpUrl = settings.BACKEND_URL,
     max_age: int = 60 * 60 * 2,
 ):
-    if domain.host_type == "domain":
+    log.debug(domain.host_type)
+    if domain.host_type in ("domain", "int_domain"):
         domains = domain.host.split(".")
-        if len(domains < 2):
-            log.error("Bad domain for cookie")
-            raise HTTPException(status.HTTP_500_INTERNAL_SERVER_ERROR, "Internal Error")
-        domain = ".".join([domains[-2], domains[-1]])
+        log.debug(domains)
+        if len(domains) > 1:
+            domain = ".".join([domains[-2], domains[-1]])
     elif domain.host_type == "ipv4":
         domain = domain.host
     else:
