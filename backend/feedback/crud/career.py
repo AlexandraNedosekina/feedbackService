@@ -1,4 +1,3 @@
-from fastapi.encoders import jsonable_encoder
 from sqlalchemy.orm import Session
 
 from feedback import models, schemas
@@ -42,6 +41,7 @@ class CRUDCareer(
         for param in obj_in:
             career_param = models.CareerParam(**param.dict())
             career.params.append(career_param)
+
         db.add(career)
         db.commit()
         db.refresh(career)
@@ -63,9 +63,9 @@ class CRUDCareer(
 
     def _construct_db_obj(self, obj_in: schemas.CareerTrackCreate):
         career_params = [models.CareerParam(**param.dict()) for param in obj_in.params]
-        obj_in_without_params = obj_in.dict()
-        obj_in_without_params.pop("params")
-        return models.CareerTrack(**obj_in_without_params, params=career_params)
+        return models.CareerTrack(
+            **obj_in.dict(exclude={"params"}), params=career_params
+        )
 
     def bulk_create(
         self, db: Session, *, objs_in: list[schemas.CareerTrackCreate]
