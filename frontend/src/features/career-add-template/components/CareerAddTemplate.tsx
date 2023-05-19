@@ -3,6 +3,7 @@ import {
 	Button,
 	Checkbox,
 	Flex,
+	Input,
 	Pagination,
 	Table as TableMantine,
 	Text,
@@ -19,13 +20,14 @@ import {
 } from '@tanstack/react-table'
 import { useEffect, useMemo, useState } from 'react'
 import { CareerTemplate } from 'shared/api/generatedTypes'
-import { Icon } from 'shared/ui'
+import { Icon, TableSkeleton } from 'shared/ui'
 import tableStyles from 'shared/ui/Table/components/styles.module.sass'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { QueryKeys, getCareerTemplates } from 'shared/api'
 import { applyTemplates } from '../lib'
 import { useRouter } from 'next/router'
 import { showNotification } from '@mantine/notifications'
+import { useDebouncedState } from '@mantine/hooks'
 
 const PER_PAGE = 5
 const columnHelper = createColumnHelper<CareerTemplate>()
@@ -98,6 +100,7 @@ export default function CareerAddTemplate({ onDone }: IProps) {
 	} = useRouter()
 	const queryClient = useQueryClient()
 
+	const [searchValue, setSearchValue] = useDebouncedState('', 250)
 	const [pagination, setPagination] = useState<PaginationState>({
 		pageIndex: 0,
 		pageSize: PER_PAGE,
@@ -111,6 +114,7 @@ export default function CareerAddTemplate({ onDone }: IProps) {
 			getCareerTemplates({
 				limit: pagination.pageSize,
 				skip: pagination.pageIndex * pagination.pageSize,
+				name: searchValue,
 			}),
 		keepPreviousData: true,
 	})
@@ -124,10 +128,10 @@ export default function CareerAddTemplate({ onDone }: IProps) {
 			queryClient.invalidateQueries([QueryKeys.CAREER_BY_USER_ID, id])
 			showNotification({
 				message: 'Успешно',
-				color: 'green'
+				color: 'green',
 			})
 			onDone?.()
-		}
+		},
 	})
 
 	const table = useReactTable({
@@ -153,19 +157,28 @@ export default function CareerAddTemplate({ onDone }: IProps) {
 
 	useEffect(() => {
 		refetch()
-	}, [pagination, refetch])
+	}, [pagination, refetch, searchValue])
 
 	function handleSubmit() {
 		mutate(Object.keys(rowSelection))
 	}
 
-	//TODO add skeleton
-	if (isLoading) return <Text>Загрузка</Text>
-	if (data && data.records.length === 0) return <Text>Шаблонов нет</Text>
+	if (isLoading) return <TableSkeleton />
 	if (!data) return <Text>Нет данных</Text>
 
 	return (
 		<>
+			<Flex justify={'end'} mb="sm">
+				<Input
+					defaultValue={searchValue}
+					onChange={e => setSearchValue(e.currentTarget.value)}
+					variant="filled"
+					icon={<Icon icon="search" />}
+					placeholder="Поиск по шаблонам"
+					size="xs"
+				/>
+			</Flex>
+
 			<TableMantine
 				sx={{
 					tableLayout: 'fixed',
@@ -193,6 +206,11 @@ export default function CareerAddTemplate({ onDone }: IProps) {
 					))}
 				</thead>
 				<tbody>
+					{table.getRowModel().rows.length === 0 ? (
+						<Text pl="sm" size="sm">
+							Данных не найдено
+						</Text>
+					) : null}
 					{table.getRowModel().rows.map(row => {
 						return (
 							<tr key={row.id}>
