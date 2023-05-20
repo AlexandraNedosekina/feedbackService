@@ -30,7 +30,10 @@ def main():
     )
     app.add_middleware(CorrelationIdMiddleware)
 
-    if settings.SENTRY_DSN and settings.BACKEND_URL.host != "localhost":
+    if settings.SENTRY_DSN and settings.BACKEND_URL.host not in (
+        "localhost",
+        "127.0.0.1",
+    ):
         sentry_sdk.init(
             dsn=settings.SENTRY_DSN,
             traces_sample_rate=1.0,
