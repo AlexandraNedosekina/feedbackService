@@ -13,6 +13,7 @@ export const CompletedBadge = () => {
 				</Text>
 			}
 			size="lg"
+			color="green"
 		>
 			Оценено
 		</Badge>

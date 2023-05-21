@@ -26,7 +26,7 @@ export const AdminFeedbackDataSelector = () => {
 			<Text>Сотрудник</Text>
 			<UserSearchSelect
 				value={userId}
-				onChange={userId => update({ userId })}
+				onChange={userId => update({ userId: userId || undefined })}
 				placeholder={'Введите имя сотрудника'}
 			/>
 

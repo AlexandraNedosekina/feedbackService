@@ -4,9 +4,10 @@ interface IProps {
 	label: string
 	placeholder: string
 	name: string
+	disabled: boolean
 }
 
-export const Textarea = ({ name, label, placeholder }: IProps) => {
+export const Textarea = ({ name, label, placeholder, disabled }: IProps) => {
 	return (
 		<FormTextarea
 			name={name}
@@ -15,6 +16,7 @@ export const Textarea = ({ name, label, placeholder }: IProps) => {
 			minRows={3}
 			maxRows={8}
 			autosize
+			disabled={disabled}
 		/>
 	)
 }
