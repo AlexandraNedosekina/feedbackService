@@ -45,6 +45,7 @@ class Feedback(Base):
 
     id = Column(Integer, primary_key=True)
     event_id = Column(Integer, ForeignKey("event.id"))
+    event = relationship("Event", foreign_keys=[event_id])
 
     sender_id = Column(Integer, ForeignKey("user.id"))
     sender = relationship("User", foreign_keys=[sender_id])

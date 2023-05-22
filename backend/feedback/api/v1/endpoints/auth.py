@@ -40,12 +40,12 @@ def set_cookie(
     max_age: int = 60 * 60 * 2,
 ):
     log.debug(domain.host_type)
-    if domain.host_type in ("domain", "int_domain"):
+    if domain.host_type in ("domain", "int_domain") and len(domain.host.split(".")) > 1:
         domains = domain.host.split(".")
         log.debug(domains)
-        if len(domains) > 1:
-            domain = ".".join([domains[-2], domains[-1]])
-    elif domain.host_type == "ipv4":
+        domain = ".".join([domains[-2], domains[-1]])
+    elif domain.host_type in ("domain", "int_domain", "ipv4"):
+        log.debug(domain)
         domain = domain.host
     else:
         log.debug("Bad domain for cookie")
