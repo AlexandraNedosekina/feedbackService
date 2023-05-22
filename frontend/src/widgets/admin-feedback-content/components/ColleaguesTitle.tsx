@@ -9,7 +9,7 @@ const ColleaguesTitle = () => {
 	return (
 		<>
 			<Group mb="sm" spacing={'xs'}>
-				<Title order={3}>Коллеги</Title>
+				<Title order={3}>Обратная связь</Title>
 
 				<ActionIcon
 					variant="light"

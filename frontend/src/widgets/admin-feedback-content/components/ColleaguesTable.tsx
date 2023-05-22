@@ -96,6 +96,7 @@ const ColleaguesTable = ({ colleagues }: IProps) => {
 				isOpen={isOpen}
 				onClose={() => setIsOpen(false)}
 				feedbackId={feedbackId}
+				key={feedbackId}
 			/>
 		</>
 	)

@@ -5,6 +5,6 @@ export const eventSelectMapper = (
 ): { value: string; label: string }[] => {
 	return events.map(event => ({
 		value: String(event.id),
-		label: `${event.parsedStartDate} - ${event.parsedEndDate}`,
+		label: event.name,
 	}))
 }
