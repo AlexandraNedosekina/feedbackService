@@ -9,6 +9,7 @@ from sqlalchemy import (
     Numeric,
     String,
     TypeDecorator,
+    func,
 )
 from sqlalchemy.orm import relationship
 
@@ -64,6 +65,8 @@ class Feedback(Base):
     wishes = Column(String)
     remarks = Column(String)
     comment = Column(String)
+
+    updated_at = Column(DateTime, onupdate=func.now())
 
     def __repr__(self):
         return f"<Feedback id={self.id} event_id={self.event_id} sender_id={self.sender_id} receiver_id={self.receiver_id}>"
