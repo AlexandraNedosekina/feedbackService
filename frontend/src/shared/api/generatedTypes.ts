@@ -498,6 +498,35 @@ export interface FeedbackFromUser {
 	comment?: string
 }
 
+/** FeedbackHistory */
+export interface FeedbackHistory {
+	/** Feedback Id */
+	feedback_id: number
+	/** Task Completion */
+	task_completion: number
+	/** Involvement */
+	involvement: number
+	/** Motivation */
+	motivation: number
+	/** Interaction */
+	interaction: number
+	/** Achievements */
+	achievements?: string
+	/** Wishes */
+	wishes?: string
+	/** Remarks */
+	remarks?: string
+	/** Comment */
+	comment?: string
+	/**
+	 * Created At
+	 * @format date-time
+	 */
+	created_at: string
+	/** Id */
+	id: number
+}
+
 /** FeedbackStat */
 export interface FeedbackStat {
 	user: UserDetails
