@@ -1,7 +1,9 @@
-import { Modal, Stack, Textarea, Title } from '@mantine/core'
+import { Group, Modal, Select, Stack, Text, Textarea } from '@mantine/core'
 import { useQuery } from '@tanstack/react-query'
+import dayjs from 'dayjs'
 import { UserRatingsByCategory } from 'features/user-ratings-by-category'
-import { getFeedback, QueryKeys } from 'shared/api'
+import { useEffect, useMemo, useState } from 'react'
+import { QueryKeys, getFeedback, getFeedbackHistory } from 'shared/api'
 
 interface IProps {
 	isOpen: boolean
@@ -18,15 +20,62 @@ const FeedbackModal = ({ isOpen, onClose, feedbackId }: IProps) => {
 		},
 		enabled: !!feedbackId,
 	})
+	const { data: history, isLoading: isHistoryLoading } = useQuery({
+		queryKey: [QueryKeys.FEEDBACK_HISTORY, feedbackId],
+		queryFn: () => {
+			if (!feedbackId) return null
+			return getFeedbackHistory(feedbackId)
+		},
+		enabled: !!feedbackId,
+	})
+
+	const [selectedFeedback, setSelectedFeedback] = useState<string>('default')
+	const selectItems = useMemo(() => {
+		if (!history) return []
+		return [
+			{
+				label: 'Последняя оценка',
+				value: 'default',
+			},
+			...history.map(item => ({
+				label: dayjs(item.created_at + '+0000').format('HH:mm, DD.MM.YYYY'),
+				value: String(item.id),
+			})),
+		]
+	}, [history])
+	const selectedFeedbackData = useMemo(() => {
+		if (!history || !data) return null
+		if (selectedFeedback === 'default') return data
+		return history.find(item => item.id === Number(selectedFeedback))
+	}, [history, selectedFeedback, data])
+
+	useEffect(() => {
+		if (isOpen) setSelectedFeedback('default')
+	}, [isOpen])
 
 	return (
 		<Modal
 			opened={isOpen}
 			onClose={onClose}
-			title={<Title order={3}>Просмотр обратной связи</Title>}
+			keepMounted={false}
+			title={
+				<Group position="apart" w={'100%'} pr="lg">
+					<Text>Просмотр обратной связи</Text>
+					<Select
+						data={selectItems}
+						value={selectedFeedback}
+						onChange={value => setSelectedFeedback(value as string)}
+					/>
+				</Group>
+			}
+			styles={() => ({
+				title: {
+					flexGrow: 1,
+				},
+			})}
 			size="xl"
 		>
-			{isLoading ? (
+			{isLoading || isHistoryLoading ? (
 				// TODO: add loading skeleton
 				<p>Загрузка...</p>
 			) : data ? (
@@ -35,14 +84,16 @@ const FeedbackModal = ({ isOpen, onClose, feedbackId }: IProps) => {
 						sx={() => ({
 							maxWidth: 'max-content',
 						})}
-						my={40}
+						my={'xl'}
 					>
 						<UserRatingsByCategory
 							values={{
-								'Выполнение задач': data?.task_completion || 0,
-								Вовлеченность: data?.involvement || 0,
-								Мотивация: data?.motivation || 0,
-								'Взаимодействие с командой': data?.interaction || 0,
+								'Выполнение задач':
+									selectedFeedbackData?.task_completion || 0,
+								Вовлеченность: selectedFeedbackData?.involvement || 0,
+								Мотивация: selectedFeedbackData?.motivation || 0,
+								'Взаимодействие с командой':
+									selectedFeedbackData?.interaction || 0,
 							}}
 							readOnly
 						/>
@@ -51,25 +102,25 @@ const FeedbackModal = ({ isOpen, onClose, feedbackId }: IProps) => {
 						<Textarea
 							placeholder="Опишите, какие успехи достигнуты"
 							label="Достижения"
-							defaultValue={data.achievements || ''}
+							value={selectedFeedbackData?.achievements || ''}
 							readOnly
 						/>
 						<Textarea
 							placeholder="Что можно сделать лучше"
 							label="Пожелания"
-							defaultValue={data.wishes || ''}
+							value={selectedFeedbackData?.wishes || ''}
 							readOnly
 						/>
 						<Textarea
 							placeholder="Что получилось не очень"
 							label="Замечания"
-							defaultValue={data.remarks || ''}
+							value={selectedFeedbackData?.remarks || ''}
 							readOnly
 						/>
 						<Textarea
 							placeholder="Любые комментарии"
 							label="Комментарии"
-							defaultValue={data.comment || ''}
+							value={selectedFeedbackData?.comment || ''}
 							readOnly
 						/>
 					</Stack>

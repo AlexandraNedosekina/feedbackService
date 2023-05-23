@@ -1,5 +1,5 @@
-import { Table as TableMantine, Text } from '@mantine/core'
-import { flexRender, Table as ITable } from '@tanstack/react-table'
+import { Table as TableMantine } from '@mantine/core'
+import { Table as ITable, flexRender } from '@tanstack/react-table'
 import tableStyles from './styles.module.sass'
 
 interface IProps {
@@ -39,9 +39,6 @@ const Table = ({ table }: IProps) => {
 							))}
 						</tr>
 					))}
-					{table?.getRowModel().rows.length === 0 && (
-						<Text ta="right">Записей нет</Text>
-					)}
 				</tbody>
 			</TableMantine>
 		</>

@@ -1,8 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import dayjs from 'dayjs'
-import { FORM_ERROR } from 'final-form'
 import { Form } from 'react-final-form'
-import { createEvent, QueryKeys } from 'shared/api'
+import { QueryKeys, createEvent } from 'shared/api'
 import { FormCondition, FormInput, required } from 'shared/ui'
 import { IFormValues } from '../types'
 import Buttons from './Buttons'
@@ -51,7 +50,7 @@ export default ({ onCancel }: IProps) => {
 			endDate: end,
 			userIds: values?.userIds?.map(item => +item) ?? undefined,
 			isTwoWay: values.twoWay,
-		}).catch(() => ({ [FORM_ERROR]: 'something went wrong' }))
+		})
 	}
 
 	return (
@@ -90,9 +89,14 @@ export default ({ onCancel }: IProps) => {
 		>
 			{({ handleSubmit, submitError }) => (
 				<>
-					<FormInput name="name" label="Название" validate={required} />
-					<TimePicker />
 					<SelectType />
+					<FormInput
+						mt="lg"
+						name="name"
+						label="Название"
+						validate={required}
+					/>
+					<TimePicker />
 					<FormCondition when={'type'} is="one">
 						<UserSelect />
 					</FormCondition>

@@ -30,7 +30,7 @@ export const AdminFeedbackDataSelector = () => {
 				placeholder={'Введите имя сотрудника'}
 			/>
 
-			<Text mt="md">Период сбора обратной связи</Text>
+			<Text mt="md">Период</Text>
 			<Select
 				value={eventId}
 				onChange={value => update({ eventId: value || 'all' })}

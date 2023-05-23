@@ -10,7 +10,14 @@ import { QueryKeys, getCareerTemplates } from 'shared/api'
 import { CareerTemplate } from 'shared/api/generatedTypes'
 import { Icon, Table, TableSkeleton } from 'shared/ui'
 import GotoEditButton from './GotoEditButton'
-import { ActionIcon, Button, Flex, Group, Pagination } from '@mantine/core'
+import {
+	ActionIcon,
+	Button,
+	Flex,
+	Group,
+	Pagination,
+	Text,
+} from '@mantine/core'
 import CreateTemplateModal from './CreateTemplateModal'
 import { useDisclosure } from '@mantine/hooks'
 import { useRouter } from 'next/router'
@@ -105,15 +112,20 @@ export default function TemplatesPanel() {
 
 	return (
 		<>
-			<Group position="right" mt="xl">
+			<Group
+				position={data?.records.length === 0 ? 'apart' : 'right'}
+				my="lg"
+			>
+				{data?.records.length === 0 ? <Text>Шаблонов нет</Text> : null}
 				<Button
 					onClick={createTemplateModalHandlers.open}
 					leftIcon={<Icon icon="add" />}
 				>
 					Создать
 				</Button>
-				<Table table={table} />
 			</Group>
+
+			{data?.records.length !== 0 ? <Table table={table} /> : null}
 
 			<Pagination
 				value={table.getState().pagination.pageIndex + 1}
