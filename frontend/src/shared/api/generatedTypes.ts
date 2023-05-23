@@ -454,6 +454,7 @@ export interface Feedback {
 	id: number
 	/** Event Id */
 	event_id: number
+	event: Event
 	sender: UserDetails
 	receiver: UserDetails
 	/** Completed */
