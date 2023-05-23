@@ -1,12 +1,11 @@
-import { Box } from '@mantine/core'
-import { Text } from '@mantine/core'
+import { Box, Text } from '@mantine/core'
 import { useQuery } from '@tanstack/react-query'
 import {
 	createColumnHelper,
 	getCoreRowModel,
 	useReactTable,
 } from '@tanstack/react-table'
-import { getAllEvents, QueryKeys, TEventAdapter } from 'shared/api'
+import { QueryKeys, TEventAdapter, getAllEvents } from 'shared/api'
 import { EventStatus } from 'shared/api/generatedTypes'
 import { Table, TableSkeleton } from 'shared/ui'
 import ActionMenuTable from './ActionMenuTable'
@@ -72,6 +71,13 @@ export default () => {
 		return (
 			<Box mt="lg">
 				<TableSkeleton />
+			</Box>
+		)
+
+	if (data?.length === 0 && !isLoading)
+		return (
+			<Box mt="lg">
+				<Text>Нет ни одной записи</Text>
 			</Box>
 		)
 

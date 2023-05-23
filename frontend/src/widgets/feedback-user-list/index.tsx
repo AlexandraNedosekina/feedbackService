@@ -56,6 +56,7 @@ export const FeedbackUserList = () => {
 							href={String(feedback.id)}
 							isActive={+(feedbackId as string) === feedback.id}
 							isCompleted={feedback.completed}
+							eventName={feedback.event.name}
 						/>
 					))
 				) : feedbackList && feedbackList.length > 0 ? (
@@ -70,6 +71,7 @@ export const FeedbackUserList = () => {
 							href={String(feedback.id)}
 							isActive={+(feedbackId as string) === feedback.id}
 							isCompleted={feedback.completed}
+							eventName={feedback.event.name}
 						/>
 					))
 				) : (

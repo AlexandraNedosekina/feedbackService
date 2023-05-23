@@ -1,6 +1,7 @@
-import { Icon } from 'shared/ui'
+import { Badge, SimpleGrid } from '@mantine/core'
 import classNames from 'classnames'
 import Link from 'next/link'
+import { Icon } from 'shared/ui'
 import UserInfoCard from '../Card'
 import styles from './styles.module.sass'
 
@@ -11,6 +12,7 @@ interface IProps {
 	href: string
 	isActive: boolean
 	isCompleted: boolean
+	eventName: string
 }
 
 const UserLinkCard = ({
@@ -20,6 +22,7 @@ const UserLinkCard = ({
 	isCompleted,
 	jobTitle,
 	name,
+	eventName,
 }: IProps) => {
 	return (
 		<Link
@@ -34,11 +37,20 @@ const UserLinkCard = ({
 				avatar={avatarUrl || ''}
 				variant="sm"
 			/>
-			{isCompleted ? (
+			<SimpleGrid cols={1}>
 				<div className={styles.done}>
-					<Icon icon="done" size={22} />
+					{isCompleted ? <Icon icon="done" size={22} /> : null}
 				</div>
-			) : null}
+				<Badge
+					color="brand"
+					size="md"
+					sx={() => ({
+						placeSelf: 'end',
+					})}
+				>
+					{eventName}
+				</Badge>
+			</SimpleGrid>
 		</Link>
 	)
 }

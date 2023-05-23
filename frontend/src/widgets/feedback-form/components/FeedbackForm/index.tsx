@@ -49,9 +49,7 @@ const FeedbackForm = () => {
 			})
 		},
 	})
-	const [isEmptyFeedback] = useState<boolean>(() =>
-		data?.task_completion ? false : true
-	)
+	const [isEmptyFeedback] = useState<boolean>(data?.task_completion === null)
 	const [isEditing, setIsEditing] = useState<boolean>(isEmptyFeedback)
 	const { mutate } = useMutation({
 		mutationFn: (data: IFormValues) => {

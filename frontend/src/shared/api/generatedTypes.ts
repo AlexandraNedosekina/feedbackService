@@ -454,6 +454,7 @@ export interface Feedback {
 	id: number
 	/** Event Id */
 	event_id: number
+	event: Event
 	sender: UserDetails
 	receiver: UserDetails
 	/** Completed */
@@ -496,6 +497,35 @@ export interface FeedbackFromUser {
 	remarks?: string
 	/** Comment */
 	comment?: string
+}
+
+/** FeedbackHistory */
+export interface FeedbackHistory {
+	/** Feedback Id */
+	feedback_id: number
+	/** Task Completion */
+	task_completion: number
+	/** Involvement */
+	involvement: number
+	/** Motivation */
+	motivation: number
+	/** Interaction */
+	interaction: number
+	/** Achievements */
+	achievements?: string
+	/** Wishes */
+	wishes?: string
+	/** Remarks */
+	remarks?: string
+	/** Comment */
+	comment?: string
+	/**
+	 * Created At
+	 * @format date-time
+	 */
+	created_at: string
+	/** Id */
+	id: number
 }
 
 /** FeedbackStat */

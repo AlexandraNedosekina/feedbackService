@@ -128,6 +128,8 @@ class FeedbackCreateEmpty(Base):
 class FeedbackInDB(Base):
     id: int
     event_id: int
+    event: Event
+
     sender: UserDetails
     receiver: UserDetails
 

@@ -5,7 +5,9 @@ const TimePicker = () => {
 	return (
 		<>
 			<Box mt="md">
-				<Text>Начало</Text>
+				<Text weight={500} size={15}>
+					Начало
+				</Text>
 				<Group align="start">
 					<FormTimeInput name="startTime" validate={required} />
 					<FormDatePickerInput
@@ -16,7 +18,9 @@ const TimePicker = () => {
 				</Group>
 			</Box>
 			<Box my="md">
-				<Text>Окончание</Text>
+				<Text weight={500} size={15}>
+					Окончание
+				</Text>
 				<Group align="start">
 					<FormTimeInput name="endTime" validate={required} />
 					<FormDatePickerInput

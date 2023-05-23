@@ -30,6 +30,10 @@ const ColleaguesTable = ({ colleagues }: IProps) => {
 
 	const columns = useMemo(
 		() => [
+			// columnHelper.display({
+			// 	id: 'some',
+			// 	cell: () => null,
+			// }),
 			columnHelper.accessor('colleague.full_name', {
 				header: 'Сотрудник',
 			}),
@@ -96,6 +100,7 @@ const ColleaguesTable = ({ colleagues }: IProps) => {
 				isOpen={isOpen}
 				onClose={() => setIsOpen(false)}
 				feedbackId={feedbackId}
+				key={feedbackId}
 			/>
 		</>
 	)

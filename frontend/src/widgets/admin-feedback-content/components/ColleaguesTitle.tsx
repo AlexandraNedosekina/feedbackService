@@ -9,21 +9,21 @@ const ColleaguesTitle = () => {
 	return (
 		<>
 			<Group mb="sm" spacing={'xs'}>
-				<Title order={3}>Коллеги</Title>
+				<Title order={3}>Обратная связь</Title>
 
-				<ActionIcon
+				{/* <ActionIcon
 					variant="light"
 					color="brand.6"
 					onClick={() => setIsModalOpened(true)}
 				>
 					<Icon icon="add" />
-				</ActionIcon>
+				</ActionIcon> */}
 			</Group>
 
-			<AddColleaguesModal
+			{/* <AddColleaguesModal
 				opened={isModalOpened}
 				onClose={() => setIsModalOpened(false)}
-			/>
+			/> */}
 		</>
 	)
 }
