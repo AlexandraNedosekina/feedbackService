@@ -12,6 +12,7 @@ interface IProps {
 	href: string
 	isActive: boolean
 	isCompleted: boolean
+	eventName: string
 }
 
 const UserLinkCard = ({
@@ -21,6 +22,7 @@ const UserLinkCard = ({
 	isCompleted,
 	jobTitle,
 	name,
+	eventName,
 }: IProps) => {
 	return (
 		<Link
@@ -46,7 +48,7 @@ const UserLinkCard = ({
 						placeSelf: 'end',
 					})}
 				>
-					Event name
+					{eventName}
 				</Badge>
 			</SimpleGrid>
 		</Link>
