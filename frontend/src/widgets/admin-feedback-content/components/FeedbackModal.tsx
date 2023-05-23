@@ -38,7 +38,7 @@ const FeedbackModal = ({ isOpen, onClose, feedbackId }: IProps) => {
 				value: 'default',
 			},
 			...history.map(item => ({
-				label: dayjs(item.created_at + '+0000').format('hh:mm, DD.MM.YYYY'),
+				label: dayjs(item.created_at + '+0000').format('HH:mm, DD.MM.YYYY'),
 				value: String(item.id),
 			})),
 		]
