@@ -49,9 +49,12 @@ const FeedbackForm = () => {
 			})
 		},
 	})
-	const [isEmptyFeedback] = useState<boolean>(data?.task_completion === null)
-	const [isEditing, setIsEditing] = useState<boolean>(isEmptyFeedback)
-	const { mutate } = useMutation({
+
+	const isEmptyFeedback = data?.task_completion === null
+	const [isEditing, setIsEditing] = useState<boolean>(false)
+	const isDisabledFields = !isEmptyFeedback && !isEditing
+
+	const { mutate, isLoading: isMutateLoading } = useMutation({
 		mutationFn: (data: IFormValues) => {
 			return createFeedback(+(feedbackId as string), {
 				task_completion: data.taskCompletion,
@@ -149,7 +152,7 @@ const FeedbackForm = () => {
 									Мотивация: 'motivation',
 									'Взаимодействие с командой': 'interaction',
 								}}
-								readOnly={!isEditing}
+								readOnly={isDisabledFields}
 							/>
 
 							<Space h="xl" />
@@ -159,25 +162,25 @@ const FeedbackForm = () => {
 									placeholder="Опишите, какие успехи достигнуты"
 									label="Достижения"
 									name="achievements"
-									disabled={!isEditing}
+									disabled={isDisabledFields}
 								/>
 								<Textarea
 									placeholder="Что можно сделать лучше"
 									label="Пожелания"
 									name="wishes"
-									disabled={!isEditing}
+									disabled={isDisabledFields}
 								/>
 								<Textarea
 									placeholder="Что получилось не очень"
 									label="Замечания"
 									name="remarks"
-									disabled={!isEditing}
+									disabled={isDisabledFields}
 								/>
 								<Textarea
 									placeholder="Любые комментарии"
 									label="Комментарии"
 									name="comments"
-									disabled={!isEditing}
+									disabled={isDisabledFields}
 								/>
 							</Stack>
 						</ScrollArea>
@@ -185,6 +188,7 @@ const FeedbackForm = () => {
 							isEditing={isEditing}
 							setIsEditing={setIsEditing}
 							isEmptyFeedback={isEmptyFeedback}
+							loading={isMutateLoading}
 						/>
 					</>
 				)}

@@ -5,12 +5,14 @@ interface IProps {
 	isEditing: boolean
 	setIsEditing: (value: boolean) => void
 	isEmptyFeedback: boolean
+	loading: boolean
 }
 
 export const Buttons = ({
 	isEditing,
 	setIsEditing,
 	isEmptyFeedback,
+	loading,
 }: IProps) => {
 	const { submit } = useForm()
 
@@ -22,7 +24,7 @@ export const Buttons = ({
 		setIsEditing(false)
 	}
 
-	if (!isEditing) {
+	if (!isEditing && !isEmptyFeedback) {
 		return (
 			<Group>
 				<Button onClick={goToEdit}>Редактировать</Button>
@@ -32,11 +34,11 @@ export const Buttons = ({
 
 	return (
 		<FormSpy>
-			{({ hasValidationErrors, pristine, submitting, form: { reset } }) => (
+			{({ hasValidationErrors, pristine, form: { reset } }) => (
 				<Group>
 					<Button
 						disabled={pristine || hasValidationErrors}
-						loading={submitting}
+						loading={loading}
 						onClick={submit}
 					>
 						Сохранить
