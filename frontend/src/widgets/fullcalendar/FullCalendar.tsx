@@ -10,6 +10,7 @@ import dayjs from 'dayjs'
 import { CalendarFormat } from 'shared/api/generatedTypes'
 import { CreateEventModal, Event, Header } from './components'
 import { useDisclosure } from '@mantine/hooks'
+import { useUser } from 'entities/user'
 
 const FullCalendar = () => {
 	const [isCreateModalOpen, createModalHandlers] = useDisclosure(false, {
@@ -46,6 +47,9 @@ const FullCalendar = () => {
 			})) ?? [],
 		[data]
 	)
+	const { user } = useUser()
+	const start = user?.work_hours_start || '09:00'
+	const end = user?.work_hours_end || '18:00'
 
 	return (
 		<>
@@ -86,10 +90,8 @@ const FullCalendar = () => {
 				eventContent={props => <Event {...props} />}
 				businessHours={{
 					daysOfWeek: [1, 2, 3, 4, 5, 6, 0],
-					//minTime: '10:00:00',
-					//maxTime: '23:00:00',
-					//startTime: '10:00',
-					//endTime: '18:00',
+					startTime: start,
+					endTime: end,
 				}}
 				events={mappedData}
 				eventTimeFormat={{
