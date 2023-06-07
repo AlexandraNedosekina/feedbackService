@@ -11,14 +11,20 @@ const UserCard = ({ name, jobTitle, avatar, variant = 'default' }: IProps) => {
 	const isDefaultVariant = variant === 'default'
 
 	return (
-		<Group>
+		<Group noWrap>
 			<Avatar
 				src={avatar}
 				size={isDefaultVariant ? 64 : 'lg'}
 				radius={100}
 			/>
 			<Stack spacing={isDefaultVariant ? 5 : 0}>
-				<Title order={isDefaultVariant ? 2 : 4} color="brand.5">
+				<Title
+					order={isDefaultVariant ? 2 : 4}
+					color="brand.5"
+					sx={() => ({
+						wordBreak: 'break-word',
+					})}
+				>
 					{name}
 				</Title>
 				{jobTitle ? (

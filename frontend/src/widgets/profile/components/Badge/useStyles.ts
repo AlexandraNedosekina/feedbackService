@@ -4,6 +4,7 @@ export const useStyles = createStyles(theme => ({
 	badge: {
 		position: 'relative',
 		overflow: 'visible',
+		maxWidth: '100%',
 		'&:hover': {
 			[`.${getStylesRef('badgeActionsCommon')}`]: {
 				opacity: 1,
