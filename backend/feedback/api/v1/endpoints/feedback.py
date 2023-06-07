@@ -392,7 +392,7 @@ async def get_history_for_feedback(
     if not feedback:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "Feedback not found")
 
-    if curr_user.id != feedback.sender_id or "admin" not in curr_user.get_roles:
+    if curr_user.id != feedback.sender_id and "admin" not in curr_user.get_roles:
         raise HTTPException(status.HTTP_403_FORBIDDEN)
 
     return crud.feedback_history.get_by_feedback_id(db, feedback_id=feedback_id)

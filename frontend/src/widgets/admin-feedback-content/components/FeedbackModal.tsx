@@ -76,9 +76,8 @@ const FeedbackModal = ({ isOpen, onClose, feedbackId }: IProps) => {
 			size="xl"
 		>
 			{isLoading || isHistoryLoading ? (
-				// TODO: add loading skeleton
 				<p>Загрузка...</p>
-			) : data ? (
+			) : data && history ? (
 				<>
 					<Stack
 						sx={() => ({
