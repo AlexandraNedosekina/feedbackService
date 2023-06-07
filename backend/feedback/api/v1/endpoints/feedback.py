@@ -1,6 +1,7 @@
 import logging
 from datetime import datetime, timedelta, timezone
 
+from feedback.db.session import engine
 from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Response, status
 from fastapi_utils.tasks import repeat_every
 from pydantic import parse_obj_as
@@ -8,6 +9,7 @@ from sqlalchemy import or_
 from sqlalchemy.orm import Session
 
 from feedback import crud, models, schemas
+from feedback.core.config import settings
 from feedback.api.deps import GetUserWithRoles, get_current_user, get_db, is_allowed
 
 logger = logging.getLogger(__name__)
@@ -315,9 +317,6 @@ async def get_user_rating(
     return crud.feedback.get_user_avg_ratings(db, user=user, event_id=event_id)
 
 
-from feedback.db.session import engine
-
-
 @router.get("/event/{event_id}", response_model=list[schemas.Feedback])
 async def get_feedback_by_envent_id(
     event_id: int,
@@ -332,54 +331,42 @@ async def get_feedback_by_envent_id(
 
 
 @router.on_event("startup")
-@repeat_every(seconds=3600)
+@repeat_every(seconds=settings.CHECK_FEEDBACK_IN_SECONDS, logger=logger)
 async def sheduled_update_event_status():
-    try:
-        db = Session(engine)
+    db = Session(engine)
 
-        def update_event_status_to_active(db: Session):
-            events = db.query(models.Event).filter(
-                models.Event.status == schemas.EventStatus.waiting
+    async def update_event_status_to_active(db: Session):
+        events = db.query(models.Event).filter(
+            models.Event.status == schemas.EventStatus.waiting
+        )
+
+        time = datetime.utcnow()
+        for event in events:
+            logger.debug(
+                f"[Scheduler (Active)] checking {event.date_start} <= {time} < {event.date_stop}"
             )
-
-            events_to_add = []
-            time = datetime.utcnow()
-            for event in events:
-                logger.debug(
-                    f"[Scheduler (Active)] checking {event.date_start} <= {time} < {event.date_stop}"
+            if event.date_start <= time < event.date_stop:
+                logger.debug(f"Updating event: {event.id} status to: Active")
+                event = crud.event.update_status(
+                    db, db_obj=event, status=schemas.EventStatus.active
                 )
-                if event.date_start <= time < event.date_stop:
-                    logger.debug(f"Updating event: {event.id} status to: Active")
-                    event = crud.event.update_status(
-                        db, db_obj=event, status=schemas.EventStatus.active
-                    )
-                    events_to_add.append(event)
-            return events_to_add
 
-        def update_event_status_to_archived(db: Session):
-            events = db.query(models.Event).filter(
-                models.Event.status != schemas.EventStatus.archived
-            )
+    async def update_event_status_to_archived(db: Session):
+        events = db.query(models.Event).filter(
+            models.Event.status != schemas.EventStatus.archived
+        )
 
-            events_to_add = []
-            time = datetime.utcnow()
-            for event in events:
-                logger.debug(
-                    f"[Scheduler (Archived)] checking  {time} > {event.date_stop}"
+        time = datetime.utcnow()
+        for event in events:
+            logger.debug(f"[Scheduler (Archived)] checking  {time} > {event.date_stop}")
+            if time >= event.date_stop:
+                logger.debug(f"Updating event: {event.id} status to: Archived")
+                event = crud.event.update_status(
+                    db, db_obj=event, status=schemas.EventStatus.archived
                 )
-                if time > event.date_stop:
-                    logger.debug(f"Updating event: {event.id} status to: Archived")
-                    event = crud.event.update_status(
-                        db, db_obj=event, status=schemas.EventStatus.archived
-                    )
-                    events_to_add.append(event)
-            return events_to_add
 
-        update_event_status_to_active(db)
-        update_event_status_to_archived(db)
-
-    except Exception as e:
-        logger.debug(f"Error sheduled update event status: {e}")
+    await update_event_status_to_active(db)
+    await update_event_status_to_archived(db)
 
 
 @router.get("/{feedback_id}/history", response_model=list[schemas.FeedbackHistory])

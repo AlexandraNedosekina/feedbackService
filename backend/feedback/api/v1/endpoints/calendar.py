@@ -44,7 +44,7 @@ def get_calendar_events_for_current_user(
     curr_user=Depends(get_current_user),
 ):
     logger.debug(
-        f"Gettings events for current user {curr_user.id=} with queries {date=}, {format=}, {status=}"
+        f"Getting events for current user {curr_user.id=} with queries {date=}, {format=}, {status=}"
     )
     events = crud.calendar.get_with_common_queries(
         db, user_id=curr_user.id, date=date, format=format, status=status
@@ -142,7 +142,7 @@ def create_calendar_event(
     background_tasks.add_task(
         notifiers.send,
         event.user_id,
-        f"{event.owner.full_name.title()} created new meeting",
+        f"{event.owner.full_name.title()} создал (-а) новую встречу",
         "calendar.create",
         db=db,
     )
@@ -153,8 +153,10 @@ def create_calendar_event(
 def update_calendar_event(
     calendar_id: int,
     calendar_event_update: schemas.CalendarEventUpdate,
+    background_tasks: BackgroundTasks,
     db: Session = Depends(get_db),
     curr_user=Depends(get_current_user),
+    notifiers: AbstractNotifier = Depends(get_notifiers),
 ):
     """
     Updates calendar event with provided id.
@@ -168,7 +170,7 @@ def update_calendar_event(
     if event.owner_id != curr_user.id:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="You must be creator to delete",
+            detail="You must be creator to update",
         )
 
     if event.status == schemas.CalendarEventStatus.ACCEPTED:
@@ -176,6 +178,28 @@ def update_calendar_event(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="You cant do that if event is accepted",
         )
+
+    # Check if new user is current user
+    if calendar_event_update.user_id == curr_user.id:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Вы не можете назначить встречу самому себе",
+        )
+
+    new_user_flag = (
+        calendar_event_update.user_id != event.user_id
+        or calendar_event_update.user_id is not None
+    )
+    logger.debug(f"{new_user_flag=}")
+    if new_user_flag:
+        new_receiver = crud.user.get(db, calendar_event_update.user_id)
+        if not new_receiver:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST, detail="Пользователь не найден"
+            )
+        # Change cuz later it will be used to check work time and other meetings
+        event.user = new_receiver
+        event.user_id = new_receiver.id
 
     # If only 1 of the dates is changed. check with val in db
     start = calendar_event_update.date_start
@@ -210,6 +234,15 @@ def update_calendar_event(
             detail="Either you, or event participant have overlapping event",
         )
     logger.debug("Updated calendar event")
+
+    if new_user_flag:
+        background_tasks.add_task(
+            notifiers.send,
+            event.user_id,
+            f"{event.owner.full_name.title()} создал (-а) новую встречу",
+            "calendar.create",
+            db=db,
+        )
     return event
 
 
@@ -309,7 +342,7 @@ def accept_calendar_event(
     background_tasks.add_task(
         notifiers.send,
         event.owner_id,
-        f"{event.user.full_name.title()} accepted your meeting",
+        f"{event.user.full_name.title()} принял (-а) вашу встречу",
         "calendar.accept",
         db=db,
     )
@@ -348,7 +381,7 @@ def reject_calendar_event(
     background_tasks.add_task(
         notifiers.send,
         event.owner_id,
-        f"{event.user.full_name.title()} rejected your meeting",
+        f"{event.user.full_name.title()} отклонил (-а) вашу встречу",
         "calendar.reject",
         db=db,
     )
@@ -407,7 +440,7 @@ def reshedule_calendar_event(
     background_tasks.add_task(
         notifiers.send,
         event.user_id,
-        f"{event.owner.full_name.title()} resheduled your meeting",
+        f"{event.owner.full_name.title()} перенес (-ла) вашу встречу",
         "calendar.reshedule",
         db=db,
     )
