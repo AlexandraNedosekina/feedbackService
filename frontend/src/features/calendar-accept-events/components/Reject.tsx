@@ -54,6 +54,7 @@ export default function ({ eventId }: IProps) {
 							</Text>
 						</Text>
 					}
+					maxLength={128}
 				/>
 
 				<Flex mt="lg" justify={'end'} gap="md">
