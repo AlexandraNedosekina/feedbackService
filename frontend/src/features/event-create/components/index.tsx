@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import dayjs from 'dayjs'
 import { Form } from 'react-final-form'
 import { QueryKeys, createEvent } from 'shared/api'
-import { FormCondition, FormInput, required } from 'shared/ui'
+import { FormCondition, FormInput, required, startEndTime } from 'shared/ui'
 import { IFormValues } from '../types'
 import Buttons from './Buttons'
 import SelectType from './SelectType'
@@ -71,20 +71,18 @@ export default ({ onCancel }: IProps) => {
 			validate={values => {
 				const errors: Partial<Record<keyof IFormValues, string>> = {}
 
-				if (
-					dayjs(values.endDate).isBefore(values.startDate) ||
-					(dayjs(values.endDate).isSame(values.startDate) &&
-						+values.startTime.replace(':', '') >
-							+values.endTime.replace(':', ''))
-				) {
-					errors.endDate = 'Окончание не может быть раньше начала'
-				}
+				const timeErrors = startEndTime({
+					startDate: values.startDate,
+					startTime: values.startTime,
+					endDate: values.endDate,
+					endTime: values.endTime,
+				})
 
 				if (values.type === 'one' && !values.userIds?.length) {
 					errors.userIds = 'Обязательно'
 				}
 
-				return errors
+				return { ...errors, ...timeErrors }
 			}}
 		>
 			{({ handleSubmit, submitError }) => (
