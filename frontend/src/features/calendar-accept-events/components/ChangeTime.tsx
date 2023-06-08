@@ -86,7 +86,7 @@ export default function ({ eventId, end, start }: IProps) {
 										name={props.input.name}
 										value={props.input.value}
 										onChange={props.input.onChange}
-										valueFormat="hh:mm, D MMMM"
+										valueFormat="HH:mm, D MMMM"
 										popoverProps={{
 											withinPortal: true,
 											zIndex: 501,
