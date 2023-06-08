@@ -1,4 +1,3 @@
-import { Icon } from 'shared/ui'
 import {
 	BadgeProps,
 	ButtonProps,
@@ -8,6 +7,7 @@ import {
 	ScrollAreaProps,
 	SelectProps,
 } from '@mantine/core'
+import { Icon } from 'shared/ui'
 
 const ButtonDefaultProps: Partial<ButtonProps> = {}
 const BadgeDefaultProps: Partial<BadgeProps> = {
@@ -151,6 +151,13 @@ export const mantineTheme: MantineThemeOverride = {
 		},
 		ScrollArea: {
 			defaultProps: ScrollAreaDefaultProps,
+		},
+		Text: {
+			styles: () => ({
+				root: {
+					wordBreak: 'break-word',
+				},
+			}),
 		},
 	},
 }
