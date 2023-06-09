@@ -85,7 +85,12 @@ export default ({ isOpen, onClose, eventId, event }: IProps) => {
 			>
 				{({ handleSubmit, invalid, dirty }) => (
 					<>
-						<FormInput name="name" label="Название" validate={required} />
+						<FormInput
+							name="name"
+							label="Название"
+							validate={required}
+							maxLength={128}
+						/>
 
 						<TimePicker />
 

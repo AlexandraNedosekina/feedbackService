@@ -93,6 +93,7 @@ export default ({ onCancel }: IProps) => {
 						name="name"
 						label="Название"
 						validate={required}
+						maxLength={12}
 					/>
 					<TimePicker />
 					<FormCondition when={'type'} is="one">

@@ -66,12 +66,14 @@ export const Form = ({ submitButtons, onSubmit, initialValues }: IProps) => {
 								autoComplete="off"
 								withAsterisk={true}
 								required={true}
+								maxLength={128}
 							/>
 							<FormInput
 								name="salary"
 								label="Зарплата"
 								autoComplete="off"
 								type="number"
+								maxLength={16}
 							/>
 
 							<Tasks title="Что нужно изучить" type="toLearn" />

@@ -78,6 +78,9 @@ export const TemplateTitle = ({ text }: IProps) => {
 										},
 									},
 									error: meta.error ? meta.error : '',
+									// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+									//@ts-ignore works fine
+									maxLength: 50,
 								}}
 							>
 								{({ setActive }) => (
