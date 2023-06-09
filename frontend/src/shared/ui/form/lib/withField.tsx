@@ -29,6 +29,17 @@ const withField = <T,>(
 			type,
 		}
 
+		if (rest.maxLength) {
+			fieldProps.validate = (value: string) => {
+				const maxLengthError =
+					value?.length > rest.maxLength
+						? `Максимум ${rest.maxLength} символов`
+						: undefined
+				const validateError = validate ? validate(value) : undefined
+				return maxLengthError || validateError
+			}
+		}
+
 		return (
 			<Field {...fieldProps} {...defaultFieldProps}>
 				{({ input, meta }) => {
