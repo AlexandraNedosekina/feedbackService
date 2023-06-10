@@ -23,6 +23,7 @@ from feedback.api.deps import (
 )
 from feedback.crud.calendar import OverlappingEventError
 from feedback.notifications.notifiers import AbstractNotifier
+from feedback.schemas.calendar import MAX_MEETING_DURATION_HOURS
 
 EKB_UTC_OFFSET = 5
 
@@ -187,9 +188,10 @@ def update_calendar_event(
         )
 
     new_user_flag = (
-        calendar_event_update.user_id != event.user_id
-        or calendar_event_update.user_id is not None
+        calendar_event_update.user_id is not None
+        and calendar_event_update.user_id != event.user_id
     )
+    logger.debug(calendar_event_update)
     logger.debug(f"{new_user_flag=}")
     if new_user_flag:
         new_receiver = crud.user.get(db, calendar_event_update.user_id)
@@ -205,14 +207,35 @@ def update_calendar_event(
     start = calendar_event_update.date_start
     end = calendar_event_update.date_end
     logger.debug("Checking if changed date is after or before stored date")
+    one_date_is_changed = bool(start) != bool(end)
     if (
-        bool(start) != bool(end)
+        one_date_is_changed
         and (start and event.date_end <= start.replace(tzinfo=None))
         or (end and event.date_start >= end.replace(tzinfo=None))
     ):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="date_start cant be smaller or equal to date_end",
+        )
+
+    max_meeting_duration = timedelta(hours=MAX_MEETING_DURATION_HOURS)
+    logger.debug(f"{start=} {end=}")
+    logger.debug(f"{event.date_start=} {event.date_end=}")
+    start_changed = (
+        one_date_is_changed
+        and start
+        and (event.date_end - start.replace(tzinfo=None)) > max_meeting_duration
+    )
+    end_changed = (
+        one_date_is_changed
+        and end
+        and (end.replace(tzinfo=None) - event.date_start) > max_meeting_duration
+    )
+
+    if start_changed or end_changed:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Продолжительность встречи не может быть более {MAX_MEETING_DURATION_HOURS} часов",
         )
 
     if event.user.work_hours_end and event.user.work_hours_start:
