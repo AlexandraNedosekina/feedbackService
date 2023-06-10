@@ -120,8 +120,8 @@ class CalendarEventUpdate(Base):
 
 
 class CalendarEventReshedule(Base):
-    date_start: datetime = Field(None, description="Event start datetime in UTC")
-    date_end: datetime = Field(None, description="Event end datetime in UTC")
+    date_start: datetime = Field(..., description="Event start datetime in UTC")
+    date_end: datetime = Field(..., description="Event end datetime in UTC")
 
     # validators
     _convert_to_utc = validator("date_start", "date_end", allow_reuse=True)(
@@ -137,6 +137,7 @@ class CalendarEventReshedule(Base):
     _check_at_least_one_exists = root_validator(allow_reuse=True)(
         at_least_one_date_exists
     )
+    _check_time_interval = root_validator(allow_reuse=True)(check_time_interval)
 
 
 class CalendarEventStatus(str, Enum):
