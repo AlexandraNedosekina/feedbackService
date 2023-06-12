@@ -68,7 +68,9 @@ async def create_oneway_event(
     for user_id in event_create.user_ids:
         user = crud.user.get(db=db, id=user_id)
         if not user:
-            raise HTTPException(status_code=404, detail="User does not exist")
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="Пользователь не найден"
+            )
         users.append(user)
     event = crud.event.create(db=db, obj_in=schemas.EventCreate(**event_create.dict()))
 
@@ -100,7 +102,9 @@ async def create_twoway_event(
     for user_id in event_create.user_ids:
         user = crud.user.get(db=db, id=user_id)
         if not user:
-            raise HTTPException(status_code=404, detail="User does not exist")
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="Пользователь не найден"
+            )
         users.append(user)
     event = crud.event.create(db=db, obj_in=schemas.EventCreate(**event_create.dict()))
 
@@ -127,7 +131,9 @@ async def get_event_by_id(
 ) -> schemas.Event:
     event = crud.event.get(db, id)
     if not event:
-        raise HTTPException(status_code=404, detail="Event does not exist")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Событие не найдено"
+        )
     return event
 
 
@@ -140,7 +146,9 @@ async def update_event(
 ) -> schemas.Event:
     event = crud.event.get(db, id)
     if not event:
-        raise HTTPException(status_code=404, detail="Event does not exist")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Событие не найдено"
+        )
 
     # If only 1 of the dates is changed. check with val in db
     start = event_update.date_start
@@ -151,7 +159,7 @@ async def update_event(
         ):
             raise HTTPException(
                 status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-                detail="date_start cant cant be smaller or equal to date_end",
+                detail="Дата начала не может быть позже конца",
             )
 
     return crud.event.update(db, db_obj=event, obj_in=event_update)
@@ -165,6 +173,8 @@ async def delete_event(
 ):
     event = crud.event.get(db, id)
     if not event:
-        raise HTTPException(status_code=404, detail="Event does not exist")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Событие не найдено"
+        )
     crud.event.remove(db, id=id)
     return Response(status_code=204)

@@ -23,6 +23,7 @@ from feedback.api.deps import (
 )
 from feedback.crud.calendar import OverlappingEventError
 from feedback.notifications.notifiers import AbstractNotifier
+from feedback.schemas.calendar import MAX_MEETING_DURATION_HOURS
 
 EKB_UTC_OFFSET = 5
 
@@ -44,7 +45,7 @@ def get_calendar_events_for_current_user(
     curr_user=Depends(get_current_user),
 ):
     logger.debug(
-        f"Gettings events for current user {curr_user.id=} with queries {date=}, {format=}, {status=}"
+        f"Getting events for current user {curr_user.id=} with queries {date=}, {format=}, {status=}"
     )
     events = crud.calendar.get_with_common_queries(
         db, user_id=curr_user.id, date=date, format=format, status=status
@@ -72,7 +73,7 @@ def get_calendar_event_by_id(
     ):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="You are not associdated with this event",
+            detail="Недостаточно прав",
         )
 
     return event
@@ -98,13 +99,13 @@ def create_calendar_event(
     if not user:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"User with id {cal_event_create.user_id} does not exist",
+            detail="Пользователь не найден",
         )
 
     if curr_user.id == user.id:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="You cant create event to yourself",
+            detail="Вы не можете создать встречу самому себе",
         )
 
     # TODO: if user is trainee => he can create event to his mentor
@@ -113,7 +114,7 @@ def create_calendar_event(
     ):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="You cant create event with this user, because you are not his/her colleague",
+            detail="Вы не можете создать встречу этому пользователю. Вы не его (ее) коллега",
         )
 
     if user.work_hours_end and user.work_hours_start:
@@ -125,7 +126,7 @@ def create_calendar_event(
         ):
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail="User doesnt work at this time",
+                detail="Пользователь не работает в это время",
             )
 
     if crud.calendar.get_overlapping_events(
@@ -135,14 +136,15 @@ def create_calendar_event(
         user_id=user.id,
     ):
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail="User has overlaping events"
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Пользователь имеет пересекающиеся встречи",
         )
 
     event = crud.calendar.create(db, obj_in=cal_event_create, owner_id=curr_user.id)
     background_tasks.add_task(
         notifiers.send,
         event.user_id,
-        f"{event.owner.full_name.title()} created new meeting",
+        f"{event.owner.full_name.title()} создал (-а) новую встречу",
         "calendar.create",
         db=db,
     )
@@ -153,8 +155,10 @@ def create_calendar_event(
 def update_calendar_event(
     calendar_id: int,
     calendar_event_update: schemas.CalendarEventUpdate,
+    background_tasks: BackgroundTasks,
     db: Session = Depends(get_db),
     curr_user=Depends(get_current_user),
+    notifiers: AbstractNotifier = Depends(get_notifiers),
 ):
     """
     Updates calendar event with provided id.
@@ -168,27 +172,71 @@ def update_calendar_event(
     if event.owner_id != curr_user.id:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="You must be creator to delete",
+            detail="Вы должны быть создателем, чтобы обновить",
         )
 
     if event.status == schemas.CalendarEventStatus.ACCEPTED:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="You cant do that if event is accepted",
+            detail="Встреча уже согласована",
         )
+
+    # Check if new user is current user
+    if calendar_event_update.user_id == curr_user.id:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Вы не можете назначить встречу самому себе",
+        )
+
+    new_user_flag = (
+        calendar_event_update.user_id is not None
+        and calendar_event_update.user_id != event.user_id
+    )
+    logger.debug(calendar_event_update)
+    logger.debug(f"{new_user_flag=}")
+    if new_user_flag:
+        new_receiver = crud.user.get(db, calendar_event_update.user_id)
+        if not new_receiver:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST, detail="Пользователь не найден"
+            )
+        # Change cuz later it will be used to check work time and other meetings
+        event.user = new_receiver
+        event.user_id = new_receiver.id
 
     # If only 1 of the dates is changed. check with val in db
     start = calendar_event_update.date_start
     end = calendar_event_update.date_end
     logger.debug("Checking if changed date is after or before stored date")
+    one_date_is_changed = bool(start) != bool(end)
     if (
-        bool(start) != bool(end)
+        one_date_is_changed
         and (start and event.date_end <= start.replace(tzinfo=None))
         or (end and event.date_start >= end.replace(tzinfo=None))
     ):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="date_start cant be smaller or equal to date_end",
+            detail="Дата начала не может быть раньше конца",
+        )
+
+    max_meeting_duration = timedelta(hours=MAX_MEETING_DURATION_HOURS)
+    logger.debug(f"{start=} {end=}")
+    logger.debug(f"{event.date_start=} {event.date_end=}")
+    start_changed = (
+        one_date_is_changed
+        and start
+        and (event.date_end - start.replace(tzinfo=None)) > max_meeting_duration
+    )
+    end_changed = (
+        one_date_is_changed
+        and end
+        and (end.replace(tzinfo=None) - event.date_start) > max_meeting_duration
+    )
+
+    if start_changed or end_changed:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Продолжительность встречи не может быть более {MAX_MEETING_DURATION_HOURS} часов",
         )
 
     if event.user.work_hours_end and event.user.work_hours_start:
@@ -199,7 +247,7 @@ def update_calendar_event(
         if work_start_utc > start.time() or work_end_utc < end.time():
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail="User doesnt work at this time",
+                detail="Пользователь не работает в это время",
             )
 
     try:
@@ -207,9 +255,18 @@ def update_calendar_event(
     except OverlappingEventError:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Either you, or event participant have overlapping event",
+            detail="У вас или у другого пользователя есть пересекающиеся встречи",
         )
     logger.debug("Updated calendar event")
+
+    if new_user_flag:
+        background_tasks.add_task(
+            notifiers.send,
+            event.user_id,
+            f"{event.owner.full_name.title()} создал (-а) новую встречу",
+            "calendar.create",
+            db=db,
+        )
     return event
 
 
@@ -230,13 +287,13 @@ def delete_calendar_event(
     if event.owner_id != curr_user.id:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="You must be creator to delete",
+            detail="Вы должны быть создателем, чтобы обновить",
         )
 
     if event.status == schemas.CalendarEventStatus.ACCEPTED:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="You cant do that if event is accepted",
+            detail="Встреча уже согласована",
         )
 
     crud.calendar.remove(db, id=calendar_id)
@@ -294,7 +351,7 @@ def accept_calendar_event(
     ):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Action on this event already prefomed",
+            detail="Встреча уже согласована или отменена",
         )
 
     try:
@@ -303,13 +360,13 @@ def accept_calendar_event(
         logger.debug(f"Event(id={event.id}) users have overlapping events")
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Either you, or event participant have overlapping event",
+            detail="У вас или у другого пользователя есть пересекающиеся встречи",
         )
 
     background_tasks.add_task(
         notifiers.send,
         event.owner_id,
-        f"{event.user.full_name.title()} accepted your meeting",
+        f"{event.user.full_name.title()} принял (-а) вашу встречу",
         "calendar.accept",
         db=db,
     )
@@ -340,7 +397,7 @@ def reject_calendar_event(
     ):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Action on this event already prefomed",
+            detail="Встреча уже согласована или отменена",
         )
 
     event = crud.calendar.reject(db, db_obj=event, rejection_cause=rejection_cause)
@@ -348,7 +405,7 @@ def reject_calendar_event(
     background_tasks.add_task(
         notifiers.send,
         event.owner_id,
-        f"{event.user.full_name.title()} rejected your meeting",
+        f"{event.user.full_name.title()} отклонил (-а) вашу встречу",
         "calendar.reject",
         db=db,
     )
@@ -381,7 +438,7 @@ def reshedule_calendar_event(
     ):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Action on this event already performed",
+            detail="Встреча уже согласована или отменена",
         )
 
     if (
@@ -393,21 +450,21 @@ def reshedule_calendar_event(
     ):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Date must differ from previous",
+            detail="Дата должна отличаться от предыдущей",
         )
 
     try:
         event = crud.calendar.reshedule(db, db_obj=event, resheduled=resheduled_event)
     except OverlappingEventError:
-        return HTTPException(
+        raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Either you, or event participant have overlapping event",
+            detail="У вас или у другого пользователя есть пересекающиеся встречи",
         )
 
     background_tasks.add_task(
         notifiers.send,
         event.user_id,
-        f"{event.owner.full_name.title()} resheduled your meeting",
+        f"{event.owner.full_name.title()} перенес (-ла) вашу встречу",
         "calendar.reshedule",
         db=db,
     )

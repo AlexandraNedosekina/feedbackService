@@ -1,7 +1,15 @@
 import os
 
 import aiofiles
-from fastapi import APIRouter, Depends, File, HTTPException, Response, UploadFile
+from fastapi import (
+    APIRouter,
+    Depends,
+    File,
+    HTTPException,
+    Response,
+    UploadFile,
+    status,
+)
 from fastapi.responses import FileResponse
 from PIL import Image
 from sqlalchemy.orm import Session
@@ -29,10 +37,14 @@ async def create_avater(
     curr_user: models.User = Depends(get_current_user),
 ):
     if not is_allowed(curr_user, user_id, ["self", "admin"]):
-        raise HTTPException(status_code=401, detail="Not enough permissions")
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN, detail="Недостаточно прав"
+        )
     user = crud.user.get(db, user_id)
     if not user:
-        raise HTTPException(status_code=404, detail="User not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Пользователь не найден"
+        )
 
     if not os.path.exists(AVATARS_BASE_DIR):
         os.mkdir(AVATARS_BASE_DIR)
@@ -41,16 +53,19 @@ async def create_avater(
 
     image_extension = file.filename.split(".")[-1].lower()
     if image_extension not in ACCEPTED_IMAGE_EXTENSIONS:
-        raise HTTPException(status_code=415, detail="File extention not supported")
+        raise HTTPException(
+            status_code=status.HTTP_415_UNSIPPORTED_MEDIA_TYPE,
+            detail="Расширение файла не поддерживается",
+        )
 
     original_path = f"{ORIGINALS_DIR}{user.id}.{image_extension}"
     thumbnail_path = f"{THUMBNAILS_DIR}{user.id}.{image_extension}"
     content = await file.read()
     await file.close()
-    if len(content) / 1024 ** 2 > MAX_FILE_SIZE_IN_MB:
+    if len(content) / 1024**2 > MAX_FILE_SIZE_IN_MB:
         raise HTTPException(
-            status_code=400,
-            detail=f"File size can not be more than {MAX_FILE_SIZE_IN_MB} MB",
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Файл не может превышать {MAX_FILE_SIZE_IN_MB} Мб",
         )
 
     if curr_user.avatar:
@@ -63,11 +78,16 @@ async def create_avater(
     try:
         result = create_thumbnail(avatar_create, thumbnail_path, original_path)
     except Exception:
-        raise HTTPException(status_code=500, detail="Error when creating thumbnail")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Ошибка при создании аватара",
+        )
 
     if not result:
         os.remove(original_path)
-        raise HTTPException(status_code=400, detail="Bad params for thumbnail")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail=" Bad params for thumbnail"
+        )
 
     crud.avatar.create(
         db, user=user, op=original_path, tp=thumbnail_path, obj_in=avatar_create
@@ -83,13 +103,19 @@ async def update_avatar(
     curr_user: models.User = Depends(get_current_user),
 ):
     if not is_allowed(curr_user, user_id, ["self", "admin"]):
-        raise HTTPException(status_code=401, detail="Not enough permissions")
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN, detail="Недостаточно прав"
+        )
     user = crud.user.get(db, user_id)
 
     if not user:
-        raise HTTPException(status_code=404, detail="User not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Пользователь не найден"
+        )
     if not user.avatar or not user.avatar.original_path:
-        raise HTTPException(status_code=404, detail="User does not have avatar")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="У пользователя нет аватара"
+        )
 
     image_extension = user.avatar.original_path.split(".")[-1]
     thumbnail_path = f"{THUMBNAILS_DIR}{user.id}.{image_extension}"
@@ -99,10 +125,16 @@ async def update_avatar(
             avatar_update, thumbnail_path, user.avatar.original_path
         )
     except Exception:
-        raise HTTPException(status_code=500, detail="Error when creating thumbnail")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Ошибка создания аватара",
+        )
 
     if not result:
-        raise HTTPException(status_code=400, detail="Bad params for thumbnail")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Неверные данные для аватара",
+        )
 
     crud.avatar.update(
         db,
@@ -120,17 +152,21 @@ async def delete_avatar(
     curr_user: models.User = Depends(get_current_user),
 ):
     if not is_allowed(curr_user, user_id, ["self", "admin"]):
-        raise HTTPException(status_code=401, detail="Not enough permissions")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Недостаточно прав"
+        )
 
     user = crud.user.get(db, user_id)
     if not user:
-        raise HTTPException(status_code=404, detail="User not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Пользователь не найден"
+        )
 
     if not user.avatar:
-        return Response(status_code=200)
+        return Response(status_code=status.HTTP_200_OK)
 
     _ = crud.avatar.remove(db, id=user.avatar.id)
-    return Response(status_code=200)
+    return Response(status_code=status.HTTP_200_OK)
 
 
 @router.get("/{user_id}/avatar")
@@ -141,14 +177,20 @@ async def get_thumbnail(
 ):
     user = crud.user.get(db, user_id)
     if not user:
-        raise HTTPException(status_code=404, detail="User not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Пользователь не найден"
+        )
 
     if not user.avatar:
-        raise HTTPException(status_code=404, detail="User does not have avatar")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="У пользователя нет аватара"
+        )
 
     avatar = user.avatar
     if not os.path.exists(avatar.thumbnail_path):
-        raise HTTPException(status_code=404, detail="Can not find avatar")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="У пользователя нет аватара"
+        )
     return FileResponse(avatar.thumbnail_path)
 
 
@@ -159,18 +201,26 @@ async def get_original(
     curr_user: models.User = Depends(get_current_user),
 ):
     if not is_allowed(curr_user, user_id, ["self", "admin"]):
-        raise HTTPException(status_code=401, detail="Not enough permissions")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Недостаточно прав"
+        )
 
     user = crud.user.get(db, user_id)
     if not user:
-        raise HTTPException(status_code=404, detail="User not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Пользователь не найден"
+        )
 
     if not user.avatar:
-        raise HTTPException(status_code=404, detail="User does not have avatar")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="У пользователя нет аватара"
+        )
 
     avatar = user.avatar
     if not os.path.exists(avatar.original_path):
-        raise HTTPException(status_code=404, detail="Can not find avatar")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="У пользователя нет аватара"
+        )
     return FileResponse(avatar.original_path)
 
 

@@ -92,12 +92,16 @@ async def authorize_gitlab(
     db: Session = Depends(get_db),
 ) -> Response:
     if state != request.session.get("state"):
+        log.debug("state mismatch")
         raise HTTPException(
-            status_code=401, detail="Error authorizing with gitlab. State mismatch"
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Ошибка авторизации через Gitalb",
         )
     if not code:
+        log.debug("no code provided")
         raise HTTPException(
-            status_code=401, detail="Error authorizing with gitlab. No code provided"
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Ошибка авторизации через Gitalb",
         )
     request.session.pop("state", None)
 
@@ -106,13 +110,20 @@ async def authorize_gitlab(
     except GetAccessTokenError as exc:
         log.debug("Error getting access token")
         log.exception(exc)
-        raise HTTPException(status_code=502, detail="Invalid code")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Ошибка авторизации через Gitalb",
+        )
     user = crud.user.get_by_email(db, email=token.userinfo.email)
 
     if not user:
         user = await register_user(token, db)
     if not user:
-        raise HTTPException(status_code=500, detail="Error when creating user")
+        log.debug("error creating user")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Ошибка авторизации через Gitalb",
+        )
 
     token = create_token(user)
     refresh_token = create_token(
@@ -134,17 +145,21 @@ async def refresh(request: Request, response: Response, db: Session = Depends(ge
     refresh_token_request = request.cookies.get("refresh-token")
 
     if not refresh_token_request:
-        raise HTTPException(status_code=400, detail="No refresh token provided")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="No refresh token provided"
+        )
 
     refresh_token = refresh_token_request.split(" ")
     if not len(refresh_token) > 1:
-        raise HTTPException(status_code=400, detail="Invalid token")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid token"
+        )
     refresh_token = refresh_token[1]
 
     refresh_token_payload = jwt.decode_token(refresh_token)
     user = crud.user.get(db, refresh_token_payload.sub)
     if not user:
-        raise HTTPException(status_code=401, detail="User not found")
+        raise HTTPException(status_code=401, detail="Пользователь не найден")
 
     token = create_token(user)
     refresh_token = create_token(

@@ -1,7 +1,7 @@
 import datetime
 from typing import Literal
 
-from pydantic import Field, validator
+from pydantic import Field, validator, EmailStr
 
 from feedback import schemas
 from feedback.schemas.base import Base
@@ -32,8 +32,12 @@ class JobExpectation(BaseRel):
 
 
 class UserCreate(Base):
-    email: str
+    email: EmailStr
     full_name: str
+
+    @validator("email")
+    def to_lower(cls, v) -> str:
+        return v.lower()
 
 
 class UserUpdateSelf(Base):

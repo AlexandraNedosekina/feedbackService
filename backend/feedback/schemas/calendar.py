@@ -1,5 +1,5 @@
 import logging
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from enum import Enum
 
 import pytz
@@ -10,6 +10,8 @@ from feedback.schemas.base import Base
 from feedback.schemas.user import UserDetails
 
 logger = logging.getLogger(__name__)
+
+MAX_MEETING_DURATION_HOURS = 8
 
 
 def at_least_one_date_exists(cls, values):
@@ -50,6 +52,23 @@ def is_end_after_start(cls, values):
     return values
 
 
+def check_time_interval(cls, values):
+    start = values.get("date_start")
+    end = values.get("date_end")
+    if (not start or not end) and cls != CalendarEventUpdate:
+        raise ValueError("cant find start or end")
+    elif cls == CalendarEventUpdate and (not start or not end):
+        return values
+
+    max_duration = timedelta(hours=MAX_MEETING_DURATION_HOURS)
+    duration = end - start
+    if duration > max_duration:
+        raise ValueError(
+            f"Продолжительность встречи не может быть более {MAX_MEETING_DURATION_HOURS} часов"
+        )
+    return values
+
+
 class CalendarEventCreate(Base):
     user_id: int
     title: str
@@ -75,6 +94,7 @@ class CalendarEventCreate(Base):
         is_date_after_currnet_date
     )
     _check_end_after_start = root_validator(allow_reuse=True)(is_end_after_start)
+    _check_time_interval = root_validator(allow_reuse=True)(check_time_interval)
 
 
 class CalendarEventUpdate(Base):
@@ -96,11 +116,12 @@ class CalendarEventUpdate(Base):
         is_date_after_currnet_date
     )
     _check_end_after_start = root_validator(allow_reuse=True)(is_end_after_start)
+    _check_time_interval = root_validator(allow_reuse=True)(check_time_interval)
 
 
 class CalendarEventReshedule(Base):
-    date_start: datetime = Field(None, description="Event start datetime in UTC")
-    date_end: datetime = Field(None, description="Event end datetime in UTC")
+    date_start: datetime = Field(..., description="Event start datetime in UTC")
+    date_end: datetime = Field(..., description="Event end datetime in UTC")
 
     # validators
     _convert_to_utc = validator("date_start", "date_end", allow_reuse=True)(
@@ -116,6 +137,7 @@ class CalendarEventReshedule(Base):
     _check_at_least_one_exists = root_validator(allow_reuse=True)(
         at_least_one_date_exists
     )
+    _check_time_interval = root_validator(allow_reuse=True)(check_time_interval)
 
 
 class CalendarEventStatus(str, Enum):

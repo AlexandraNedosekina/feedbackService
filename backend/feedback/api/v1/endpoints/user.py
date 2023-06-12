@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, Response
+from fastapi import APIRouter, Depends, HTTPException, Response, status
 from pydantic import parse_obj_as
 from sqlalchemy.orm import Session
 
@@ -23,10 +23,10 @@ async def create_user(
     db: Session = Depends(get_db),
     _: models.User = Depends(get_admin),
 ) -> schemas.User:
-    user = crud.user.get_by_email(db, email=user_create.email)
-    if user:
+    if _ := crud.user.get_by_email(db, email=user_create.email):
         raise HTTPException(
-            status_code=400, detail="User with such email already exists"
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Пользователь с таким email уже существует",
         )
     created_user = crud.user.create(db=db, obj_in=user_create)
     return created_user
@@ -38,7 +38,7 @@ async def get_all_users(
     _: models.User = Depends(get_current_user),
     *,
     skip: int = 0,
-    limit: int = 100
+    limit: int = 100,
 ) -> list[schemas.User]:
     users = crud.user.get_multi(db, skip=skip, limit=limit)
     return parse_obj_as(list[schemas.User], users)
@@ -52,7 +52,9 @@ async def get_user_by_id(
 ) -> schemas.User:
     user = crud.user.get(db, user_id)
     if not user:
-        raise HTTPException(status_code=404, detail="User not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Пользователь не найден"
+        )
     return user
 
 
@@ -81,7 +83,9 @@ async def update_user(
     for s_r in upd_schemas_roles:
         for k in s_r[0].__fields__.keys():
             if k in upd_keys and not is_allowed(curr_user, user_id, s_r[1]):
-                raise HTTPException(status_code=401, detail="Not enough permissions")
+                raise HTTPException(
+                    status_code=status.HTTP_403_FORBIDDEN, detail="Недостаточно прав"
+                )
             if k in upd_keys:
                 upd_keys.remove(k)
 
@@ -89,11 +93,15 @@ async def update_user(
     if not is_allowed(curr_user, user_id, ["admin"]) and "admin" in upd.get(
         "roles", []
     ):
-        raise HTTPException(status_code=401, detail="Not enough permissions")
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN, detail="Недостаточно прав"
+        )
 
     user = crud.user.get(db, user_id)
     if not user:
-        raise HTTPException(status_code=404, detail="No user with such id")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Пользователь не найден"
+        )
 
     updated_user = crud.user.update(db=db, db_obj=user, obj_in=user_update)
     return updated_user
@@ -108,6 +116,8 @@ async def delete_user(
 ):
     user = crud.user.get(db, user_id)
     if not user:
-        raise HTTPException(status_code=404, detail="No user with such id")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Пользователь не найден"
+        )
     _ = crud.user.remove(db, id=user_id)
     return Response(status_code=204)
