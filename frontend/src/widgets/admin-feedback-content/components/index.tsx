@@ -26,7 +26,7 @@ export const AdminFeedbackContent = () => {
 		}),
 		shallow
 	)
-	const { data, isFetching, refetch } = useQuery({
+	const { data, isFetching, refetch, isError } = useQuery({
 		queryKey: [QueryKeys.FEEDBACK_STATS, userId, eventId],
 		queryFn: () =>
 			getFeedbackStats(userId, eventId === 'all' ? undefined : eventId),
@@ -49,7 +49,9 @@ export const AdminFeedbackContent = () => {
 				</Flex>
 			)}
 
-			{(userId || data) && (
+			{isError ? <Text>Ошибка при получении обратной связи </Text> : null}
+
+			{data && (
 				<ScrollArea h={'100%'}>
 					<Group position="apart" align="flex-start">
 						<Group>
