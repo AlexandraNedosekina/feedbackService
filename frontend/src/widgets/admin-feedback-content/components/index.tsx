@@ -11,14 +11,16 @@ import { useQuery } from '@tanstack/react-query'
 import { feedbackModel } from 'entities/feedback'
 import { UserCard, UserRating } from 'entities/user'
 import { UserRatingsByCategory } from 'features/user-ratings-by-category'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { getFeedbackStats, QueryKeys } from 'shared/api'
 import shallow from 'zustand/shallow'
+import { Archive } from './Archive'
 import ColleaguesTable from './ColleaguesTable'
 import ColleaguesTitle from './ColleaguesTitle'
 import styles from './styles.module.sass'
 
 export const AdminFeedbackContent = () => {
+	const [isArchiveActive, setIsArchiveActive] = useState<boolean>(false)
 	const { eventId, userId } = feedbackModel.useAdminFeedbackStore(
 		state => ({
 			eventId: state.eventId,
@@ -26,7 +28,7 @@ export const AdminFeedbackContent = () => {
 		}),
 		shallow
 	)
-	const { data, isFetching, refetch } = useQuery({
+	const { data, isFetching, refetch, isError } = useQuery({
 		queryKey: [QueryKeys.FEEDBACK_STATS, userId, eventId],
 		queryFn: () =>
 			getFeedbackStats(userId, eventId === 'all' ? undefined : eventId),
@@ -35,8 +37,19 @@ export const AdminFeedbackContent = () => {
 	})
 
 	useEffect(() => {
-		if (userId) refetch()
+		if (userId) {
+			refetch()
+		}
+		setIsArchiveActive(false)
 	}, [userId, eventId, refetch])
+
+	if (isArchiveActive) {
+		return (
+			<div className={styles.root}>
+				<Archive close={() => setIsArchiveActive(false)} />
+			</div>
+		)
+	}
 
 	return (
 		<div className={styles.root}>
@@ -49,7 +62,9 @@ export const AdminFeedbackContent = () => {
 				</Flex>
 			)}
 
-			{(userId || data) && (
+			{isError ? <Text>Ошибка при получении обратной связи </Text> : null}
+
+			{data && (
 				<ScrollArea h={'100%'}>
 					<Group position="apart" align="flex-start">
 						<Group>
@@ -62,7 +77,13 @@ export const AdminFeedbackContent = () => {
 								<UserRating rating={data?.avg_rating} />
 							) : null}
 						</Group>
-						<Button variant="outline">Архив</Button>
+						<Button
+							variant="outline"
+							onClick={() => setIsArchiveActive(true)}
+							disabled={Boolean(userId) === false}
+						>
+							Архив
+						</Button>
 					</Group>
 
 					<Stack

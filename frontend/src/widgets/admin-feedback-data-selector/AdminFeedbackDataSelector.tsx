@@ -26,18 +26,21 @@ export const AdminFeedbackDataSelector = () => {
 			<Text>Сотрудник</Text>
 			<UserSearchSelect
 				value={userId}
-				onChange={userId => update({ userId: userId || undefined })}
+				onChange={userId => {
+					update({ userId: userId || undefined })
+				}}
 				placeholder={'Введите имя сотрудника'}
 			/>
 
 			<Text mt="md">Период</Text>
 			<Select
 				value={eventId}
-				onChange={value => update({ eventId: value || 'all' })}
+				onChange={value => {
+					update({ eventId: value || 'all' })
+				}}
 				placeholder="Выберите период"
 				data={[{ label: 'За все время', value: 'all' }, ...parsedEvents]}
-				disabled={isLoading}
-				clearable
+				disabled={isLoading || !parsedEvents.length}
 				rightSection={null}
 				rightSectionProps={{ style: { pointerEvents: 'all' } }}
 			/>
