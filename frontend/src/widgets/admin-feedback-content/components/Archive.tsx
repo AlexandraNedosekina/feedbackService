@@ -4,6 +4,7 @@ import { feedbackModel } from 'entities/feedback'
 import { getFeedbackArchive, QueryKeys } from 'shared/api'
 import { Icon } from 'shared/ui'
 import shallow from 'zustand/shallow'
+import { ArchiveItem } from './ArchiveItem'
 
 interface IProps {
 	close: () => void
@@ -27,7 +28,7 @@ export function Archive({ close }: IProps) {
 
 	return (
 		<div style={{ height: '100%' }}>
-			<Group spacing={3}>
+			<Group spacing={3} pb="xs">
 				<ActionIcon size="sm" onClick={close}>
 					<Icon icon="arrow_back_ios_new" size={14} />
 				</ActionIcon>
@@ -36,11 +37,15 @@ export function Archive({ close }: IProps) {
 
 			{isLoading ? (
 				<Text>Загрузка...</Text>
-			) : (
-				<ScrollArea h={'100%'}>
-					<pre>{JSON.stringify(data, null, 2)}</pre>
+			) : data?.length === 0 ? (
+				<Text>Записей нет</Text>
+			) : data && data.length > 0 ? (
+				<ScrollArea h={'100%'} pb="lg">
+					{data.map(feedback => (
+						<ArchiveItem key={feedback.id} feedback={feedback} />
+					))}
 				</ScrollArea>
-			)}
+			) : null}
 		</div>
 	)
 }
