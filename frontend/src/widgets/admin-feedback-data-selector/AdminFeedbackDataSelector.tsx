@@ -5,10 +5,8 @@ import { UserSearchSelect } from 'features/user-search-select'
 import { getAllEvents, QueryKeys } from 'shared/api'
 import shallow from 'zustand/shallow'
 import { eventSelectMapper } from './lib'
-import { useRouter } from 'next/router'
 
 export const AdminFeedbackDataSelector = () => {
-	const { query } = useRouter()
 	const { eventId, userId, update } = feedbackModel.useAdminFeedbackStore(
 		state => ({
 			eventId: state.eventId,
