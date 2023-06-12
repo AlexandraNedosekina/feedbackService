@@ -455,7 +455,7 @@ def reshedule_calendar_event(
     try:
         event = crud.calendar.reshedule(db, db_obj=event, resheduled=resheduled_event)
     except OverlappingEventError:
-        return HTTPException(
+        raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Either you, or event participant have overlapping event",
         )
