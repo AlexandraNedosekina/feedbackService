@@ -16,7 +16,7 @@ def get_template_by_id(template_id: int, db=Depends(get_db)):
     log.debug(f"Get template with {template_id=}")
     template = crud.career_template.get(db, id=template_id)
     if not template:
-        raise HTTPException(status.HTTP_404_NOT_FOUND, "Template not found")
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Шаблон не найден")
     log.debug(f"Found template {template=}")
     return template
 
@@ -61,10 +61,12 @@ def update_whole_template(
 ):
     template = crud.career_template.get(db, template_id)
     if not template:
-        raise HTTPException(status.HTTP_404_NOT_FOUND, "Template not found")
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Шаблон не найден")
 
     if "admin" not in curr_user.get_roles or template.created_by_id != curr_user.id:
-        raise HTTPException(status.HTTP_403_FORBIDDEN, "You can't delete that template")
+        raise HTTPException(
+            status.HTTP_403_FORBIDDEN, "Вы не можете обновить этот шаблон"
+        )
 
     template = crud.career_template.update(db, db_obj=template, obj_in=template_update)
     log.debug(f"Template {template.id} updated by {curr_user.id}")
@@ -77,10 +79,12 @@ def delete_template(
 ):
     template = crud.career_template.get(db, template_id)
     if not template:
-        raise HTTPException(status.HTTP_404_NOT_FOUND, "Template not found")
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Шаблон не найден")
 
     if "admin" not in curr_user.get_roles or template.created_by_id != curr_user.id:
-        raise HTTPException(status.HTTP_403_FORBIDDEN, "You can't delete that template")
+        raise HTTPException(
+            status.HTTP_403_FORBIDDEN, "Вы не можете удалить этот шаблон"
+        )
 
     crud.career_template.remove(db, id=template_id)
 
@@ -106,7 +110,7 @@ def apply_template(
         user = crud.user.get(db, uid)
         if not user:
             raise HTTPException(
-                status.HTTP_404_NOT_FOUND, f"User with id {uid} does not exist"
+                status.HTTP_404_NOT_FOUND, f"Пользователь с id {user.id} не существует"
             )
     log.debug("Users exist")
 
@@ -114,7 +118,9 @@ def apply_template(
     if apply_options.indexes and any(
         i > len(template.template) - 1 for i in apply_options.indexes
     ):
-        raise HTTPException(status.HTTP_400_BAD_REQUEST, "Index is out of range")
+        raise HTTPException(
+            status.HTTP_400_BAD_REQUEST, "Индекс находится вне диапазона"
+        )
     log.debug("Indexes are ok")
 
     background_tasks.add_task(constuct_and_create_tracks, apply_options, template, db)

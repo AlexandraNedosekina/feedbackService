@@ -26,7 +26,7 @@ async def get_current_user(
     user = crud.user.get_by_email(db, email=token_payload.email)
     if not user:
         raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED, detail="User not found"
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Пользователь не найден"
         )
     return user
 
@@ -43,7 +43,7 @@ class GetUserWithRoles:
             if role in self.roles:
                 return current_user
         raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED, detail="Not enough permissions"
+            status_code=status.HTTP_403_FORBIDDEN, detail="Недостаточно прав"
         )
 
 

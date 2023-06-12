@@ -1,6 +1,6 @@
 import logging
 
-from fastapi import APIRouter, Depends, HTTPException, Query, Response
+from fastapi import APIRouter, Depends, HTTPException, Query, Response, status
 from sqlalchemy.orm import Session
 
 from feedback import crud, models, schemas
@@ -41,7 +41,9 @@ async def get_career_by_id(
 ):
     career_track = crud.career.get(db, id=career_id)
     if not career_track:
-        raise HTTPException(status_code=404, detail="Career track not found")
+        raise HTTPException(
+            status.HTTP_404_NOT_FOUND, detail="Карьерный путь не найден"
+        )
     return career_track
 
 
@@ -64,7 +66,9 @@ async def update_career_track(
 ):
     career = crud.career.get(db, id=career_id)
     if not career:
-        raise HTTPException(status_code=404, detail="Career track not found")
+        raise HTTPException(
+            status.HTTP_404_NOT_FOUND, detail="Карьерный путь не найден"
+        )
 
     return crud.career.update(db, db_obj=career, obj_in=career_update)
 
@@ -77,7 +81,9 @@ async def delete_career_track(
 ):
     career_track = crud.career.get(db, id=career_id)
     if not career_track:
-        raise HTTPException(status_code=404, detail="Career track not found")
+        raise HTTPException(
+            status.HTTP_404_NOT_FOUND, detail="Карьерный путь не найден"
+        )
     crud.career.remove(db, id=career_id)
     return Response(status_code=204)
 
@@ -91,7 +97,9 @@ async def add_params(
 ):
     career = crud.career.get(db, id=career_id)
     if not career:
-        raise HTTPException(status_code=404, detail="Career track not found")
+        raise HTTPException(
+            status.HTTP_404_NOT_FOUND, detail="Карьерный путь не найден"
+        )
     career = crud.career.add_params(db, career=career, obj_in=param_create)
     return career
 
@@ -104,7 +112,7 @@ async def remove_param(
 ):
     param = crud.career.get_param(db, param_id)
     if not param:
-        raise HTTPException(status_code=404, detail="Career param not found")
+        raise HTTPException(status.HTTP_404_NOT_FOUND, detail="Этап не найден")
 
     crud.career.remove_param(db, id=param_id)
     return Response(status_code=204)

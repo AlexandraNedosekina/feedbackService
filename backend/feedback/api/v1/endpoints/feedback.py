@@ -29,7 +29,9 @@ async def send_feedback_out_of_turn(
 ):
     user = crud.user.get(db, user_id)
     if not user:
-        raise HTTPException(status_code=404, detail="User does not exist")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Пользователь не найден"
+        )
 
     # NOTE: WTF
     user_roles = user.get_roles
@@ -41,7 +43,7 @@ async def send_feedback_out_of_turn(
 
     if not can_send_feedback:
         raise HTTPException(
-            status_code=403, detail="You can not send feedback to user with that role"
+            status_code=status.HTTP_403_FORBIDDEN, detail="Недостаточно прав"
         )
 
     curr_utc_datetime = datetime.now(tz=timezone.utc) + timedelta(seconds=2)
@@ -77,14 +79,20 @@ async def send_feedback(
 ) -> schemas.Feedback:
     feedback = crud.feedback.get(db=db, id=feedback_id)
     if not feedback:
-        raise HTTPException(status_code=404, detail="Feedback does not exist")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Обратная связь не найдена"
+        )
 
     event = crud.event.get(db, feedback.event_id)
     if not event:
-        raise HTTPException(status_code=404, detail="Event does not exist")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Событие не найдено"
+        )
 
     if not (event.date_start <= datetime.utcnow() < event.date_stop):
-        raise HTTPException(status_code=410, detail="Event status is not active")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Событие еще не началось"
+        )
 
     allow = await is_allowed_to_send_feedback(db, curr_user, feedback)
     # Если у пользователя одна из ролей (Админ, руковод., менеджер) то вероятно что для него не создан фидбэк
@@ -111,7 +119,8 @@ async def send_feedback(
 
         if feedback.receiver_id == curr_user.id:
             raise HTTPException(
-                status_code=400, detail="You can not send feedback to yourself"
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Вы не можете отправить обратную связь самому себе",
             )
 
         return crud.feedback.create(
@@ -124,12 +133,12 @@ async def send_feedback(
 
     if not allow:
         raise HTTPException(
-            status_code=403, detail="You can not send feedback to this user"
+            status_code=status.HTTP_403_FORBIDDEN, detail="Недостаточно прав"
         )
 
     if curr_user.id != feedback.sender_id:
         raise HTTPException(
-            status_code=403, detail="You can not send feedback with this id"
+            status_code=status.HTTP_403_FORBIDDEN, detail="Недостаточно прав"
         )
 
     if feedback.completed is True:
@@ -194,11 +203,15 @@ async def get_feedback_by_id(
 ) -> schemas.Feedback:
     feedback = crud.feedback.get(db, id)
     if not feedback:
-        raise HTTPException(status_code=404, detail="Feedback does not exist")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Обратная связь не найдена"
+        )
     if not is_allowed(
         curr_user, feedback.sender_id, ["admin", "boss", "manager", "HR", "self"]
     ):
-        raise HTTPException(status_code=401, detail="Not enough permissions")
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN, detail="Недостаточно прав"
+        )
     return feedback
 
 
@@ -210,7 +223,9 @@ async def delete_feedback(
 ):
     feedback = crud.feedback.get(db, id)
     if not feedback:
-        raise HTTPException(status_code=404, detail="Feedback does not exist")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Обратная связь не найдена"
+        )
     crud.feedback.remove(db, id=id)
     return Response(status_code=204)
 
@@ -220,7 +235,10 @@ async def is_allowed_to_send_feedback(
 ) -> str | bool:
     receiver = crud.user.get(db, feedback.receiver_id)
     if not receiver:
-        raise HTTPException(status_code=404, detail="feedback receiver does not exist")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Пользователя, для которого обратная связь, не существует",
+        )
     receiver_roles = receiver.get_roles
 
     # Boss, Manager, Admin can send feedback to anyone
@@ -244,7 +262,9 @@ async def show_receiver_active_feedback_list_by_user_id(
 ):
     user = crud.user.get(db=db, id=user_id)
     if not user:
-        raise HTTPException(status_code=404, detail="User does not exist")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Пользователь не найден"
+        )
 
     events_ids = set()
     for val in (
@@ -277,7 +297,9 @@ async def show_receiver_archive_feedback_list_by_user_id(
 ):
     user = crud.user.get(db=db, id=user_id)
     if not user:
-        raise HTTPException(status_code=404, detail="User does not exist")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Пользователь не найден"
+        )
 
     events_ids = set()
     for val in (
@@ -307,12 +329,16 @@ async def get_user_rating(
 ):
     user = crud.user.get(db, user_id)
     if not user:
-        raise HTTPException(status_code=404, detail="User does not exist")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Пользователь не найден"
+        )
 
     if event_id:
         event = crud.event.get(db, event_id)
         if not event:
-            raise HTTPException(status_code=404, detail="Event does not exist")
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="Событие не найдено"
+            )
 
     return crud.feedback.get_user_avg_ratings(db, user=user, event_id=event_id)
 
@@ -325,7 +351,9 @@ async def get_feedback_by_envent_id(
 ):
     event = crud.event.get(db=db, id=event_id)
     if not event:
-        raise HTTPException(status_code=404, detail="Event does not exist")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Событие не найдено"
+        )
     feedbacks = crud.feedback.get_by_event_id(db=db, event_id=event_id)
     return parse_obj_as(list[schemas.Feedback], feedbacks)
 
@@ -377,9 +405,9 @@ async def get_history_for_feedback(
 ) -> list[schemas.FeedbackHistory]:
     feedback = crud.feedback.get(db, feedback_id)
     if not feedback:
-        raise HTTPException(status.HTTP_404_NOT_FOUND, "Feedback not found")
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Обратная связь не найдена")
 
     if curr_user.id != feedback.sender_id and "admin" not in curr_user.get_roles:
-        raise HTTPException(status.HTTP_403_FORBIDDEN)
+        raise HTTPException(status.HTTP_403_FORBIDDEN, detail="Недостаточно прав")
 
     return crud.feedback_history.get_by_feedback_id(db, feedback_id=feedback_id)
