@@ -43,7 +43,6 @@ export const AdminFeedbackDataSelector = () => {
 				placeholder="Выберите период"
 				data={[{ label: 'За все время', value: 'all' }, ...parsedEvents]}
 				disabled={isLoading || !parsedEvents.length}
-				clearable
 				rightSection={null}
 				rightSectionProps={{ style: { pointerEvents: 'all' } }}
 			/>
