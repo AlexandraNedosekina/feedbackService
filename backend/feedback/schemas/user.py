@@ -1,7 +1,7 @@
 import datetime
 from typing import Literal
 
-from pydantic import Field, validator, EmailStr
+from pydantic import EmailStr, Field, validator
 
 from feedback import schemas
 from feedback.schemas.base import Base

@@ -15,7 +15,11 @@ class CRUDAvatar(CRUDBase[models.Avatars, schemas.AvatarCreate, schemas.AvatarUp
         obj_in: schemas.AvatarCreate,
         op: str,
         tp: str,
+        url: str,
     ) -> models.Avatars:
+        if url.endswith("/"):
+            url = url.strip("/")
+
         user.avatar = models.Avatars(
             original_path=op,
             thumbnail_path=tp,
@@ -23,7 +27,7 @@ class CRUDAvatar(CRUDBase[models.Avatars, schemas.AvatarCreate, schemas.AvatarUp
             y=obj_in.y,
             width=obj_in.width,
             height=obj_in.height,
-            thumbnail_url=f"http://{settings.APP_HOST}:{settings.APP_PORT}/user/{user.id}/avatar",
+            thumbnail_url=f"{url}/user/{user.id}/avatar",
         )
         db.add(user)
         db.commit()
