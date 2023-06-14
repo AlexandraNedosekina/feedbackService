@@ -16,6 +16,7 @@ from sqlalchemy.orm import Session
 
 from feedback import crud, models, schemas
 from feedback.api.deps import get_current_user, get_db, is_allowed
+from feedback.core.config import settings
 
 AVATARS_BASE_DIR = "avatars/"
 ORIGINALS_DIR = AVATARS_BASE_DIR + "originals/"
@@ -90,7 +91,12 @@ async def create_avater(
         )
 
     crud.avatar.create(
-        db, user=user, op=original_path, tp=thumbnail_path, obj_in=avatar_create
+        db,
+        user=user,
+        op=original_path,
+        tp=thumbnail_path,
+        obj_in=avatar_create,
+        url=settings.BACKEND_URL,
     )
     return Response(status_code=201)
 

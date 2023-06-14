@@ -1,7 +1,6 @@
 import logging
 from datetime import datetime, timedelta, timezone
 
-from feedback.db.session import engine
 from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Response, status
 from fastapi_utils.tasks import repeat_every
 from pydantic import parse_obj_as
@@ -9,8 +8,9 @@ from sqlalchemy import or_
 from sqlalchemy.orm import Session
 
 from feedback import crud, models, schemas
-from feedback.core.config import settings
 from feedback.api.deps import GetUserWithRoles, get_current_user, get_db, is_allowed
+from feedback.core.config import settings
+from feedback.db.session import engine
 
 logger = logging.getLogger(__name__)
 
