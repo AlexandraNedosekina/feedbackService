@@ -7,17 +7,14 @@ async function deleteUsersColleagues(
 	colleaguesIds: Set<number>
 ): Promise<Colleagues[]> {
 	try {
-		const res = await api.delete<Colleagues[]>(
-			`colleagues/user_id?user_id=${userId}`,
-			{
-				data: {
-					['colleagues_ids']: Array.from(colleaguesIds),
-				},
-				headers: {
-					'Content-Type': 'application/json',
-				},
-			}
-		)
+		const res = await api.delete<Colleagues[]>(`colleagues/${userId}`, {
+			data: {
+				['colleagues_ids']: Array.from(colleaguesIds),
+			},
+			headers: {
+				'Content-Type': 'application/json',
+			},
+		})
 
 		return res.data
 	} catch (error: any) {
