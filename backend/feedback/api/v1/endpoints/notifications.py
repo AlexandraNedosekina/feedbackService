@@ -71,10 +71,10 @@ async def delete_notification(
 ):
     notification = crud.notification.get(db, notification_id)
     if not notification:
-        raise HTTPException(status.HTTP_404_NOT_FOUND, "Notification not found")
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Уведомление не найдено")
 
     if notification.user_id != curr_user.id:
-        raise HTTPException(status.HTTP_403_FORBIDDEN)
+        raise HTTPException(status.HTTP_403_FORBIDDEN, detail="Недостаточно прав")
 
     crud.notification.remove(db, id=notification.id)
     return Response(status_code=status.HTTP_204_NO_CONTENT)
@@ -94,10 +94,10 @@ async def mark_as_seen(
 ):
     notification = crud.notification.get(db, notification_id)
     if not notification:
-        raise HTTPException(status.HTTP_404_NOT_FOUND, "Notification not found")
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Уведомление не найдено")
 
     if notification.user_id != curr_user.id:
-        raise HTTPException(status.HTTP_403_FORBIDDEN)
+        raise HTTPException(status.HTTP_403_FORBIDDEN, detail="Недостаточно прав")
 
     crud.notification.mark_as_seen(db, db_obj=notification)
     return Response(status_code=status.HTTP_204_NO_CONTENT)

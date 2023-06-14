@@ -43,6 +43,7 @@ const AddItem = ({ onAdd }: IProps) => {
 						</ActionIcon>
 					}
 					ref={focusTrapRef}
+					maxLength={128}
 				/>
 			</div>
 		)

@@ -5,7 +5,7 @@ import { EventCreateTimePicker as TimePicker } from 'features/event-create'
 import { Form } from 'react-final-form'
 import { QueryKeys, updateEvent } from 'shared/api'
 import { Event, EventUpdate } from 'shared/api/generatedTypes'
-import { FormInput, required } from 'shared/ui'
+import { FormInput, required, startEndTime } from 'shared/ui'
 
 interface IFormValues {
 	name: string
@@ -72,22 +72,25 @@ export default ({ isOpen, onClose, eventId, event }: IProps) => {
 				validate={values => {
 					const errors: Partial<Record<keyof IFormValues, string>> = {}
 
-					if (
-						dayjs(values.endDate).isBefore(values.startDate) ||
-						(dayjs(values.endDate).isSame(values.startDate) &&
-							+values.startTime.replace(':', '') >
-								+values.endTime.replace(':', ''))
-					) {
-						errors.endDate = 'Окончание не может быть раньше начала'
-					}
+					const timeErrors = startEndTime({
+						startDate: values.startDate,
+						startTime: values.startTime,
+						endDate: values.endDate,
+						endTime: values.endTime,
+					})
 
-					return errors
+					return { ...errors, ...timeErrors }
 				}}
 				keepDirtyOnReinitialize
 			>
 				{({ handleSubmit, invalid, dirty }) => (
 					<>
-						<FormInput name="name" label="Название" validate={required} />
+						<FormInput
+							name="name"
+							label="Название"
+							validate={required}
+							maxLength={128}
+						/>
 
 						<TimePicker />
 

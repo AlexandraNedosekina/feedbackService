@@ -16,6 +16,9 @@ export const FeedbackUserList = () => {
 	const { data: feedbackList, isLoading } = useQuery({
 		queryKey: [QueryKeys.FEEDBACK_LIST],
 		queryFn: getFeedbackList,
+		select: data => {
+			return data.filter(item => item.event.status !== 'archived')
+		},
 	})
 	const filteredFeedbackList = useMemo(
 		() =>

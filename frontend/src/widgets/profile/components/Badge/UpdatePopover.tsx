@@ -57,6 +57,7 @@ const UpdatePopover = ({
 						onChange={onInputChange}
 						placeholder="Обновленный текст"
 						data-testid="update-badge-input"
+						maxLength={64}
 					/>
 
 					<Group position="center" spacing="xs" noWrap>

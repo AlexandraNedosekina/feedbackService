@@ -1,4 +1,4 @@
-import { Checkbox } from '@mantine/core'
+import { Checkbox, Text } from '@mantine/core'
 import { showNotification } from '@mantine/notifications'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import produce from 'immer'
@@ -87,7 +87,7 @@ const ParamCheckbox = ({ isCompleted, label, id, careerId, type }: IProps) => {
 
 	return (
 		<Checkbox
-			label={label}
+			label={<Text>{label}</Text>}
 			checked={isChecked}
 			onChange={handleChange}
 			mt="xs"

@@ -76,17 +76,25 @@ const GradeCard = () => {
 			salary={grade.salary}
 		>
 			<Text mt="sm">Что нужно изучить:</Text>
-			<List withPadding>
+			<List withPadding w={'95%'}>
 				{grade.params.map((item, i) => {
 					if (item.type !== 'to_learn') return
-					return <List.Item key={i}>{item.description}</List.Item>
+					return (
+						<List.Item key={i}>
+							<Text>{item.description}</Text>
+						</List.Item>
+					)
 				})}
 			</List>
 			<Text mt="sm">Что нужно сделать:</Text>
-			<List withPadding>
+			<List withPadding w={'95%'}>
 				{grade.params.map((item, i) => {
 					if (item.type !== 'to_complete') return
-					return <List.Item key={i}>{item.description}</List.Item>
+					return (
+						<List.Item key={i}>
+							<Text>{item.description}</Text>
+						</List.Item>
+					)
 				})}
 			</List>
 

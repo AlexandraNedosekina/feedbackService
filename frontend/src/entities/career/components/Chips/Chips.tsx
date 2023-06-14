@@ -34,6 +34,10 @@ const useStyles = createStyles(theme => ({
 		paddingInline: theme.spacing.lg,
 		borderRadius: '4px',
 		color: theme.colors.brand[5],
+		width: '100%',
+		whiteSpace: 'break-spaces',
+		overflowWrap: 'break-word',
+		height: 'max-content',
 		'&[data-checked]': {
 			'&, &:hover': {
 				backgroundColor: theme.colors.brand[0],
@@ -44,6 +48,9 @@ const useStyles = createStyles(theme => ({
 	},
 	iconWrapper: {
 		display: 'none',
+	},
+	root: {
+		maxWidth: '100%',
 	},
 }))
 

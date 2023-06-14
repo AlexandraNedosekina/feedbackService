@@ -17,6 +17,7 @@ export const Textarea = ({ name, label, placeholder, disabled }: IProps) => {
 			maxRows={8}
 			autosize
 			disabled={disabled}
+			maxLength={1024}
 		/>
 	)
 }

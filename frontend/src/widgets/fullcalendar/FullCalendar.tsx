@@ -61,6 +61,7 @@ const FullCalendar = () => {
 				ref={ref => {
 					setCalendarRef(ref)
 				}}
+				eventStartEditable={false}
 				plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
 				headerToolbar={false}
 				buttonText={{

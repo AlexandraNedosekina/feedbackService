@@ -1,1 +1,1 @@
-export { default as CareerTimeline } from './components'
+export { default as CareerTimeline } from './components/CareerTimeline'

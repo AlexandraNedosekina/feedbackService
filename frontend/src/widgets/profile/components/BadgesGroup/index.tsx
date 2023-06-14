@@ -149,6 +149,7 @@ export const BadgesGroup = ({ badges, title, api_key }: IProps) => {
 									</ActionIcon>
 								}
 								autoComplete="off"
+								maxLength={64}
 							/>
 						</form>
 					</div>

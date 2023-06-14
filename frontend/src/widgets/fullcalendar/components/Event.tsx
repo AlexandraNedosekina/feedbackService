@@ -6,6 +6,7 @@ import {
 	CloseButton,
 	Flex,
 	Popover,
+	ScrollArea,
 	Spoiler,
 	Stack,
 	Text,
@@ -99,92 +100,104 @@ export default function ({
 						{title}
 					</Badge>
 				</Popover.Target>
-				<Popover.Dropdown bg="white" sx={() => ({ zIndex: 1000 })}>
-					<Stack align="start" spacing={'sm'}>
-						<Flex justify={'space-between'} align="center" w={'100%'}>
-							<Title order={5}>{title}</Title>
-							<CloseButton onClick={close} />
-						</Flex>
-						{extendedProps.desc ? (
-							<Spoiler
-								maxHeight={140}
-								showLabel="Показать полностью"
-								hideLabel="Скрыть"
+				<Popover.Dropdown
+					bg="white"
+					sx={() => ({
+						zIndex: 1000,
+					})}
+				>
+					<ScrollArea.Autosize mah={300}>
+						<Stack h={'100%'} align="start" spacing={'sm'}>
+							<Flex justify={'space-between'} align="center" w={'100%'}>
+								<Title
+									order={5}
+									sx={() => ({
+										maxWidth: '80%',
+									})}
+								>
+									{title}
+								</Title>
+								<CloseButton onClick={close} />
+							</Flex>
+							{extendedProps.desc ? (
+								<Spoiler
+									maxHeight={140}
+									showLabel="Показать полностью"
+									hideLabel="Скрыть"
+								>
+									<Text py="xs">{extendedProps.desc}</Text>
+								</Spoiler>
+							) : null}
+							<Badge
+								leftSection={
+									<Avatar
+										src={participant.avatar?.thumbnail_url}
+										mr={5}
+										size={24}
+										radius="xl"
+									/>
+								}
+								pl={0}
+								size="lg"
+								radius={'xl'}
 							>
-								<Text py="xs" sx={() => ({ whiteSpace: 'normal' })}>
-									{extendedProps.desc}
-								</Text>
-							</Spoiler>
-						) : null}
-						<Badge
-							leftSection={
-								<Avatar
-									src={participant.avatar?.thumbnail_url}
-									mr={5}
-									size={24}
-									radius="xl"
-								/>
-							}
-							pl={0}
-							size="lg"
-							radius={'xl'}
-						>
-							{participant.full_name}
-						</Badge>
-						<Flex gap="sm">
-							<Text color="dimmed">Время и дата</Text>
-							<Text>
-								{dayjs(event.startStr.split('+')[0]).format(
-									'HH:mm, D MMMM'
-								)}{' '}
-								- {dayjs(event.endStr).format('HH:mm D MMMM')}
-							</Text>
-						</Flex>
-						<Flex align="center" gap="xs">
-							<Badge variant={'dot'} color={color} size="lg">
-								{status}
+								{participant.full_name}
 							</Badge>
-							{canAccept ? (
-								<CalendarEventActions
-									eventId={extendedProps.id}
-									start={event.startStr}
-									end={event.endStr}
-								/>
+							<Flex gap="sm">
+								<Text color="dimmed">Время и дата</Text>
+								<Text>
+									{dayjs(event.startStr.split('+')[0]).format(
+										'HH:mm, D MMMM'
+									)}{' '}
+									- {dayjs(event.endStr).format('HH:mm D MMMM')}
+								</Text>
+							</Flex>
+							<Flex align="center" gap="xs">
+								<Badge variant={'dot'} color={color} size="lg">
+									{status}
+								</Badge>
+								{canAccept ? (
+									<CalendarEventActions
+										eventId={extendedProps.id}
+										start={event.startStr}
+										end={event.endStr}
+									/>
+								) : null}
+							</Flex>
+							{status === 'Отклонено' && extendedProps.cause ? (
+								<Text>
+									<Text span color="dimmed">
+										Причина:
+									</Text>{' '}
+									{extendedProps.cause}
+								</Text>
 							) : null}
-						</Flex>
-						{status === 'Отклонено' && extendedProps.cause ? (
-							<Text>
-								<Text span color="dimmed">
-									Причина:
-								</Text>{' '}
-								{extendedProps.cause}
-							</Text>
-						) : null}
-						<Flex justify={'end'} gap="xs" w="100%">
-							{canDelete ? (
-								<ActionIcon
-									onClick={deleteModalHandlers.open}
-									color={'brand'}
-									size="md"
-									variant={'outline'}
-									title="Удалить"
-								>
-									<Icon icon="delete" size={18} />
-								</ActionIcon>
-							) : null}
-							{canEdit ? (
-								<ActionIcon
-									color="brand"
-									size="md"
-									variant="outline"
-									title="Редактировать"
-									onClick={editModalHandlers.open}
-								>
-									<Icon icon="edit" size={18} />
-								</ActionIcon>
-							) : null}
-						</Flex>
-					</Stack>
+							<Flex justify={'end'} gap="xs" w="100%">
+								{canDelete ? (
+									<ActionIcon
+										onClick={deleteModalHandlers.open}
+										color={'brand'}
+										size="md"
+										variant={'outline'}
+										title="Удалить"
+									>
+										<Icon icon="delete" size={18} />
+									</ActionIcon>
+								) : null}
+								{canEdit ? (
+									<ActionIcon
+										color="brand"
+										size="md"
+										variant="outline"
+										title="Редактировать"
+										onClick={editModalHandlers.open}
+									>
+										<Icon icon="edit" size={18} />
+									</ActionIcon>
+								) : null}
+							</Flex>
+						</Stack>
+					</ScrollArea.Autosize>
 				</Popover.Dropdown>
 			</Popover>
 			{canDelete ? (

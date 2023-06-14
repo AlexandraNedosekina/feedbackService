@@ -25,7 +25,9 @@ export default function GradeCard({
 			})}
 		>
 			<Group position="apart">
-				<Title order={3}>{title}</Title>
+				<Title order={3} w={'80%'}>
+					{title}
+				</Title>
 				{menuItems ? <ActionsMenu items={menuItems} /> : null}
 			</Group>
 

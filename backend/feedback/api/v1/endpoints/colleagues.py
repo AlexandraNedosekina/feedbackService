@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
 from pydantic import parse_obj_as
 from sqlalchemy.orm import Session
 
@@ -26,7 +26,9 @@ async def get_colleagues_by_user(
 ):
     user = crud.user.get(db, user_id)
     if not user:
-        raise HTTPException(status_code=404, detail="No user with such id")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Пользователь не найден"
+        )
     return parse_obj_as(list[schemas.Colleagues], user.colleagues)
 
 
@@ -42,18 +44,21 @@ async def add_user_colleagues(
     colleagues_ids = colleagues_ids.colleagues_ids
     user = crud.user.get(db, user_id)
     if not user:
-        raise HTTPException(status_code=404, detail="No user with such id")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Пользователь не найден"
+        )
 
     for coll_id in colleagues_ids:
         if coll_id == user_id:
             raise HTTPException(
-                status_code=404,
+                status_code=status.HTTP_404_NOT_FOUND,
                 detail=f"Can not add colleague with users(self) id - {coll_id}",
             )
         colleague = crud.user.get(db, coll_id)
         if not colleague:
             raise HTTPException(
-                status_code=404, detail=f"No user with such id - {colleague}"
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"Пользователь не найден - {colleague}",
             )
 
         # Add colleague to user and user to colleague
@@ -83,26 +88,29 @@ async def delete_user_colleagues(
     to_delete_colleagues_ids = colleagues_ids.colleagues_ids
     user = crud.user.get(db, user_id)
     if not user:
-        raise HTTPException(status_code=404, detail="No user with such id")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Пользователь не найден"
+        )
 
     user_colleagues_ids = list(map(lambda x: x.colleague_id, user.colleagues))
 
     for coll_id in to_delete_colleagues_ids:
         if coll_id == user_id:
             raise HTTPException(
-                status_code=404,
-                detail=f"Can not delete colleague with users(self) id - {coll_id}",
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"Вы не можете удалить пользователя с id {coll_id} из коллег",
             )
         colleague = crud.user.get(db, coll_id)
         if not colleague:
             raise HTTPException(
-                status_code=404, detail=f"No user with such id - {coll_id}"
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Пользователь не найден",
             )
 
         if coll_id not in user_colleagues_ids:
             raise HTTPException(
-                status_code=404,
-                detail=f"User has no colleague with id {coll_id} to be deleted",
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"У пользователя нет коллеги с id = {coll_id}",
             )
 
         delete_user_relation = (

@@ -15,6 +15,9 @@ class Settings(BaseSettings):
     FRONTEND_URL: AnyHttpUrl = Field("http://localhost:3000")  # Gloabl url
     BACKEND_URL: AnyHttpUrl = "http://localhost:8000"  # Global url
     CORS_ORIGINS: list[AnyHttpUrl]
+    CHECK_FEEDBACK_IN_SECONDS: int = (
+        10  # Check and update feedback status every _ secods
+    )
 
     # Jwt
     REFRESH_TOKEN_EXPIRES_IN_SECONDS: int = 60 * 60 * 720  # 30 days

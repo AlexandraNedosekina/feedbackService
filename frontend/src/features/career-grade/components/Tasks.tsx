@@ -119,10 +119,11 @@ const Tasks = ({ title, type }: IProps) => {
 									}
 									size="xs"
 									ref={focusTrapRef}
+									maxLength={128}
 								/>
 							</div>
 						) : (
-							<>{fields.value[index].text}</>
+							<Text>{fields.value[index].text}</Text>
 						)}
 						<Group spacing={0}>
 							{!isEdit ? (

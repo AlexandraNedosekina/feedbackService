@@ -86,7 +86,11 @@ export default function ({ opened, onClose, selectedDate }: IProps) {
 									<Text>Название</Text>
 								</Grid.Col>
 								<Grid.Col span={3}>
-									<FormInput name="title" validate={required} />
+									<FormInput
+										name="title"
+										validate={required}
+										maxLength={128}
+									/>
 								</Grid.Col>
 							</Grid>
 
@@ -97,7 +101,11 @@ export default function ({ opened, onClose, selectedDate }: IProps) {
 											<Text>Описание</Text>
 										</Grid.Col>
 										<Grid.Col span={3}>
-											<FormTextarea name="desc" minRows={3} />
+											<FormTextarea
+												name="desc"
+												minRows={3}
+												maxLength={1024}
+											/>
 										</Grid.Col>
 									</>
 								) : (

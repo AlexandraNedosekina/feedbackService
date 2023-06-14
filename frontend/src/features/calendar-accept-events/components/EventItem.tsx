@@ -28,7 +28,13 @@ export default function EventItem({ event }: IProps) {
 					avatar={event.owner.avatar?.thumbnail_url}
 					variant="sm"
 				/>
-				<Title order={3} pt="lg">
+				<Title
+					order={3}
+					pt="lg"
+					sx={() => ({
+						maxWidth: '80%',
+					})}
+				>
 					<Text span color="gray.6" size="sm" weight={'normal'}>
 						Тема:{' '}
 					</Text>
